@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">Walladog</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="navigation_item_1">Home</string>
+    <string name="navigation_item_2">Events</string>
+    <string name="starred_string">Starred</string>
+    <string name="inbox_string">Inbox</string>
+    <string name="sent_mail_string">Sent mail</string>
+    <string name="draft_string">Drafts</string>
+    <string name="subheader">Subheader</string>
+    <string name="trash_string">Trash</string>
+    <string name="all_mail_string">All mails</string>
+    <string name="spam_string">Spams</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="gcm_senderId">838012343378</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+    completions."</string>
+
+    <string name="login_success">Identificado correctamente!</string>
+    <string name="login_error">Error al autenticar, inténtalo de nuevo.</string>
+    <string name="menu_send_message">Enviar Msg</string>
+    <string name="menu_share">Compartir</string>
+    <string name="menu_login">Identifícate</string>
+    <string name="menu_comunicate">Comunícate</string>
+    <string name="menu_users">Usuarios</string>
+    <string name="menu_your_profile">Tu Perfil</string>
+    <string name="menu_your_transactions">Tus transacciones</string>
+    <string name="menu_your_products">Tus productos</string>
+    <string name="menu_add_new">Agregar nuevo</string>
+    <string name="menu_gotohome">Ir a Home</string>
+    <string name="menu_logout">Desconectar</string>
+    <string name="action_ajustes">Ajustes</string>
+    <string name="sure_exit">Estás seguro que deseas salir?</string>
+    <string name="app_yes">Si</string>
+    <string name="app_no">No</string>
+    <string name="dumy_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sit amet nisi blandit lacus tincidunt laoreet. Etiam vulputate, tortor a tincidunt convallis, libero augue lacinia ante, nec dictum lacus ex a felis. Etiam in orci eu quam elementum scelerisque. Praesent eget justo sed sapien aliquam interdum nec a orci. Nam vitae nunc laoreet, tempor ligula vel, facilisis nisi. Cras eget condimentum risus. Donec lobortis id mi vulputate sollicitudin. Vivamus imperdiet massa erat, ut rhoncus est vestibulum sed. Pellentesque consectetur ipsum sed augue fermentum tristique. Phasellus pellentesque, lectus ut pharetra venenatis, dui dui hendrerit tortor, nec varius turpis lectus vitae nibh. Sed dui est, pellentesque convallis metus eget, malesuada aliquam erat. Morbi consectetur tristique nulla vitae accumsan. Praesent non sem in nibh congue maximus in ac arcu. Nunc volutpat eros magna, eget porta est ultricies id. Morbi quis neque dolor.
+
+Mauris mollis leo id urna hendrerit malesuada. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras porttitor elit vel sem pellentesque, ut placerat sapien mollis. Morbi eleifend fermentum lacus eget ultricies. Etiam libero nibh, bibendum ut lacus nec, pellentesque sodales lacus. Morbi sit amet purus luctus, fermentum tortor sed, porta sapien. Nam nec urna eget lorem vestibulum ultricies. Sed commodo justo eu bibendum egestas. Vivamus cursus euismod elit eu eleifend. Nam quis diam nec lectus volutpat ullamcorper placerat in sem. Proin tempus iaculis blandit.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dummy_text_image">Dummy text image</string>
+    <string name="menu_map_friends">Tus amigos cerca</string>
+    <string name="menu_take_photo">Tomar una foto</string>
+
+
+</resources>

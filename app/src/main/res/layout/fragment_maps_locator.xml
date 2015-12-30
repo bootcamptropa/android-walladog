@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.walladog.walladog.controllers.activities.MainActivity" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <fragment
+            android:id="@+id/mapFragment"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            class="com.google.android.gms.maps.SupportMapFragment" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:text="Animate Marker" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:text="Zoom to markers" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:text="Animate back to position" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
+
+<!--
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".MapsLocator">
+
+    <com.google.android.gms.plus.PlusOneButton
+        android:id="@+id/plus_one_button"
+        xmlns:plus="http://schemas.android.com/apk/lib/com.google.android.gms.plus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        plus:annotation="inline"
+        plus:size="standard"/>
+
+</FrameLayout>
+-->

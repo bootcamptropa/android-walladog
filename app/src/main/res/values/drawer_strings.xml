@@ -1,0 +1,4 @@
+<resources>
+    <string name="drawer_close_drawer_accesibility_string">Navigation View Closed</string>
+    <string name="drawer_open_drawer_accesibility_string">Navigation View Opened</string>
+</resources>

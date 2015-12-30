@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:background="@color/colorPrimaryDark"
+        >
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"
+            android:src="@drawable/walladogsmall"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/txt_list_title"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/common_plus_signin_btn_text_dark_disabled"
+            android:text="Walla Adopta"
+            />
+
+
+    </LinearLayout>
+
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/gridview"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:columnWidth="90dp"
+              android:numColumns="auto_fit"
+              android:verticalSpacing="10dp"
+              android:horizontalSpacing="10dp"
+              android:stretchMode="columnWidth"
+              android:layout_marginTop="5dp"
+              android:gravity="center"
+        />
+
+
+</LinearLayout>
