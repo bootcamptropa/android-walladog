@@ -32,6 +32,10 @@
                 android:icon="@drawable/ic_menu_signin"
                 android:title="@string/menu_login"/>
             <item
+                android:id="@+id/nav_signin"
+                android:icon="@drawable/ic_menu_signin"
+                android:title="@string/btn_signin"/>
+            <item
                 android:id="@+id/nav_account"
                 android:icon="@drawable/ic_menu_account"
                 android:title="@string/menu_your_profile"/>

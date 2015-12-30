@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.walladog.walladog.R;
+import com.walladog.walladog.utils.WDUtils;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -31,6 +32,7 @@ public abstract class DrawerBaseActivity extends AppCompatActivity {
 
     // Initializing Toolbar and setting it as the actionbar
     setSupportActionBar(toolbar);
+    WDUtils.applyFontForToolbarTitle(this);
 
     //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
     navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {

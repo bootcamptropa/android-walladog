@@ -15,14 +15,15 @@ import com.walladog.walladog.controllers.fragments.DogListFragment;
 import com.walladog.walladog.controllers.fragments.HomeFragment;
 import com.walladog.walladog.controllers.fragments.LoginFragment;
 import com.walladog.walladog.controllers.fragments.MapsLocator;
-import com.walladog.walladog.controllers.fragments.ServiceFragment;
+import com.walladog.walladog.controllers.fragments.SigninFragment;
 import com.walladog.walladog.models.WDServices;
 
 public class MainActivity extends DrawerBaseActivity
         implements LoginFragment.OnLoginClickListener,
         MapsLocator.OnFragmentInteractionListener,
         DogListFragment.OnFragmentInteractionListener,
-        AddProductFragment.OnFragmentInteractionListener{
+        AddProductFragment.OnFragmentInteractionListener,
+        SigninFragment.OnSigninClickListener{
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -41,23 +42,10 @@ public class MainActivity extends DrawerBaseActivity
         }
     }
 
-    @Override public void onDrawerClosed(View drawerView) {
-
-    }
-
-    @Override public void onDrawerOpened(View drawerView) {
-
-    }
-
+    @Override public void onDrawerClosed(View drawerView) {}
+    @Override public void onDrawerOpened(View drawerView) {}
     @Override public void onNavigationItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
-            case R.id.nav_login:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, LoginFragment.newInstance(),LoginFragment.class.getName())
-                        .addToBackStack(LoginFragment.class.getName())
-                        .commit();
-                Toast.makeText(getApplicationContext(), "Login Selected", Toast.LENGTH_SHORT).show();
-                break;
             case R.id.nav_home:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout_main_activity_frame, HomeFragment.newInstance(),HomeFragment.class.getName())
@@ -66,10 +54,6 @@ public class MainActivity extends DrawerBaseActivity
                 Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_products:
-                /*getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, ProductListFragment.newInstance(),ProductListFragment.class.getName())
-                        .addToBackStack(ProductListFragment.class.getName())
-                        .commit();*/
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance("1","1"),DogListFragment.class.getName())
                         .addToBackStack(DogListFragment.class.getName())
@@ -90,20 +74,28 @@ public class MainActivity extends DrawerBaseActivity
                         .commit();
                 Toast.makeText(getApplicationContext(), "Go to Picture", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.nav_login:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.drawer_layout_main_activity_frame, LoginFragment.newInstance(),LoginFragment.class.getName())
+                        .addToBackStack(LoginFragment.class.getName())
+                        .commit();
+                Toast.makeText(getApplicationContext(), "Login Selected", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_signin:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.drawer_layout_main_activity_frame, SigninFragment.newInstance(),SigninFragment.class.getName())
+                        .addToBackStack(SigninFragment.class.getName())
+                        .commit();
+                Toast.makeText(getApplicationContext(), "Signin Selected", Toast.LENGTH_SHORT).show();
+                break;
             default:
                 Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public void onLoginSubmit(String username, String password, View currentView) {
-        Log.v(TAG, "Click listener");
-    }
-
-    @Override
     public void onBackPressed() {
         final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        ServiceFragment mFragment = (ServiceFragment) fm.findFragmentByTag("HomeFragment");
 
         if (fm.getBackStackEntryCount() == 0) {
             new android.app.AlertDialog.Builder(this)
@@ -130,5 +122,15 @@ public class MainActivity extends DrawerBaseActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
         Log.v(TAG,"Fragment Listener");
+    }
+
+    @Override
+    public void onLoginSubmit(String username, String password, View currentView) {
+        Log.v(TAG, "Click listener");
+    }
+
+    @Override
+    public void onSigninSubmit(String username, String password, View currentView) {
+
     }
 }

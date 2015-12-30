@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -43,6 +45,7 @@ public class SplashActivity extends Activity {
     private static final String TAG = SplashActivity.class.getName();
     private long splashDelay = 3000; // 6 segundos
     public ProgressBar progressBar;
+    private TextView appTitle = null;
     private boolean firstUse;
     private Uri URLScheme = null;
 
@@ -64,6 +67,11 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
         Intent intent = getIntent();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        appTitle = (TextView) findViewById(R.id.app_title);
+        Typeface face=Typeface.createFromAsset(getAssets(),"fonts/Lobster-Regular.ttf");
+        appTitle.setTextSize(30);
+        appTitle.setTypeface(face);
+
 
         context = getApplicationContext();
         if (checkPlayServices())

@@ -56,6 +56,10 @@ Mauris mollis leo id urna hendrerit malesuada. Pellentesque habitant morbi trist
     <string name="dummy_text_image">Dummy text image</string>
     <string name="menu_map_friends">Tus amigos cerca</string>
     <string name="menu_take_photo">Tomar una foto</string>
+    <string name="prompt_firstname">Indica tu nombre</string>
+    <string name="btn_signin">Registrarse</string>
+    <string name="sigin_wellcome">Bienvenido a Walladog, registrate para formar parte de nuestra comunidad</string>
+    <string name="title_activity_borrame">borrameActivity</string>
 
 
 </resources>
