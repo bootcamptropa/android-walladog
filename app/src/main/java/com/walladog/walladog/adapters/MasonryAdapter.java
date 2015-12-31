@@ -1,11 +1,14 @@
 package com.walladog.walladog.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +23,8 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.walladog.walladog.R;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -29,19 +34,29 @@ import java.util.Random;
 
 public class MasonryAdapter extends RecyclerView.Adapter<MasonryAdapter.MasonryView> {
 
-    private static final String TAG = MasonryAdapter.class.getName();
+    private static String TAG = MasonryAdapter.class.getName();
+    private OnPhotoClickListener mOnPhotoClickListener=null;
 
     private Context context;
 
-    String[] nameList = {"One", "Two", "Three", "Four", "Five", "Six",
-            "Seven", "Eight", "Nine", "Ten","One", "Two", "Three", "Four", "Five", "Six",
-            "Seven", "Eight", "Nine", "Ten","One", "Two", "Three", "Four", "Five", "Six",
-            "Seven", "Eight", "Nine", "Ten","One", "Two", "Three", "Four", "Five", "Six",
-            "Seven", "Eight", "Nine", "Ten","One", "Two", "Three", "Four", "Five", "Six",
-            "Seven", "Eight", "Nine", "Ten"};
+    List<String> nameList2 = null;
 
     public MasonryAdapter(Context context) {
+        nameList2 = new ArrayList<>();
+        for(int i=1; i<1000; i++){
+            nameList2.add("Numero "+String.valueOf(i));
+        }
         this.context = context;
+        mOnPhotoClickListener = (OnPhotoClickListener) context;
+    }
+
+    public MasonryAdapter(Context context,OnPhotoClickListener cb) {
+        nameList2 = new ArrayList<>();
+        for(int i=1; i<1000; i++){
+            nameList2.add("Numero "+String.valueOf(i));
+        }
+        this.context = context;
+        mOnPhotoClickListener = cb;
     }
 
     @Override
@@ -51,8 +66,19 @@ public class MasonryAdapter extends RecyclerView.Adapter<MasonryAdapter.MasonryV
         return masonryView;
     }
 
+
+
     @Override
-    public void onBindViewHolder(MasonryView holder, int position) {
+    public void onBindViewHolder(MasonryView holder, final int position) {
+
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v(TAG,"Item clicked");
+                mOnPhotoClickListener.onPhotoClick(position);
+            }
+        });
+
         Transformation transformation = new RoundedTransformationBuilder()
                 .borderColor(Color.LTGRAY)
                 .borderWidthDp(1)
@@ -71,12 +97,13 @@ public class MasonryAdapter extends RecyclerView.Adapter<MasonryAdapter.MasonryV
                 .transform(transformation)
                 .into(holder.imageView);
 
-        holder.textView.setText(nameList[position]);
+        //holder.textView.setText(nameList[position]);
+        holder.textView.setText(nameList2.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return nameList.length;
+        return nameList2.size();
     }
 
     class MasonryView extends RecyclerView.ViewHolder {
@@ -89,5 +116,9 @@ public class MasonryAdapter extends RecyclerView.Adapter<MasonryAdapter.MasonryV
             textView = (TextView) itemView.findViewById(R.id.img_name);
 
         }
+    }
+
+    public interface OnPhotoClickListener {
+        void onPhotoClick(int position);
     }
 }

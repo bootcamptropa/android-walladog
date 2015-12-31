@@ -1,7 +1,6 @@
 package com.walladog.walladog.controllers.activities;
 
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -11,6 +10,7 @@ import android.widget.Toast;
 
 import com.walladog.walladog.R;
 import com.walladog.walladog.controllers.fragments.AddProductFragment;
+import com.walladog.walladog.controllers.fragments.DogDetailFragment;
 import com.walladog.walladog.controllers.fragments.DogListFragment;
 import com.walladog.walladog.controllers.fragments.HomeFragment;
 import com.walladog.walladog.controllers.fragments.LoginFragment;
@@ -20,12 +20,12 @@ import com.walladog.walladog.models.WDServices;
 
 public class MainActivity extends DrawerBaseActivity
         implements LoginFragment.OnLoginClickListener,
-        MapsLocator.OnFragmentInteractionListener,
-        DogListFragment.OnFragmentInteractionListener,
-        AddProductFragment.OnFragmentInteractionListener,
-        SigninFragment.OnSigninClickListener{
+        SigninFragment.OnSigninClickListener,
+        DogListFragment.OnListItemSelectedListener{
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,10 +119,6 @@ public class MainActivity extends DrawerBaseActivity
         }
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        Log.v(TAG,"Fragment Listener");
-    }
 
     @Override
     public void onLoginSubmit(String username, String password, View currentView) {
@@ -132,5 +128,14 @@ public class MainActivity extends DrawerBaseActivity
     @Override
     public void onSigninSubmit(String username, String password, View currentView) {
 
+    }
+
+    @Override
+    public void onListItemSelected(int position) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.drawer_layout_main_activity_frame, DogDetailFragment.newInstance(String.valueOf(position),""),DogDetailFragment.class.getName())
+                .addToBackStack(DogDetailFragment.class.getName())
+                .commit();
+        Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
     }
 }

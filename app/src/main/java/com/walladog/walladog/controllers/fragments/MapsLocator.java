@@ -50,8 +50,6 @@ public class MapsLocator extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
-
     // Google Map
     private GoogleMap googleMap;
     private HashMap markersHashMap;
@@ -144,38 +142,7 @@ public class MapsLocator extends Fragment {
         super.onResume();
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    //Listener
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-
     //Maps
-
     private void initilizeMap(final View view) {
 
         (view.findViewById(R.id.mapFragment)).getViewTreeObserver().addOnGlobalLayoutListener(
