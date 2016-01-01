@@ -19,7 +19,8 @@ public abstract class DrawerBaseActivity extends AppCompatActivity {
 
   @Bind(R.id.toolbar)
   Toolbar toolbar;
-  @Bind(R.id.drawer_layout_navigation_view)  NavigationView navigationView;
+  @Bind(R.id.drawer_layout_navigation_view)
+  NavigationView navigationView;
   @Bind(R.id.drawer)
   DrawerLayout drawerLayout;
 

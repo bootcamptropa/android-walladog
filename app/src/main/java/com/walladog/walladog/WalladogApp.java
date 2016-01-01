@@ -5,20 +5,25 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
+import java.util.Calendar;
 
 /**
  * Created by hadock on 1/01/16.
  *
  */
-public class WalladogApp extends Application {
+public class WalladogApp extends Application implements GoogleApiClient.OnConnectionFailedListener,GoogleApiClient.ConnectionCallbacks {
 
     private static final String TAG = WalladogApp.class.getName();
 
@@ -31,6 +36,8 @@ public class WalladogApp extends Application {
     private GoogleCloudMessaging gcm =null;
     private String regid = null;
 
+    //Location
+    private GoogleApiClient mGoogleApiClient = null;
 
     @Override
     public void onCreate() {
@@ -48,6 +55,14 @@ public class WalladogApp extends Application {
                 registerInBackground();
             }else{
                 Log.d(TAG, "No valid Google Play Services APK found.");
+            }
+            if (mGoogleApiClient == null) {
+                mGoogleApiClient = new GoogleApiClient.Builder(this)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API)
+                        .build();
+                mGoogleApiClient.connect();
             }
         }
 
@@ -130,5 +145,52 @@ public class WalladogApp extends Application {
 
         task.execute();
 
+    }
+
+    private void saveLatLongCoords(String latitude,String longitude){
+        Log.v(TAG,"Curdate: "+String.valueOf(Calendar.getInstance().getTimeInMillis() / 1000));
+        getSharedPreferences(WalladogApp.class.getSimpleName(), Context.MODE_PRIVATE)
+                .edit()
+                .putString("WDLat", latitude)
+                .putString("WDLong",longitude)
+                .putString("WDLatLongUpdate",String.valueOf(Calendar.getInstance().getTimeInMillis()/1000))
+                .commit();
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        mGoogleApiClient.disconnect();
+    }
+
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            String latitudeText = (String.valueOf(mLastLocation.getLatitude()));
+            String longitudeText = (String.valueOf(mLastLocation.getLongitude()));
+            Log.v(TAG,"Lat is : "+ latitudeText +" and Long: "+ longitudeText);
+            saveLatLongCoords(latitudeText,longitudeText);
+        }else{
+            Log.v(TAG,"Lag/Lang is null");
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Log.v(TAG,"Ojo con la memoria Pardal!");
     }
 }

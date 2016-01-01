@@ -7,4 +7,5 @@
     <color name="primary_dark_color">#9056D2</color>
     <color name="wd_white">#FFFFFF</color>
     <color name="wd_menu_sel">#bab5e1</color>
+    <color name="wd_base">#4e91df</color>
 </resources>

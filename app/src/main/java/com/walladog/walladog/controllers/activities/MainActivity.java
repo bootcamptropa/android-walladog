@@ -38,8 +38,7 @@ import retrofit.Retrofit;
 public class MainActivity extends DrawerBaseActivity
         implements LoginFragment.OnLoginClickListener,
         SigninFragment.OnSigninClickListener,
-        DogListFragment.OnListItemSelectedListener,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        DogListFragment.OnListItemSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -54,15 +53,6 @@ public class MainActivity extends DrawerBaseActivity
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //Location
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
 
         mServices = (List<WDServices>) getIntent().getSerializableExtra(this.EXTRA_WDSERVICES);
         mProducts = (List<Product>) getIntent().getSerializableExtra(this.EXTRA_WDPRODUCTS);
@@ -79,32 +69,20 @@ public class MainActivity extends DrawerBaseActivity
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mGoogleApiClient.disconnect();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
-
     @Override public void onDrawerClosed(View drawerView) {}
     @Override public void onDrawerOpened(View drawerView) {}
     @Override public void onNavigationItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, HomeFragment.newInstance(),HomeFragment.class.getName())
+                        .replace(R.id.drawer_layout_main_activity_frame, HomeFragment.newInstance(mServices,mProducts),HomeFragment.class.getName())
                         .addToBackStack(HomeFragment.class.getName())
                         .commit();
                 Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_products:
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance("1","1"),DogListFragment.class.getName())
+                        .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts),DogListFragment.class.getName())
                         .addToBackStack(DogListFragment.class.getName())
                         .commit();
                 Toast.makeText(getApplicationContext(), "Go to ProductsResponse", Toast.LENGTH_SHORT).show();
@@ -186,30 +164,5 @@ public class MainActivity extends DrawerBaseActivity
                 .addToBackStack(DogDetailFragment.class.getName())
                 .commit();
         Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
-    }
-
-
-    //Location methods
-    @Override
-    public void onConnected(Bundle bundle) {
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            String latitudeText = (String.valueOf(mLastLocation.getLatitude()));
-            String longitudeText = (String.valueOf(mLastLocation.getLongitude()));
-            Log.v(TAG,"Lat is : "+ latitudeText +" and Long: "+ longitudeText);
-        }else{
-            Log.v(TAG,"Lag/Lang is null");
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
     }
 }

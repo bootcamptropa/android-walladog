@@ -1,28 +1,20 @@
 package com.walladog.walladog.controllers.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.ServicesPagerAdapter;
+import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.WDServices;
-import com.walladog.walladog.models.apiservices.ServiceGenerator;
-import com.walladog.walladog.models.apiservices.WDServicesService;
-import com.walladog.walladog.models.responses.ServicesResponse;
 
+import java.io.Serializable;
 import java.util.List;
-
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 /**
  * Created by hadock on 28/12/15.
@@ -39,8 +31,12 @@ public class HomeFragment extends Fragment {
     private List<WDServices> services = null;
     private ViewPager pager = null;
 
-    public static HomeFragment newInstance() {
+    public static HomeFragment newInstance(List<WDServices> services, List<Product> products) {
         HomeFragment fragment = new HomeFragment();
+        Bundle arguments = new Bundle();
+        arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) services);
+        arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
+        fragment.setArguments(arguments);
         return fragment;
     }
 
@@ -58,9 +54,10 @@ public class HomeFragment extends Fragment {
         //Pager
         pager = (ViewPager) root.findViewById(R.id.view_pager);
 
-        Bundle b = getArguments();
-        List<WDServices> services = (List<WDServices>) b.getSerializable(this.ARG_WDSERVICES);
-        pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), services));
+        if (getArguments() != null) {
+            List<WDServices> services = (List<WDServices>) getArguments().getSerializable(this.ARG_WDSERVICES);
+            pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), services));
+        }
 
         return root;
     }
