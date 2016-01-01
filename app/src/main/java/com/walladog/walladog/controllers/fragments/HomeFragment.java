@@ -15,6 +15,7 @@ import com.walladog.walladog.adapters.ServicesPagerAdapter;
 import com.walladog.walladog.models.WDServices;
 import com.walladog.walladog.models.apiservices.ServiceGenerator;
 import com.walladog.walladog.models.apiservices.WDServicesService;
+import com.walladog.walladog.models.responses.ServicesResponse;
 
 import java.util.List;
 
@@ -62,30 +63,24 @@ public class HomeFragment extends Fragment {
     //Helper Functions
     public void getServices() {
         WDServicesService apiServices = ServiceGenerator.createService(WDServicesService.class);
-        Call<List<WDServices>> call = apiServices.getMultiTask();
+        Call<ServicesResponse> call = apiServices.getMultiTask();
 
-        call.enqueue(new Callback<List<WDServices>>() {
+        call.enqueue(new Callback<ServicesResponse>() {
             @Override
-            public void onResponse(Response<List<WDServices>> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
-                    List<WDServices> test = response.body();
-                    services = response.body();
+            public void onResponse(Response<ServicesResponse> response, Retrofit retrofit) {
+                if(response.isSuccess()){
+                    List<WDServices> services = response.body().getData();
                     syncViewWithModel(services);
-                    Log.v(TAG, String.valueOf(test.get(0).getName()));
-
-                } else {
-                    Log.v(TAG, "No api response");
-
+                }else{
+                    Log.v(TAG, "Error in response of " + ServicesResponse.class.getName());
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
-                // something went completely south (like no internet connection)
                 Log.d(TAG, t.getMessage());
             }
         });
-
     }
 
     private void syncViewWithModel(List<WDServices> serviceList){

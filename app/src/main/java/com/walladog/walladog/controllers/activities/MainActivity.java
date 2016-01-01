@@ -1,6 +1,7 @@
 package com.walladog.walladog.controllers.activities;
 
 import android.content.DialogInterface;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -8,6 +9,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.walladog.walladog.R;
 import com.walladog.walladog.controllers.fragments.AddProductFragment;
 import com.walladog.walladog.controllers.fragments.DogDetailFragment;
@@ -16,15 +20,28 @@ import com.walladog.walladog.controllers.fragments.HomeFragment;
 import com.walladog.walladog.controllers.fragments.LoginFragment;
 import com.walladog.walladog.controllers.fragments.MapsLocator;
 import com.walladog.walladog.controllers.fragments.SigninFragment;
+import com.walladog.walladog.models.Product;
+import com.walladog.walladog.models.ServiceGenerator;
 import com.walladog.walladog.models.WDServices;
+import com.walladog.walladog.models.apiservices.WDProductsService;
+import com.walladog.walladog.models.responses.ProductsResponse;
+
+import java.util.List;
+
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class MainActivity extends DrawerBaseActivity
         implements LoginFragment.OnLoginClickListener,
         SigninFragment.OnSigninClickListener,
-        DogListFragment.OnListItemSelectedListener{
+        DogListFragment.OnListItemSelectedListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private GoogleApiClient mGoogleApiClient = null;
 
 
     @Override protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +52,32 @@ public class MainActivity extends DrawerBaseActivity
         arguments.putSerializable("ARG_SERVICES", new WDServices());
         fragment.setArguments(arguments);
 
+        //Location
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.drawer_layout_main_activity_frame, fragment, HomeFragment.class.getName())
                     .commit();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
     }
 
     @Override public void onDrawerClosed(View drawerView) {}
@@ -58,7 +96,7 @@ public class MainActivity extends DrawerBaseActivity
                         .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance("1","1"),DogListFragment.class.getName())
                         .addToBackStack(DogListFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Go to Products", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Go to ProductsResponse", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_location:
                 getSupportFragmentManager().beginTransaction()
@@ -137,5 +175,60 @@ public class MainActivity extends DrawerBaseActivity
                 .addToBackStack(DogDetailFragment.class.getName())
                 .commit();
         Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
+    }
+
+
+    //Services
+    //Helper Functions
+    public void getProducts() {
+        WDProductsService productsService = ServiceGenerator.createService(WDProductsService.class);
+        Call<ProductsResponse> call = productsService.getMultiTask();
+
+        call.enqueue(new Callback<ProductsResponse>() {
+
+            @Override
+            public void onResponse(Response<ProductsResponse> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    List<Product> products = response.body().getData();
+                    Log.v(TAG, products.get(0).getName());
+                } else {
+                    Log.v(TAG, "Error in response of " + ProductsResponse.class.getName());
+                }
+                Log.v(TAG, "respuesta correcta");
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.v(TAG, t.getMessage());
+                Log.v(TAG, t.getCause().getMessage());
+                Log.v(TAG, "respuesta coñazo");
+            }
+        });
+
+    }
+
+
+    //Location methods
+    @Override
+    public void onConnected(Bundle bundle) {
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            String latitudeText = (String.valueOf(mLastLocation.getLatitude()));
+            String longitudeText = (String.valueOf(mLastLocation.getLongitude()));
+            Log.v(TAG,"Lat is : "+ latitudeText +" and Long: "+ longitudeText);
+        }else{
+            Log.v(TAG,"Lag/Lang is null");
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

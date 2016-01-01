@@ -1,9 +1,8 @@
 package com.walladog.walladog.models.apiservices;
 
+import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.WDServices;
-import com.walladog.walladog.models.responses.ServicesResponse;
-
-import java.util.List;
+import com.walladog.walladog.models.responses.ProductsResponse;
 
 import retrofit.Call;
 import retrofit.http.Body;
@@ -18,21 +17,21 @@ import retrofit.http.Path;
  *
  */
 
-public interface WDServicesService {
+public interface WDProductsService {
 
-    String apiEndpoint = "/services";
+    String apiEndpoint = "/products";
 
     @GET(apiEndpoint)
-    Call<ServicesResponse> getMultiTask();
+    Call<ProductsResponse> getMultiTask();
 
     @GET(apiEndpoint+"/{id}")
-    Call<WDServices> getOneTask();
+    Call<Product> getOneTask();
 
     @POST(apiEndpoint)
-    Call<WDServices> postTask(@Body WDServices data);
+    Call<Product> postTask(@Body WDServices data);
 
     @PUT(apiEndpoint+"/{id}")
-    Call<WDServices> putTask(@Path("id") String id, @Body WDServices data);
+    Call<Product> putTask(@Path("id") String id, @Body Product data);
 
     @DELETE(apiEndpoint+"/{id}")
     Call deleteTask(@Path("id") String id);

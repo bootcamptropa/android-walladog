@@ -1,5 +1,7 @@
 package com.walladog.walladog.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -7,16 +9,27 @@ import java.io.Serializable;
 
 public class Product implements Serializable {
 
+    @SerializedName("gender")
     private String gender;
+    @SerializedName("stateId")
     private double stateId;
+    @SerializedName("raceId")
     private double raceId;
+    @SerializedName("id")
     private double id;
+    @SerializedName("price")
     private double price;
+    @SerializedName("sellerId")
     private double sellerId;
+    @SerializedName("sterile")
     private boolean sterile;
+    @SerializedName("publishDate")
     private String publishDate;
+    @SerializedName("categoryId")
     private double categoryId;
+    @SerializedName("description")
     private String description;
+    @SerializedName("name")
     private String name;
 
 
