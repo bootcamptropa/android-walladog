@@ -32,7 +32,10 @@ import retrofit.Retrofit;
 public class HomeFragment extends Fragment {
 
     private static final String TAG = HomeFragment.class.getName();
-    private static final String ARG_SERVICES = "services";
+
+    public static final String ARG_WDSERVICES = "ARG_WDSERVICES";
+    public static final String ARG_WDPRODUCTS = "ARG_WDPRODUCTS";
+
     private List<WDServices> services = null;
     private ViewPager pager = null;
 
@@ -45,6 +48,7 @@ public class HomeFragment extends Fragment {
 
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,47 +58,11 @@ public class HomeFragment extends Fragment {
         //Pager
         pager = (ViewPager) root.findViewById(R.id.view_pager);
 
-        //Api call
-        getServices();
+        Bundle b = getArguments();
+        List<WDServices> services = (List<WDServices>) b.getSerializable(this.ARG_WDSERVICES);
+        pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), services));
+
         return root;
     }
 
-
-    //Helper Functions
-    public void getServices() {
-        WDServicesService apiServices = ServiceGenerator.createService(WDServicesService.class);
-        Call<ServicesResponse> call = apiServices.getMultiTask();
-
-        call.enqueue(new Callback<ServicesResponse>() {
-            @Override
-            public void onResponse(Response<ServicesResponse> response, Retrofit retrofit) {
-                if(response.isSuccess()){
-                    List<WDServices> services = response.body().getData();
-                    syncViewWithModel(services);
-                }else{
-                    Log.v(TAG, "Error in response of " + ServicesResponse.class.getName());
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.d(TAG, t.getMessage());
-            }
-        });
-    }
-
-    private void syncViewWithModel(List<WDServices> serviceList){
-        //Set adapter of viewPager
-        pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), serviceList));
-    }
-
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-
-    
 }

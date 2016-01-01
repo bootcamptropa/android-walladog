@@ -1,6 +1,7 @@
 package com.walladog.walladog.controllers.activities;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,6 +27,7 @@ import com.walladog.walladog.models.WDServices;
 import com.walladog.walladog.models.apiservices.WDProductsService;
 import com.walladog.walladog.models.responses.ProductsResponse;
 
+import java.io.Serializable;
 import java.util.List;
 
 import retrofit.Call;
@@ -41,16 +43,17 @@ public class MainActivity extends DrawerBaseActivity
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    public static final String EXTRA_WDSERVICES = "EXTRA_WDSERVICES";
+    public static final String EXTRA_WDPRODUCTS = "EXTRA_WDPRODUCTS";
+
+    private static List<WDServices> mServices = null;
+    private static List<Product> mProducts = null;
+
     private GoogleApiClient mGoogleApiClient = null;
 
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Fragment fragment = new HomeFragment();
-        Bundle arguments = new Bundle();
-        arguments.putSerializable("ARG_SERVICES", new WDServices());
-        fragment.setArguments(arguments);
 
         //Location
         if (mGoogleApiClient == null) {
@@ -61,6 +64,14 @@ public class MainActivity extends DrawerBaseActivity
                     .build();
         }
 
+        mServices = (List<WDServices>) getIntent().getSerializableExtra(this.EXTRA_WDSERVICES);
+        mProducts = (List<Product>) getIntent().getSerializableExtra(this.EXTRA_WDPRODUCTS);
+
+        Fragment fragment = new HomeFragment();
+        Bundle arguments = new Bundle();
+        arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) mServices);
+        fragment.setArguments(arguments);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.drawer_layout_main_activity_frame, fragment, HomeFragment.class.getName())
@@ -70,14 +81,14 @@ public class MainActivity extends DrawerBaseActivity
 
     @Override
     protected void onStop() {
-        mGoogleApiClient.disconnect();
         super.onStop();
+        mGoogleApiClient.disconnect();
     }
 
     @Override
     protected void onStart() {
-        mGoogleApiClient.connect();
         super.onStart();
+        mGoogleApiClient.connect();
     }
 
     @Override public void onDrawerClosed(View drawerView) {}
@@ -175,36 +186,6 @@ public class MainActivity extends DrawerBaseActivity
                 .addToBackStack(DogDetailFragment.class.getName())
                 .commit();
         Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
-    }
-
-
-    //Services
-    //Helper Functions
-    public void getProducts() {
-        WDProductsService productsService = ServiceGenerator.createService(WDProductsService.class);
-        Call<ProductsResponse> call = productsService.getMultiTask();
-
-        call.enqueue(new Callback<ProductsResponse>() {
-
-            @Override
-            public void onResponse(Response<ProductsResponse> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
-                    List<Product> products = response.body().getData();
-                    Log.v(TAG, products.get(0).getName());
-                } else {
-                    Log.v(TAG, "Error in response of " + ProductsResponse.class.getName());
-                }
-                Log.v(TAG, "respuesta correcta");
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.v(TAG, t.getMessage());
-                Log.v(TAG, t.getCause().getMessage());
-                Log.v(TAG, "respuesta coñazo");
-            }
-        });
-
     }
 
 
