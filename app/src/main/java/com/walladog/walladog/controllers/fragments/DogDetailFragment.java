@@ -6,12 +6,16 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.viewpagerindicator.LinePageIndicator;
 import com.viewpagerindicator.TitlePageIndicator;
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.CarouselAdapter;
 import com.walladog.walladog.models.Photo;
+import com.walladog.walladog.utils.WorkaroundMapFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +35,13 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
     //Array of pictures
     private List<Photo> photoList;
 
+    //Map
+    private ScrollView mScrollView;
+    private GoogleMap mMap;
+
     public DogDetailFragment() {
         photoList = new ArrayList<>();
-        for(int i=0; i<10; i++){
+        for(int i=0; i<5; i++){
             photoList.add(new Photo("Photo"+String.valueOf(i),"http://lorempixel.com/30"+String.valueOf(i)+"/300/animals"));
         }
     }
@@ -46,8 +54,6 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
         fragment.setArguments(args);
         return fragment;
     }
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,6 +68,23 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_dog_detail, container, false);
+
+        //Map - intercepting touch events in custom class
+        if (mMap == null) {
+            mMap = ((WorkaroundMapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment)).getMap();
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+            mScrollView = (ScrollView) v.findViewById(R.id.detailScroll); //parent scrollview in xml, give your scrollview id value
+
+            ((WorkaroundMapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment))
+                    .setListener(new WorkaroundMapFragment.OnTouchListener() {
+                        @Override
+                        public void onTouch() {
+                            mScrollView.requestDisallowInterceptTouchEvent(true);
+                        }
+                    });
+
+        }
 
         CarouselAdapter adapter = new CarouselAdapter(getActivity().getSupportFragmentManager(),photoList);
         ViewPager pager = (ViewPager) v.findViewById(R.id.viewpager);

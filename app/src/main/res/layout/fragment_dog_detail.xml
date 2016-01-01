@@ -2,6 +2,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/detailScroll"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
 
@@ -13,7 +14,7 @@
         <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
                                            android:id="@+id/viewpager"
                                            android:layout_width="fill_parent"
-                                           android:layout_height="300dp" />
+                                           android:layout_height="250dp" />
         <com.viewpagerindicator.LinePageIndicator
             android:id="@+id/titles"
             android:layout_height="wrap_content"
@@ -31,7 +32,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/txt_product_description"
             android:background="@drawable/description_product_background"
-            android:text="Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum "
+            android:text="Toby es un perro muy alegre de raza labrador, es jugueton i solo tiene 3 meses, esta buscando un hogar, te animas ?"
             />
 
         <fragment
@@ -41,18 +42,36 @@
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
             android:layout_marginTop="3dp"
-            class="com.google.android.gms.maps.SupportMapFragment" />
+            android:layout_weight="1"
+            class="com.walladog.walladog.utils.WorkaroundMapFragment" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:padding="8dp"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
-            android:layout_marginTop="3dp"
             android:layout_height="wrap_content"
-            android:id="@+id/txt_product_owner"
+            android:orientation="horizontal"
+            android:layout_marginTop="3dp"
+            android:padding="2dp"
             android:background="@drawable/description_product_background"
-            android:text="Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem"
-            />
+            >
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/walladogsmall"
+                android:layout_gravity="center"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/txt_product_owner"
+                android:layout_gravity="center_vertical"
+                android:text="Ramon Alberti Danes\nBarcelona"
+                />
+
+
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

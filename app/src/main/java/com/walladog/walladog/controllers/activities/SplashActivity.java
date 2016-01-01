@@ -45,7 +45,7 @@ public class SplashActivity extends Activity {
     private static final String TAG = SplashActivity.class.getName();
     private long splashDelay = 3000; // 6 segundos
     public ProgressBar progressBar;
-    private TextView appTitle = null;
+    private TextView appTitle,appLoading = null;
     private boolean firstUse;
     private Uri URLScheme = null;
 
@@ -68,9 +68,12 @@ public class SplashActivity extends Activity {
         Intent intent = getIntent();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         appTitle = (TextView) findViewById(R.id.app_title);
+        appLoading = (TextView) findViewById(R.id.txt_loading);
         Typeface face=Typeface.createFromAsset(getAssets(),"fonts/Lobster-Regular.ttf");
         appTitle.setTextSize(30);
         appTitle.setTypeface(face);
+        appLoading.setTextSize(15);
+        appLoading.setTypeface(face);
 
 
         context = getApplicationContext();
@@ -222,11 +225,9 @@ public class SplashActivity extends Activity {
         l.clearAnimation();
         l.startAnimation(anim);
 
-        anim = AnimationUtils.loadAnimation(this, R.anim.translate);
-        anim.reset();
+        Animation animScaleDown = AnimationUtils.loadAnimation(this, R.anim.rotate);
         ImageView iv = (ImageView) findViewById(R.id.imageView);
-        iv.clearAnimation();
-        iv.startAnimation(anim);
+        iv.startAnimation(animScaleDown);
 
     }
 

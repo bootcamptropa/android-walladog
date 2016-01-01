@@ -60,6 +60,7 @@ Mauris mollis leo id urna hendrerit malesuada. Pellentesque habitant morbi trist
     <string name="btn_signin">Registrarse</string>
     <string name="sigin_wellcome">Bienvenido a Walladog, registrate para formar parte de nuestra comunidad</string>
     <string name="title_activity_borrame">borrameActivity</string>
+    <string name="splash_loading">Cargando ...</string>
 
 
 </resources>
