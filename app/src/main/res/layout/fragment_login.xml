@@ -79,15 +79,19 @@
 
             </android.support.design.widget.TextInputLayout>
 
+
             <Button
                 android:id="@+id/email_sign_in_button"
-                style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/btn_corners"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@color/common_action_bar_splitter"
-                android:text="@string/action_sign_in"
-                android:textStyle="bold"/>
+                android:drawableRight="@drawable/ic_menu_signinwhite"
+                android:padding="5dp"
+                android:textColor="#FFF"
+                android:drawablePadding="15dp"
+                android:text="@string/action_sign_in"/>
 
         </LinearLayout>
     </ScrollView>

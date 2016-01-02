@@ -152,7 +152,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     app:border_width="1dp"
-                    android:src="@drawable/walladogsmall"
+                    android:src="@drawable/personsample3"
                     android:layout_gravity="center"
                     />
 
@@ -188,55 +188,32 @@
 
 
         </LinearLayout>
-
-        <!--<LinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="0dp"
+            android:orientation="vertical"
+            android:layout_marginTop="4dp"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
             android:padding="2dp"
-            android:background="@drawable/description_product_background"
-            >
+            android:background="@drawable/description_product_background">
 
-            <com.mikhaellopez.circularimageview.CircularImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:border_width="1dp"
-                android:src="@drawable/walladogsmall"
-                android:layout_gravity="center"
-                />
-
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical"
-                >
+                android:padding="1dp"
+                android:textStyle="bold"
+                android:text="Información:"
+                />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/txt_product_owner_name"
-                    android:layout_gravity="center_vertical"
-                    android:text="Ramon Alberti Danes"
-                    />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/txt_product_owner_location"
-                    android:layout_gravity="center_vertical"
-                    android:text="Barcelona"
-                    />
-
-            </LinearLayout>
-
-        </LinearLayout>-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="1dp"
+                android:id="@+id/description_product"
+                android:text="Eh! este es Boby, un perro de raza labrador super agradable cariñoso y de 3 meses, esta buscando un hogar donde lo cuiden y lo amen, te animas ?"
+                />
+        </LinearLayout>
 
         <fragment
             android:id="@+id/mapFragment"

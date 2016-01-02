@@ -21,7 +21,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">Entrar en Walladog</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -47,9 +47,7 @@
     <string name="sure_exit">Estás seguro que deseas salir?</string>
     <string name="app_yes">Si</string>
     <string name="app_no">No</string>
-    <string name="dumy_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sit amet nisi blandit lacus tincidunt laoreet. Etiam vulputate, tortor a tincidunt convallis, libero augue lacinia ante, nec dictum lacus ex a felis. Etiam in orci eu quam elementum scelerisque. Praesent eget justo sed sapien aliquam interdum nec a orci. Nam vitae nunc laoreet, tempor ligula vel, facilisis nisi. Cras eget condimentum risus. Donec lobortis id mi vulputate sollicitudin. Vivamus imperdiet massa erat, ut rhoncus est vestibulum sed. Pellentesque consectetur ipsum sed augue fermentum tristique. Phasellus pellentesque, lectus ut pharetra venenatis, dui dui hendrerit tortor, nec varius turpis lectus vitae nibh. Sed dui est, pellentesque convallis metus eget, malesuada aliquam erat. Morbi consectetur tristique nulla vitae accumsan. Praesent non sem in nibh congue maximus in ac arcu. Nunc volutpat eros magna, eget porta est ultricies id. Morbi quis neque dolor.
-
-Mauris mollis leo id urna hendrerit malesuada. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras porttitor elit vel sem pellentesque, ut placerat sapien mollis. Morbi eleifend fermentum lacus eget ultricies. Etiam libero nibh, bibendum ut lacus nec, pellentesque sodales lacus. Morbi sit amet purus luctus, fermentum tortor sed, porta sapien. Nam nec urna eget lorem vestibulum ultricies. Sed commodo justo eu bibendum egestas. Vivamus cursus euismod elit eu eleifend. Nam quis diam nec lectus volutpat ullamcorper placerat in sem. Proin tempus iaculis blandit.</string>
+    <string name="dumy_text">Sin datos del servicio</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

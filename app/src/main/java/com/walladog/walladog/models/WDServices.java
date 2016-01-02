@@ -9,25 +9,11 @@ import java.io.Serializable;
 
 public class WDServices implements Serializable {
 
-    //@SerializedName("success")
-    //private Boolean success;
-
-    //@SerializedName("name")
     private String name;
-
-    //@SerializedName("serviceImage")
     private String serviceImage;
+    private String description;
 
 
-/*
-    public Boolean getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(Boolean success) {
-        this.success = success;
-    }
-*/
 
     public String getName() {
         return name;
@@ -45,4 +31,11 @@ public class WDServices implements Serializable {
         this.serviceImage = serviceImage;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

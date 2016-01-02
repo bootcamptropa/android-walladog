@@ -1,6 +1,7 @@
 package com.walladog.walladog.controllers.fragments;
 
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,8 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -62,6 +65,10 @@ public class ServiceFragment extends Fragment {
 
         // Linking with view
         serviceTitle = (TextView) root.findViewById(R.id.txt_service_title);
+        Typeface face=Typeface.createFromAsset(getActivity().getAssets(),"fonts/Lobster-Regular.ttf");
+        serviceTitle.setTypeface(face);
+        serviceTitle.setTextSize(20);
+
         serviceDescription = (TextView) root.findViewById(R.id.txt_service_description);
         serviceImage = (ImageView) root.findViewById(R.id.img_service3);
 
@@ -69,12 +76,14 @@ public class ServiceFragment extends Fragment {
 
         // Sync view & model
         serviceTitle.setText(wdservice.getName());
+        serviceDescription.setText(wdservice.getDescription());
         Picasso.with(getActivity().getApplicationContext())
                 .load(wdservice.getServiceImage())
-                .placeholder(R.drawable.walladogsmall)
+                .placeholder(R.drawable.progress_animation)
                 .into(serviceImage);
-
 
         return root;
     }
+
+
 }

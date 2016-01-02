@@ -54,8 +54,7 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
     @Override
     public MasonryView onCreateViewHolder(ViewGroup parent, int viewType) {
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item, parent, false);
-        MasonryView masonryView = new MasonryView(layoutView);
-        return masonryView;
+        return new MasonryView(layoutView);
     }
 
 
@@ -74,7 +73,7 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
         Transformation transformation = new RoundedTransformationBuilder()
                 .borderColor(Color.LTGRAY)
                 .borderWidthDp(1)
-                .cornerRadiusDp(30)
+                .cornerRadiusDp(5)
                 .oval(false)
                 .build();
 
@@ -85,7 +84,7 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
 
         Picasso.with(context)
                 .load(url)
-                .placeholder(R.drawable.walladogsmall)
+                .placeholder(R.drawable.huellaplaceholder)
                 .transform(transformation)
                 .into(holder.imageView);
 
