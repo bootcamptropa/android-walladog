@@ -8,4 +8,5 @@
     <color name="wd_white">#FFFFFF</color>
     <color name="wd_menu_sel">#bab5e1</color>
     <color name="wd_base">#4e91df</color>
+    <color name="wd_grey_bg">#FFF5F2F2</color>
 </resources>

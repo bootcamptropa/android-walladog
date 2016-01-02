@@ -42,7 +42,7 @@ public class PhotoDetailFragment extends Fragment {
         if (getArguments() != null) {
             mPhoto = (Photo) getArguments().getSerializable(EXTRA_MESSAGE);
         }else{
-            mPhoto = new Photo("http://lorempixel.com/300/300/animals","Placeholder");
+            mPhoto = new Photo("http://loremflickr.com/400/300/dog","Placeholder");
         }
         View v = inflater.inflate(R.layout.photo_layout, container, false);
         
@@ -50,16 +50,18 @@ public class PhotoDetailFragment extends Fragment {
         TextView txtView = (TextView) v.findViewById(R.id.photoTitle);
         txtView.setText(mPhoto.getPhotoTitle());
 
+/*
         Transformation transformation = new RoundedTransformationBuilder()
                 .borderColor(Color.LTGRAY)
-                .borderWidthDp(1)
+                .borderWidthDp(0)
                 .cornerRadiusDp(10)
                 .oval(false)
                 .build();
+*/
 
         Picasso.with(getActivity()).
                 load(mPhoto.getPhotoUrl())
-                .transform(transformation)
+                /*.transform(transformation)*/
                 .placeholder(R.drawable.walladogsmall)
                 .into(imgView);
 

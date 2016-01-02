@@ -42,7 +42,7 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
     public DogDetailFragment() {
         photoList = new ArrayList<>();
         for(int i=0; i<5; i++){
-            photoList.add(new Photo("Photo"+String.valueOf(i),"http://lorempixel.com/30"+String.valueOf(i)+"/300/animals"));
+            photoList.add(new Photo("Photo"+String.valueOf(i),"http://loremflickr.com/30"+String.valueOf(i)+"/300/dog"));
         }
     }
 
