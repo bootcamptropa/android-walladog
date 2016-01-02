@@ -160,7 +160,7 @@ public class MainActivity extends DrawerBaseActivity
     @Override
     public void onListItemSelected(int position) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.drawer_layout_main_activity_frame, DogDetailFragment.newInstance(String.valueOf(position),""),DogDetailFragment.class.getName())
+                .replace(R.id.drawer_layout_main_activity_frame, DogDetailFragment.newInstance(mProducts.get(position)),DogDetailFragment.class.getName())
                 .addToBackStack(DogDetailFragment.class.getName())
                 .commit();
         Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();

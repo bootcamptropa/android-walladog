@@ -59,6 +59,12 @@
     <string name="sigin_wellcome">Bienvenido a Walladog, registrate para formar parte de nuestra comunidad</string>
     <string name="title_activity_borrame">borrameActivity</string>
     <string name="splash_loading">Cargando ...</string>
+    <string name="txt_dog_name">Nombre:</string>
+    <string name="txt_dog_gender">Genero:</string>
+    <string name="txt_dog_noname">Sin nombre</string>
+    <string name="txt_dog_nogender">Desconocido</string>
+    <string name="txt_dog_norace">Raza desconocida</string>
+    <string name="txt_unknown">Desconocido</string>
 
 
 </resources>

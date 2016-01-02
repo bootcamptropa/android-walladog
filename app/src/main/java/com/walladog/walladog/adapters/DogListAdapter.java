@@ -14,8 +14,8 @@ import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.walladog.walladog.R;
+import com.walladog.walladog.models.Product;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -31,22 +31,11 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
 
     private Context context;
 
-    List<String> nameList2 = null;
+    List<Product> productList = null;
 
-    public DogListAdapter(Context context) {
-        nameList2 = new ArrayList<>();
-        for(int i=1; i<1000; i++){
-            nameList2.add("Numero "+String.valueOf(i));
-        }
-        this.context = context;
-        mOnPhotoClickListener = (OnPhotoClickListener) context;
-    }
 
-    public DogListAdapter(Context context, OnPhotoClickListener cb) {
-        nameList2 = new ArrayList<>();
-        for(int i=1; i<1000; i++){
-            nameList2.add("Numero "+String.valueOf(i));
-        }
+    public DogListAdapter(Context context, OnPhotoClickListener cb, List<Product> products) {
+        productList=products;
         this.context = context;
         mOnPhotoClickListener = cb;
     }
@@ -56,7 +45,6 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item, parent, false);
         return new MasonryView(layoutView);
     }
-
 
 
     @Override
@@ -84,32 +72,44 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
 
         Picasso.with(context)
                 .load(url)
-                .placeholder(R.drawable.huellaplaceholder)
+                .placeholder(R.drawable.progress_animation)
                 .transform(transformation)
                 .into(holder.imageView);
 
-        //holder.textView.setText(nameList[position]);
-        holder.textView.setText(nameList2.get(position));
+        holder.dogName.setText(productList.get(position).getName());
+        holder.dogLocation.setText("Barcelona");
+        holder.dogRace.setText(productList.get(position).getGender());
     }
 
     @Override
     public int getItemCount() {
-        return nameList2.size();
+        return productList.size();
     }
 
     class MasonryView extends RecyclerView.ViewHolder {
         ImageView imageView;
-        TextView textView;
+        TextView dogName;
+        TextView dogLocation;
+        TextView dogRace;
 
         public MasonryView(View itemView) {
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.img);
-            textView = (TextView) itemView.findViewById(R.id.img_name);
-
+            dogName = (TextView) itemView.findViewById(R.id.txt_nombre);
+            dogRace = (TextView) itemView.findViewById(R.id.txt_genero);
+            dogLocation = (TextView) itemView.findViewById(R.id.txt_location);
         }
     }
 
     public interface OnPhotoClickListener {
         void onPhotoClick(int position);
+    }
+
+
+    //For pagination:
+    public void appendItems(List<Product> products) {
+        int count = getItemCount();
+        productList.addAll(products);
+        notifyItemRangeInserted(count, products.size());
     }
 }

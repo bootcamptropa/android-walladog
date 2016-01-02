@@ -12,15 +12,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rockerhieu.rvadapter.endless.EndlessRecyclerViewAdapter;
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.DogListAdapter;
 import com.walladog.walladog.models.Product;
+import com.walladog.walladog.models.ServiceGenerator;
+import com.walladog.walladog.models.apiservices.WDProductsService;
+import com.walladog.walladog.models.responses.ProductsResponse;
 import com.walladog.walladog.utils.SpacesItemDecoration;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class DogListFragment extends Fragment implements SearchView.OnQueryTextListener,DogListAdapter.OnPhotoClickListener {
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
+
+public class DogListFragment extends Fragment
+        implements SearchView.OnQueryTextListener,
+        DogListAdapter.OnPhotoClickListener, EndlessRecyclerViewAdapter.RequestToLoadMoreListener{
     private static final String TAG = DogListFragment.class.getName();
 
     private static final String ARG_WDPRODUCTS = "ARG_WDPRODUCTS";
@@ -29,10 +39,17 @@ public class DogListFragment extends Fragment implements SearchView.OnQueryTextL
     private SearchView mSearchView = null;
     private FloatingActionButton mFab = null;
 
-    private List<Product> mParam1=null;
+    private List<Product> mProducts =null;
 
     private OnListItemSelectedListener mListItemListener;
     private DogListAdapter mAdapter = null;
+
+    //Pagination
+    private EndlessRecyclerViewAdapter endlessRecyclerViewAdapter;
+    private boolean loading = true;
+    int grid_column_count = 2;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+    StaggeredGridLayoutManager mLayoutManager;
 
     public DogListFragment() {
 
@@ -50,7 +67,7 @@ public class DogListFragment extends Fragment implements SearchView.OnQueryTextL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = (List<Product>) getArguments().getSerializable(ARG_WDPRODUCTS);
+            mProducts = (List<Product>) getArguments().getSerializable(ARG_WDPRODUCTS);
         }
 
     }
@@ -74,10 +91,14 @@ public class DogListFragment extends Fragment implements SearchView.OnQueryTextL
         });
 
         mRecyclerView = (RecyclerView) root.findViewById(R.id.masonry_grid);
-        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        mAdapter = new DogListAdapter(getActivity().getApplicationContext(),this);
-        mRecyclerView.setAdapter(mAdapter);
+        mAdapter = new DogListAdapter(getActivity().getApplicationContext(),this,mProducts);
+        endlessRecyclerViewAdapter = new EndlessRecyclerViewAdapter(getContext(),mAdapter,this); //Adapter endless
+
+        mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mRecyclerView.setAdapter(endlessRecyclerViewAdapter);
         SpacesItemDecoration decoration = new SpacesItemDecoration(16);
         mRecyclerView.addItemDecoration(decoration);
 
@@ -119,6 +140,25 @@ public class DogListFragment extends Fragment implements SearchView.OnQueryTextL
     public void onPhotoClick(int position) {
         Log.v(TAG,"Photo click listener at : "+String.valueOf(position));
         mListItemListener.onListItemSelected(position);
+    }
+
+    @Override
+    public void onLoadMoreRequested() {
+
+        ServiceGenerator.createService(WDProductsService.class).getMultiTask().enqueue(new Callback<ProductsResponse>() {
+            @Override
+            public void onResponse(Response<ProductsResponse> response, Retrofit retrofit) {
+                mAdapter.appendItems(response.body().getData());
+                endlessRecyclerViewAdapter.onDataReady(true);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.v(TAG,"Fallo en la conexion a la api");
+                endlessRecyclerViewAdapter.onDataReady(false);
+            }
+        });
+
     }
 
     public interface OnListItemSelectedListener {
