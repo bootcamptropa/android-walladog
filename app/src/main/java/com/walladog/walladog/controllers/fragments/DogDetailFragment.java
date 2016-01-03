@@ -3,6 +3,7 @@ package com.walladog.walladog.controllers.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -140,22 +141,29 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
         double latitude = 41.390205;
         double longitude  = 2.154007;
 
-        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude,longitude));
+        try {
+            //TODO reactivate this for real-devices
 
-        MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Walladog");
+            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
 
-        // Set icon
-        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_menu_petfeet));
+            MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Walladog");
 
-        // adding marker
-        mMap.addMarker(marker);
+            // Set icon
+            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_menu_petfeet));
 
-        CameraUpdate zoom=CameraUpdateFactory.zoomTo(12);
-        mMap.moveCamera(center);
-        mMap.animateCamera(zoom);
+            // adding marker
+            mMap.addMarker(marker);
 
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
+            CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
+            mMap.moveCamera(center);
+            mMap.animateCamera(zoom);
+
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+
+        }catch(Exception e){
+            Log.v(TAG, e.getMessage());
+        }
 
     }
 }

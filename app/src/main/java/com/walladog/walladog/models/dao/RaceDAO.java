@@ -47,7 +47,8 @@ public class RaceDAO implements DAOPersistable<Race> {
         db.beginTransaction();
         long id = DatabaseHelper.INVALID_ID;
         try {
-            id = dbHelper.getWritableDatabase().insert(TABLE_RACES, null, this.getContentValues(race));
+            //id = dbHelper.getWritableDatabase().insert(TABLE_RACES, null, this.getContentValues(race));
+            id = dbHelper.getWritableDatabase().insertWithOnConflict(TABLE_RACES, null, this.getContentValues(race), SQLiteDatabase.CONFLICT_IGNORE);
             race.setId(id);
             db.setTransactionSuccessful();
         } finally {
@@ -129,8 +130,22 @@ public class RaceDAO implements DAOPersistable<Race> {
     }
 
     @Override
-    public Race query(long id) {
-        return null;
+    public @Nullable Race query(long id) {
+        Race race = null;
+
+        DatabaseHelper db = DatabaseHelper.getInstance(context.get());
+
+        String where = KEY_RACES_ID + "=" + id;
+        Cursor c = db.getReadableDatabase().query(TABLE_RACES, allColumns, where, null, null, null, null);
+        if (c != null) {
+            if (c.getCount() > 0) {
+                c.moveToFirst();
+                race = raceFromCursor(c);
+            }
+        }
+        c.close();
+        db.close();
+        return race;
     }
 
     public static ContentValues getContentValues(Race race) {

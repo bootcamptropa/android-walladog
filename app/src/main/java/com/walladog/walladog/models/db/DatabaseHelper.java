@@ -15,7 +15,7 @@ import java.util.Date;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = DatabaseHelper.class.getName();
-    public static final String DATABASE_NAME = "walladogapp.sqlite";
+    public static final String DATABASE_NAME = "walladogapp";
     public static final int DATABASE_VERSION = 2;
     public static final long INVALID_ID = -1;
 
@@ -69,6 +69,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // utility method to create DB
     private void createDB(SQLiteDatabase db) {
         for (String sql: DBConstants.CREATE_DATABASE) {
+            Log.v(TAG,"Executing SQL: "+sql);
             db.execSQL(sql);
         }
     }

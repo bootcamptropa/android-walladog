@@ -47,8 +47,8 @@ public class PhotoDetailFragment extends Fragment {
         View v = inflater.inflate(R.layout.photo_layout, container, false);
         
         ImageView imgView = (ImageView)v.findViewById(R.id.imageView);
-        TextView txtView = (TextView) v.findViewById(R.id.photoTitle);
-        txtView.setText(mPhoto.getPhotoTitle());
+        //TextView txtView = (TextView) v.findViewById(R.id.photoTitle);
+        //txtView.setText(mPhoto.getPhotoTitle());
 
 /*
         Transformation transformation = new RoundedTransformationBuilder()

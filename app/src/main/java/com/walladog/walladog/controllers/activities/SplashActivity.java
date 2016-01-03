@@ -13,15 +13,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.walladog.walladog.R;
+import com.walladog.walladog.models.Category;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.Race;
 import com.walladog.walladog.models.ServiceGenerator;
 import com.walladog.walladog.models.WDServices;
+import com.walladog.walladog.models.apiservices.WDCategoryService;
 import com.walladog.walladog.models.apiservices.WDProductsService;
 import com.walladog.walladog.models.apiservices.WDRacesService;
 import com.walladog.walladog.models.apiservices.WDServicesService;
+import com.walladog.walladog.models.dao.CategoryDAO;
 import com.walladog.walladog.models.dao.RaceDAO;
 import com.walladog.walladog.models.db.DatabaseHelper;
+import com.walladog.walladog.models.responses.CategoryResponse;
 import com.walladog.walladog.models.responses.ProductsResponse;
 import com.walladog.walladog.models.responses.RacesResponse;
 import com.walladog.walladog.models.responses.ServicesResponse;
@@ -102,6 +106,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void getInitRestData(){
         appLoading.setText("Loading services...");
+
         ServiceGenerator
                 .createService(WDServicesService.class).getMultiTask()
                 .enqueue(new Callback<ServicesResponse>() {
@@ -141,22 +146,12 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Response<RacesResponse> response, Retrofit retrofit) {
                         List<Race> mRacesList = response.body().getData();
-                        appLoading.setText("Razas cargadas");
+                        appLoading.setText("Cargando razas");
                         DatabaseHelper.getInstance(getApplicationContext());
                         RaceDAO racedao = new RaceDAO(getApplicationContext());
                         for(Race race : mRacesList){
                             racedao.insert(race);
-                            appLoading.setText("Inserting race: " + race.getName());
-                            Log.v(TAG,"Inserting race: "+race.getName());
                         }
-                        Race tmpRace = racedao.query(1);
-
-                        try{
-                            Log.v(TAG,"Query result for id 1 : "+tmpRace.getName());
-                        }catch (Exception e){
-                            Log.v(TAG,e.getMessage());
-                        }
-
                         requestsFinished++;
                     }
 
@@ -166,15 +161,34 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
+        ServiceGenerator.createService(WDCategoryService.class).getMultiTask()
+                .enqueue(new Callback<CategoryResponse>() {
+                    @Override
+                    public void onResponse(Response<CategoryResponse> response, Retrofit retrofit) {
+                        List<Category> mCategoryList = response.body().getData();
+                        appLoading.setText("Cargando Categorias");DatabaseHelper.getInstance(getApplicationContext());
+                        CategoryDAO categorydao = new CategoryDAO(getApplicationContext());
+                        for(Category cat : mCategoryList){
+                            categorydao.insert(cat);
+                        }
+                        requestsFinished++;
+                    }
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Log.v(TAG, "Failed request on " + WDCategoryService.class.getName());
+                    }
+                });
+
 
     }
 
     private void LaunchApp(){
-        if(mProductList!=null && mWDServices!=null && requestsFinished==3){
+        if(mProductList!=null && mWDServices!=null && requestsFinished==4){
             Intent i = new Intent(this, MainActivity.class);
             i.putExtra(MainActivity.EXTRA_WDSERVICES, (Serializable) mWDServices);
             i.putExtra(MainActivity.EXTRA_WDPRODUCTS, (Serializable) mProductList);
 
+            Log.v(TAG,"Launching APP all tasks successfull resolved");
             startActivity(i);
 
         }else{

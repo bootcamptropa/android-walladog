@@ -8,18 +8,22 @@ import java.io.Serializable;
 public class Product implements Serializable {
 
 
-    private String gender;
-    private double stateId;
-    private double raceId;
     private double id;
-    private double price;
-    private double sellerId;
-    private boolean sterile;
-    private String publishDate;
-    private double categoryId;
-    private String description;
     //@SerializedName("name")
     private String name;
+    private double raceId;
+    private double sellerId;
+    private String gender;
+    private boolean sterile;
+    private String description;
+    private String publishDate;
+    private double stateId;
+    private double price;
+    private double categoryId;
+    private double latitude;
+    private double longitude;
+    private boolean active;
+
 
 
     public Product () {
@@ -130,8 +134,19 @@ public class Product implements Serializable {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "{id = "+id+", publishDate = "+publishDate+",  categoryId = "+categoryId+", price = "+price+", sterile = "+sterile+", description = "+description+", name = "+name+", stateId = "+stateId+", gender = "+gender+", sellerId = "+sellerId+", raceId = "+raceId+"}";
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 }
