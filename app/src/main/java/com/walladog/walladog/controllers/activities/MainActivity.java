@@ -21,6 +21,7 @@ import com.walladog.walladog.controllers.fragments.HomeFragment;
 import com.walladog.walladog.controllers.fragments.LoginFragment;
 import com.walladog.walladog.controllers.fragments.MapsLocator;
 import com.walladog.walladog.controllers.fragments.SigninFragment;
+import com.walladog.walladog.controllers.fragments.UserProfileFragment;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.ServiceGenerator;
 import com.walladog.walladog.models.WDServices;
@@ -93,6 +94,13 @@ public class MainActivity extends DrawerBaseActivity
                         .addToBackStack(HomeFragment.class.getName())
                         .commit();
                 Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_transactions:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.drawer_layout_main_activity_frame, UserProfileFragment.newInstance("1", "1"),UserProfileFragment.class.getName())
+                        .addToBackStack(UserProfileFragment.class.getName())
+                        .commit();
+                Toast.makeText(getApplicationContext(), "Go to Picture", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_picture:
                 getSupportFragmentManager().beginTransaction()

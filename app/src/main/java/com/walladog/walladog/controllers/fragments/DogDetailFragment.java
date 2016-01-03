@@ -141,7 +141,7 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
         double latitude = 41.390205;
         double longitude  = 2.154007;
 
-        try {
+
             //TODO reactivate this for real-devices
 
             CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
@@ -152,7 +152,11 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_menu_petfeet));
 
             // adding marker
+        try {
             mMap.addMarker(marker);
+        }catch (Exception e){
+
+        }
 
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
             mMap.moveCamera(center);
@@ -161,9 +165,6 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             mMap.getUiSettings().setZoomControlsEnabled(true);
 
-        }catch(Exception e){
-            Log.v(TAG, e.getMessage());
-        }
 
     }
 }
