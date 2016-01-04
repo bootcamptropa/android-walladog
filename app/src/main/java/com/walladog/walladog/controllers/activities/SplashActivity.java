@@ -22,9 +22,6 @@ import com.walladog.walladog.models.apiservices.WDCategoryService;
 import com.walladog.walladog.models.apiservices.WDProductsService;
 import com.walladog.walladog.models.apiservices.WDRacesService;
 import com.walladog.walladog.models.apiservices.WDServicesService;
-import com.walladog.walladog.models.dao.CategoryDAO;
-import com.walladog.walladog.models.dao.RaceDAO;
-import com.walladog.walladog.models.db.DatabaseHelper;
 import com.walladog.walladog.models.responses.CategoryResponse;
 import com.walladog.walladog.models.responses.ProductsResponse;
 import com.walladog.walladog.models.responses.RacesResponse;
@@ -147,11 +144,13 @@ public class SplashActivity extends AppCompatActivity {
                     public void onResponse(Response<RacesResponse> response, Retrofit retrofit) {
                         List<Race> mRacesList = response.body().getData();
                         appLoading.setText("Cargando razas");
+/*
                         DatabaseHelper.getInstance(getApplicationContext());
                         RaceDAO racedao = new RaceDAO(getApplicationContext());
                         for(Race race : mRacesList){
                             racedao.insert(race);
                         }
+*/
                         requestsFinished++;
                     }
 
@@ -166,13 +165,15 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Response<CategoryResponse> response, Retrofit retrofit) {
                         List<Category> mCategoryList = response.body().getData();
-                        appLoading.setText("Cargando Categorias");DatabaseHelper.getInstance(getApplicationContext());
+                        appLoading.setText("Cargando Categorias");
+/*                        DatabaseHelper.getInstance(getApplicationContext());
                         CategoryDAO categorydao = new CategoryDAO(getApplicationContext());
-                        for(Category cat : mCategoryList){
+                        for (Category cat : mCategoryList) {
                             categorydao.insert(cat);
-                        }
+                        }*/
                         requestsFinished++;
                     }
+
                     @Override
                     public void onFailure(Throwable t) {
                         Log.v(TAG, "Failed request on " + WDCategoryService.class.getName());
@@ -195,4 +196,6 @@ public class SplashActivity extends AppCompatActivity {
             Log.v(TAG,"Error , some process working, app not launched...");
         }
     }
+
+
 }
