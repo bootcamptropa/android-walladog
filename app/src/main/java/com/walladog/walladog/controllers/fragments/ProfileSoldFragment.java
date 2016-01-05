@@ -4,11 +4,18 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.walladog.walladog.R;
+import com.walladog.walladog.adapters.SellingAdapter;
+import com.walladog.walladog.models.Product;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ProfileSoldFragment extends Fragment {
@@ -17,6 +24,10 @@ public class ProfileSoldFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
+
+    private SellingAdapter adapter;
+    private RecyclerView recyclerView;
+    private static List<Product> productList;
 
     public ProfileSoldFragment() {
         // Required empty public constructor
@@ -43,6 +54,31 @@ public class ProfileSoldFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile_sold, container, false);
+        View v = inflater.inflate(R.layout.fragment_profile_selling, container, false);
+
+
+
+        return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        recyclerView = (RecyclerView) getView().findViewById(R.id.sellingList);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
+
+        productList = new ArrayList<Product>();
+        char c = 'A';
+        for (byte i = 0; i < 20; i++) {
+            Product model = new Product();
+            model.setName(String.valueOf(c++));
+            model.setGender("Male");
+            productList.add(model);
+        }
+        adapter = new SellingAdapter(productList,getContext());
+        recyclerView.setAdapter(adapter);
     }
 }

@@ -11,13 +11,17 @@ import android.widget.Button;
 
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.ProfilePagerAdapter;
+import com.walladog.walladog.models.Product;
+
+import java.io.Serializable;
+import java.util.List;
 
 
 public class UserProfileFragment extends Fragment implements ViewPager.OnPageChangeListener {
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_SELLINGPRODUCTS = "ARG_SELLINGPRODUCTS";
     private static final String ARG_PARAM2 = "param2";
 
-    private String mParam1;
+    private List<Product> mProductsSelling;
     private String mParam2;
 
     private ViewPager pager = null;
@@ -28,10 +32,10 @@ public class UserProfileFragment extends Fragment implements ViewPager.OnPageCha
 
     }
 
-    public static UserProfileFragment newInstance(String param1, String param2) {
+    public static UserProfileFragment newInstance(List<Product> productlist, String param2) {
         UserProfileFragment fragment = new UserProfileFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putSerializable(ARG_SELLINGPRODUCTS, (Serializable) productlist);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
@@ -41,7 +45,7 @@ public class UserProfileFragment extends Fragment implements ViewPager.OnPageCha
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            mProductsSelling = (List<Product>) getArguments().getSerializable(ARG_SELLINGPRODUCTS);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -60,8 +64,8 @@ public class UserProfileFragment extends Fragment implements ViewPager.OnPageCha
             @Override
             public void onClick(View v) {
                 b1.setTextColor(Color.parseColor("#ffffff"));
-                b2.setTextColor(Color.parseColor("#000000"));
-                b3.setTextColor(Color.parseColor("#000000"));
+                b2.setTextColor(Color.parseColor("#d3d3d3"));
+                b3.setTextColor(Color.parseColor("#d3d3d3"));
                 pager.setCurrentItem(0);
             }
         });
@@ -69,9 +73,9 @@ public class UserProfileFragment extends Fragment implements ViewPager.OnPageCha
         b2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                b1.setTextColor(Color.parseColor("#000000"));
+                b1.setTextColor(Color.parseColor("#d3d3d3"));
                 b2.setTextColor(Color.parseColor("#ffffff"));
-                b3.setTextColor(Color.parseColor("#000000"));
+                b3.setTextColor(Color.parseColor("#d3d3d3"));
                 pager.setCurrentItem(1);
             }
         });
@@ -79,8 +83,8 @@ public class UserProfileFragment extends Fragment implements ViewPager.OnPageCha
         b3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                b1.setTextColor(Color.parseColor("#000000"));
-                b2.setTextColor(Color.parseColor("#000000"));
+                b1.setTextColor(Color.parseColor("#d3d3d3"));
+                b2.setTextColor(Color.parseColor("#d3d3d3"));
                 b3.setTextColor(Color.parseColor("#ffffff"));
                 pager.setCurrentItem(2);
             }
@@ -114,17 +118,17 @@ public class UserProfileFragment extends Fragment implements ViewPager.OnPageCha
         switch (position){
             case 1:
                 b1.setTextColor(Color.parseColor("#ffffff"));
-                b2.setTextColor(Color.parseColor("#fdfdfd"));
-                b3.setTextColor(Color.parseColor("#fdfdfd"));
+                b2.setTextColor(Color.parseColor("#d3d3d3"));
+                b3.setTextColor(Color.parseColor("#d3d3d3"));
                 break;
             case 2:
-                b1.setTextColor(Color.parseColor("#fdfdfd"));
+                b1.setTextColor(Color.parseColor("#d3d3d3"));
                 b2.setTextColor(Color.parseColor("#ffffff"));
-                b3.setTextColor(Color.parseColor("#fdfdfd"));
+                b3.setTextColor(Color.parseColor("#d3d3d3"));
                 break;
             case 3:
-                b1.setTextColor(Color.parseColor("#fdfdfd"));
-                b2.setTextColor(Color.parseColor("#fdfdfd"));
+                b1.setTextColor(Color.parseColor("#d3d3d3"));
+                b2.setTextColor(Color.parseColor("#d3d3d3"));
                 b3.setTextColor(Color.parseColor("#ffffff"));
                 break;
         }

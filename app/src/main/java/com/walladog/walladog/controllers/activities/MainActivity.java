@@ -1,8 +1,6 @@
 package com.walladog.walladog.controllers.activities;
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,9 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.walladog.walladog.R;
 import com.walladog.walladog.controllers.fragments.AddProductFragment;
 import com.walladog.walladog.controllers.fragments.DogDetailFragment;
@@ -23,18 +19,10 @@ import com.walladog.walladog.controllers.fragments.MapsLocator;
 import com.walladog.walladog.controllers.fragments.SigninFragment;
 import com.walladog.walladog.controllers.fragments.UserProfileFragment;
 import com.walladog.walladog.models.Product;
-import com.walladog.walladog.models.ServiceGenerator;
 import com.walladog.walladog.models.WDServices;
-import com.walladog.walladog.models.apiservices.WDProductsService;
-import com.walladog.walladog.models.responses.ProductsResponse;
 
 import java.io.Serializable;
 import java.util.List;
-
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 public class MainActivity extends DrawerBaseActivity
         implements LoginFragment.OnLoginClickListener,
@@ -97,7 +85,7 @@ public class MainActivity extends DrawerBaseActivity
                 break;
             case R.id.nav_transactions:
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, UserProfileFragment.newInstance("1", "1"),UserProfileFragment.class.getName())
+                        .replace(R.id.drawer_layout_main_activity_frame, UserProfileFragment.newInstance(mProducts, "1"),UserProfileFragment.class.getName())
                         .addToBackStack(UserProfileFragment.class.getName())
                         .commit();
                 Toast.makeText(getApplicationContext(), "Go to Picture", Toast.LENGTH_SHORT).show();

@@ -6,6 +6,7 @@
     <color name="primary_color">#2196F3</color>
     <color name="primary_dark_color">#9056D2</color>
     <color name="wd_white">#FFFFFF</color>
+    <color name="wd_grey">#d3d3d3</color>
     <color name="wd_menu_sel">#bab5e1</color>
     <color name="wd_base">#4e91df</color>
     <color name="wd_grey_bg">#FFF5F2F2</color>
