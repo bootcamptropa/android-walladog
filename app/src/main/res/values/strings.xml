@@ -65,6 +65,7 @@
     <string name="txt_dog_nogender">Desconocido</string>
     <string name="txt_dog_norace">Raza desconocida</string>
     <string name="txt_unknown">Desconocido</string>
+    <string name="menu_notifications">Notificaciones</string>
 
 
 </resources>

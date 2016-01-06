@@ -17,7 +17,7 @@
         <item
             android:id="@+id/nav_notifications"
             android:icon="@drawable/ic_menu_sms"
-            android:title="@string/menu_map_friends"/>
+            android:title="@string/menu_notifications"/>
         <item
             android:id="@+id/nav_location"
             android:icon="@drawable/ic_menu_location"

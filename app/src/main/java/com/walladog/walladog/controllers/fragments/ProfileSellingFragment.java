@@ -72,7 +72,7 @@ public class ProfileSellingFragment extends Fragment {
         char c = 'A';
         for (byte i = 0; i < 20; i++) {
             Product model = new Product();
-            model.setName(String.valueOf(c++));
+            model.setName("Product name"+String.valueOf(c++));
             model.setGender("Male");
             productList.add(model);
         }
