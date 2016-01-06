@@ -26,6 +26,7 @@ import com.walladog.walladog.models.responses.CategoryResponse;
 import com.walladog.walladog.models.responses.ProductsResponse;
 import com.walladog.walladog.models.responses.RacesResponse;
 import com.walladog.walladog.models.responses.ServicesResponse;
+import com.walladog.walladog.utils.DBAsyncTasks;
 
 import java.io.Serializable;
 import java.util.List;
@@ -166,6 +167,8 @@ public class SplashActivity extends AppCompatActivity {
                     public void onResponse(Response<CategoryResponse> response, Retrofit retrofit) {
                         List<Category> mCategoryList = response.body().getData();
                         appLoading.setText("Cargando Categorias");
+                        DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(getApplicationContext(),mCategoryList);
+                        task.execute();
 /*                        DatabaseHelper.getInstance(getApplicationContext());
                         CategoryDAO categorydao = new CategoryDAO(getApplicationContext());
                         for (Category cat : mCategoryList) {

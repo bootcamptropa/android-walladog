@@ -16,6 +16,7 @@ import com.walladog.walladog.controllers.fragments.DogListFragment;
 import com.walladog.walladog.controllers.fragments.HomeFragment;
 import com.walladog.walladog.controllers.fragments.LoginFragment;
 import com.walladog.walladog.controllers.fragments.MapsLocator;
+import com.walladog.walladog.controllers.fragments.NotificationsFragment;
 import com.walladog.walladog.controllers.fragments.SigninFragment;
 import com.walladog.walladog.controllers.fragments.UserProfileFragment;
 import com.walladog.walladog.models.Product;
@@ -87,6 +88,13 @@ public class MainActivity extends DrawerBaseActivity
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout_main_activity_frame, UserProfileFragment.newInstance(mProducts, "1"),UserProfileFragment.class.getName())
                         .addToBackStack(UserProfileFragment.class.getName())
+                        .commit();
+                Toast.makeText(getApplicationContext(), "Go to Picture", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_notifications:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.drawer_layout_main_activity_frame, NotificationsFragment.newInstance("1", "1"),NotificationsFragment.class.getName())
+                        .addToBackStack(NotificationsFragment.class.getName())
                         .commit();
                 Toast.makeText(getApplicationContext(), "Go to Picture", Toast.LENGTH_SHORT).show();
                 break;

@@ -36,48 +36,4 @@
 
 </LinearLayout>
 
-<!--
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/drawer_header_height"
-    android:orientation="vertical"
-    style="@style/drawer_header_style">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/profile_image"
-        android:layout_width="76dp"
-    android:layout_height="76dp"
-    tools:src="@drawable/profile"
-    app:border_color="#FF000000"
-        android:layout_marginLeft="24dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="24dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="User text"
-        android:gravity="left"
-        android:id="@+id/drawer_header_title"
-        android:layout_above="@+id/drawer_header_subtitle"
-        android:layout_alignLeft="@+id/profile_image"
-        android:layout_alignStart="@+id/profile_image"
-        style="@style/drawer_header_title_style"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Akash.bangad93@gmail.com"
-        android:id="@+id/drawer_header_subtitle"
-        android:gravity="left"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/drawer_header_title"
-        android:layout_alignStart="@+id/drawer_header_title"
-        style="@style/drawer_header_subtitle_style"/>
-
-</RelativeLayout>-->

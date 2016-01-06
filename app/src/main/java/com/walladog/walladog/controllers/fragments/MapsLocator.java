@@ -83,7 +83,7 @@ public class MapsLocator extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_maps_locator, container, false);
-        googleMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment)).getMap();
+        googleMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragmentTest)).getMap();
 
 
         // check if map is created successfully or not
@@ -142,15 +142,15 @@ public class MapsLocator extends Fragment {
     //Maps
     private void initilizeMap(final View view) {
 
-        (view.findViewById(R.id.mapFragment)).getViewTreeObserver().addOnGlobalLayoutListener(
+        (view.findViewById(R.id.mapFragmentTest)).getViewTreeObserver().addOnGlobalLayoutListener(
                 new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
 
                     @Override
                     public void onGlobalLayout() {
                         if (android.os.Build.VERSION.SDK_INT >= 16) {
-                            (view.findViewById(R.id.mapFragment)).getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            (view.findViewById(R.id.mapFragmentTest)).getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         } else {
-                            (view.findViewById(R.id.mapFragment)).getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            (view.findViewById(R.id.mapFragmentTest)).getViewTreeObserver().removeGlobalOnLayoutListener(this);
                         }
                         setCustomMarkerOnePosition();
                         setCustomMarkerTwoPosition();
