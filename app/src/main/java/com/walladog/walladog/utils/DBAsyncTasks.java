@@ -6,9 +6,10 @@ import android.util.Log;
 
 import com.walladog.walladog.models.Category;
 import com.walladog.walladog.models.Race;
+import com.walladog.walladog.models.WDNotification;
 import com.walladog.walladog.models.dao.CategoryDAO;
+import com.walladog.walladog.models.dao.NotificationDAO;
 import com.walladog.walladog.models.dao.RaceDAO;
-import com.walladog.walladog.models.db.DatabaseHelper;
 
 import java.util.List;
 
@@ -23,28 +24,70 @@ public class DBAsyncTasks<T> extends AsyncTask<Object, Object, Void> {
 
     private Context context;
     private List<T> itemList;
-    Class<T> type;
+    private T type;
+    private String mTaskType;
 
-    public DBAsyncTasks(Context context,List<T> items) {
+    private OnItemsSavedToDBListener mOnItemsSavedToDBListener=null;
+    private OnItemsRecoveredFromDBListener mOnItemsRecoveredFromDBListener=null;
+
+    public static final String TASK_SAVE_LIST = "task_save_list";
+    public static final String TASK_SAVE_ITEM = "task_save_item";
+    public static final String TASK_GET_LIST = "task_get_list";
+    public static final String TASK_GET_ITEM = "task_get_item";
+
+
+    public DBAsyncTasks(String taskType, T myType, Context context, List<T> items, OnItemsSavedToDBListener listener) {
+        this.type=myType;
         this.context = context;
         this.itemList=items;
+        this.mOnItemsSavedToDBListener=(OnItemsSavedToDBListener) listener;
+        this.mTaskType=taskType;
+    }
+
+    public DBAsyncTasks(String taskType, T myType, Context context, List<T> items, OnItemsRecoveredFromDBListener listener) {
+        this.type=myType;
+        this.context = context;
+        this.itemList=items;
+        this.mOnItemsSavedToDBListener=(OnItemsSavedToDBListener) listener;
+        this.mTaskType=taskType;
     }
 
 
     @Override
     protected Void doInBackground(Object... params) {
-        DatabaseHelper.getInstance(context);
+        switch (mTaskType){
+            case TASK_SAVE_LIST:
+                if (type instanceof Race) {
+                    Log.v(TAG, "Insertando Race");
+                    RaceDAO objDAO = new RaceDAO(context);
+                    for (T item : itemList) {
+                        objDAO.insert((Race) item);
+                    }
+                } else if (type instanceof Category) {
+                    Log.v(TAG, "Insertando Category");
+                    CategoryDAO objDAO = new CategoryDAO(context);
+                    for (T item : itemList) {
+                        objDAO.insert((Category) item);
+                    }
+                } else if (type instanceof WDNotification) {
+                    Log.v(TAG, "Insertando Notificacion");
+                    NotificationDAO objDAO = new NotificationDAO(context);
+                    for (T item : itemList) {
+                        objDAO.insert((WDNotification) item);
+                    }
+                } else {
+                    Log.v(TAG, "Clase no detectada en AsyncTaskDB");
+                }
+                break;
+            case TASK_SAVE_ITEM:
+                break;
+            case TASK_GET_LIST:
+                if (type instanceof WDNotification) {
 
-        if(type.isInstance(Race.class)){
-            RaceDAO objDAO = new RaceDAO(context);
-            for (T item : itemList) {
-                objDAO.insert((Race) item);
-            }
-        } else if(type.isInstance(Category.class)){
-            CategoryDAO objDAO = new CategoryDAO(context);
-            for (T item : itemList) {
-                objDAO.insert((Category) item);
-            }
+                }
+                break;
+            case TASK_GET_ITEM:
+                break;
         }
         return null;
     }
@@ -52,6 +95,14 @@ public class DBAsyncTasks<T> extends AsyncTask<Object, Object, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        Log.v(TAG, "Saved successfull into DB");
+        //Log.v(TAG, "Saved successfull into DB");
+        mOnItemsSavedToDBListener.onItemsSaved(true);
+    }
+
+    public interface OnItemsSavedToDBListener {
+        void onItemsSaved(Boolean saved);
+    }
+    public interface OnItemsRecoveredFromDBListener {
+        void onItemsRecovered(Boolean saved);
     }
 }

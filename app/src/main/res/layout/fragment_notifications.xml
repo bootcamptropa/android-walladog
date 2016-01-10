@@ -5,11 +5,29 @@
                 android:layout_height="match_parent"
     >
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/notiProgressBar"
+        android:indeterminate="true"
+        android:layout_centerInParent="true"
+        android:progressTint="#ffffba27"
+        android:secondaryProgressTint="#ffff1e25" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Loading..."
+        android:layout_below="@+id/notiProgressBar"
+        />
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:app="http://schemas.android.com/apk/res-auto"
                   android:layout_height="wrap_content"
-                  android:id="@+id/main_linear"
+                  android:id="@+id/main_linear_notifications"
                   android:layout_width="match_parent"
+                  android:visibility="invisible"
                   android:orientation="vertical">
 
         <LinearLayout
@@ -22,7 +40,7 @@
                                                android:layout_width="match_parent"
                                                android:layout_height="wrap_content"
                                                android:background="@color/wd_white"
-                                               android:id="@+id/view_pager">
+                                               android:id="@+id/view_pager_notifications">
             </android.support.v4.view.ViewPager>
         </LinearLayout>
     </LinearLayout>
@@ -37,45 +55,34 @@
         >
 
         <Button
-            android:id="@+id/btn_enventa"
+            android:id="@+id/btn_toread"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_corners"
             android:textSize="12sp"
             android:layout_weight="1"
-            android:drawableTop="@drawable/ic_menu_cartwhite"
-            android:paddingTop="3dp"
+            android:drawableLeft="@drawable/ic_menu_toread"
+            android:paddingTop="0dp"
+            android:paddingLeft="5dp"
             android:layout_margin="5dp"
             android:textColor="@color/wd_white"
             android:elevation="5dp"
-            android:text="EN VENTA"/>
+            android:text="@string/noti_toread"/>
+
         <Button
-            android:id="@+id/btn_vendido"
+            android:id="@+id/btn_readed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_corners"
             android:textSize="12sp"
             android:layout_weight="1"
-            android:paddingTop="3dp"
+            android:paddingTop="0dp"
             android:layout_margin="5dp"
-            android:drawableTop="@drawable/ic_menu_vendido"
+            android:paddingLeft="5dp"
+            android:drawableLeft="@drawable/ic_menu_readed"
             android:textColor="@color/wd_grey"
             android:elevation="5dp"
-            android:text="VENDIDO"/>
-        <Button
-            android:id="@+id/btn_busquedas"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="1dp"
-            android:background="@drawable/btn_corners"
-            android:textSize="12sp"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/ic_menu_searchwhite2"
-            android:paddingTop="3dp"
-            android:layout_margin="5dp"
-            android:textColor="@color/wd_grey"
-            android:elevation="5dp"
-            android:text="BUSQUEDAS"/>
+            android:text="@string/noti_readed"/>
 
     </LinearLayout>
 

@@ -145,14 +145,14 @@ public class SplashActivity extends AppCompatActivity {
                     public void onResponse(Response<RacesResponse> response, Retrofit retrofit) {
                         List<Race> mRacesList = response.body().getData();
                         appLoading.setText("Cargando razas");
-/*
-                        DatabaseHelper.getInstance(getApplicationContext());
-                        RaceDAO racedao = new RaceDAO(getApplicationContext());
-                        for(Race race : mRacesList){
-                            racedao.insert(race);
-                        }
-*/
-                        requestsFinished++;
+                        DBAsyncTasks<Race> task = new DBAsyncTasks<Race>(DBAsyncTasks.TASK_SAVE_LIST,new Race(), getApplicationContext(), mRacesList, new DBAsyncTasks.OnItemsSavedToDBListener() {
+                            @Override
+                            public void onItemsSaved(Boolean saved) {
+                                requestsFinished++;
+                                LaunchApp();
+                            }
+                        });
+                        task.execute();
                     }
 
                     @Override
@@ -167,14 +167,14 @@ public class SplashActivity extends AppCompatActivity {
                     public void onResponse(Response<CategoryResponse> response, Retrofit retrofit) {
                         List<Category> mCategoryList = response.body().getData();
                         appLoading.setText("Cargando Categorias");
-                        DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(getApplicationContext(),mCategoryList);
+                        DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(DBAsyncTasks.TASK_SAVE_LIST,new Category(), getApplicationContext(), mCategoryList, new DBAsyncTasks.OnItemsSavedToDBListener() {
+                            @Override
+                            public void onItemsSaved(Boolean saved) {
+                                requestsFinished++;
+                                LaunchApp();
+                            }
+                        });
                         task.execute();
-/*                        DatabaseHelper.getInstance(getApplicationContext());
-                        CategoryDAO categorydao = new CategoryDAO(getApplicationContext());
-                        for (Category cat : mCategoryList) {
-                            categorydao.insert(cat);
-                        }*/
-                        requestsFinished++;
                     }
 
                     @Override
@@ -187,11 +187,11 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void LaunchApp(){
+        Log.v(TAG,"Lanzado "+String.valueOf(requestsFinished));
         if(mProductList!=null && mWDServices!=null && requestsFinished==4){
             Intent i = new Intent(this, MainActivity.class);
             i.putExtra(MainActivity.EXTRA_WDSERVICES, (Serializable) mWDServices);
             i.putExtra(MainActivity.EXTRA_WDPRODUCTS, (Serializable) mProductList);
-
             Log.v(TAG,"Launching APP all tasks successfull resolved");
             startActivity(i);
 
@@ -199,6 +199,4 @@ public class SplashActivity extends AppCompatActivity {
             Log.v(TAG,"Error , some process working, app not launched...");
         }
     }
-
-
 }

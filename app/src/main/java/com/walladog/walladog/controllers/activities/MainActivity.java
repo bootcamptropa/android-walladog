@@ -75,28 +75,28 @@ public class MainActivity extends DrawerBaseActivity
                         .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts),DogListFragment.class.getName())
                         .addToBackStack(DogListFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Go to ProductsResponse", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Go to Products", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_location:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout_main_activity_frame, MapsLocator.newInstance("1","1"),MapsLocator.class.getName())
                         .addToBackStack(HomeFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Go to Location", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_transactions:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout_main_activity_frame, UserProfileFragment.newInstance(mProducts, "1"),UserProfileFragment.class.getName())
                         .addToBackStack(UserProfileFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Go to Picture", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Go to Transactions", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_notifications:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout_main_activity_frame, NotificationsFragment.newInstance("1", "1"),NotificationsFragment.class.getName())
                         .addToBackStack(NotificationsFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Go to Picture", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Go to Notification", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_picture:
                 getSupportFragmentManager().beginTransaction()
@@ -110,14 +110,14 @@ public class MainActivity extends DrawerBaseActivity
                         .replace(R.id.drawer_layout_main_activity_frame, LoginFragment.newInstance(),LoginFragment.class.getName())
                         .addToBackStack(LoginFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Login Selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Go to Login", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_signin:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout_main_activity_frame, SigninFragment.newInstance(),SigninFragment.class.getName())
                         .addToBackStack(SigninFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Signin Selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Go to Signin", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();

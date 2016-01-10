@@ -54,6 +54,8 @@ public class CategoryDAO implements DAOPersistable<Category> {
             id = dbHelper.getWritableDatabase().insertWithOnConflict(TABLE_CATEGORIES, null, this.getContentValues(category), SQLiteDatabase.CONFLICT_IGNORE);
             category.setId(id);
             db.setTransactionSuccessful();
+        }catch(Exception e){
+                e.printStackTrace();
         } finally {
             db.endTransaction();
         }

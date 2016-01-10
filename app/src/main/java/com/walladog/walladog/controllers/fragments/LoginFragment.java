@@ -70,14 +70,6 @@ public class LoginFragment extends Fragment {
         void onLoginSubmit(String username, String password,View currentView);
     }
 
-/*
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mOnLoginClickListener = (OnLoginClickListener) getActivity();
-    }
-*/
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

@@ -90,10 +90,8 @@ public class UserProfileFragment extends Fragment implements ViewPager.OnPageCha
             }
         });
 
-
         pager.setAdapter(new ProfilePagerAdapter(getChildFragmentManager()));
         pager.addOnPageChangeListener(this);
-
 
         return v;
     }

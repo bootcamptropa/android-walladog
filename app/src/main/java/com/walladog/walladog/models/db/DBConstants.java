@@ -11,6 +11,7 @@ public class DBConstants {
 
     public static final String TABLE_RACES = "RACES";
     public static final String TABLE_CATEGORIES = "CATEGORIES";
+    public static final String TABLE_NOTIFICATIONS = "NOTIFICATIONS";
 
 
     // Table field constants
@@ -24,6 +25,13 @@ public class DBConstants {
     public static final String KEY_CATEGORIES_CREATION_DATE = "creationDate";
     public static final String KEY_CATEGORIES_MODIFICATION_DATE = "modificationDate";
 
+    public static final String KEY_NOTIFICATIONS_ID = "_id";
+    public static final String KEY_NOTIFICATIONS_TITLE = "title";
+    public static final String KEY_NOTIFICATIONS_MESSAGE = "message";
+    public static final String KEY_NOTIFICATIONS_AUTHOR = "author";
+    public static final String KEY_NOTIFICATIONS_READ = "read";
+    public static final String KEY_NOTIFICATIONS_CREATION_DATE = "creationDate";
+    public static final String KEY_NOTIFICATIONS_MODIFICATION_DATE = "modificationDate";
 
     public static final String SQL_CREATE_RACES_TABLE =
             "create table "
@@ -43,9 +51,22 @@ public class DBConstants {
                     + KEY_CATEGORIES_MODIFICATION_DATE + " INTEGER "
                     + ");";
 
+    public static final String SQL_CREATE_NOTIFICATIONS_TABLE =
+            "create table "
+                    + TABLE_NOTIFICATIONS + "( " + KEY_NOTIFICATIONS_ID
+                    + " integer primary key autoincrement, "
+                    + KEY_NOTIFICATIONS_TITLE + " text not null,"
+                    + KEY_NOTIFICATIONS_MESSAGE + " text not null,"
+                    + KEY_NOTIFICATIONS_AUTHOR + " DOUBLE,"
+                    + KEY_NOTIFICATIONS_READ + " BOOLEAN,"
+                    + KEY_NOTIFICATIONS_CREATION_DATE + " INTEGER, "
+                    + KEY_NOTIFICATIONS_MODIFICATION_DATE + " INTEGER "
+                    + ");";
+
     public static final String[] CREATE_DATABASE = {
             SQL_CREATE_RACES_TABLE,
-            SQL_CREATE_CATEGORIES_TABLE
+            SQL_CREATE_CATEGORIES_TABLE,
+            SQL_CREATE_NOTIFICATIONS_TABLE
     };
 
 }

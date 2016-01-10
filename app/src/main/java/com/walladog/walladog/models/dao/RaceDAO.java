@@ -92,6 +92,8 @@ public class RaceDAO implements DAOPersistable<Race> {
 
     }
 
+
+
     @Override
     public void deleteAll() {
         DatabaseHelper db = DatabaseHelper.getInstance(context.get());

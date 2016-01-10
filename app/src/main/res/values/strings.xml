@@ -66,6 +66,10 @@
     <string name="txt_dog_norace">Raza desconocida</string>
     <string name="txt_unknown">Desconocido</string>
     <string name="menu_notifications">Notificaciones</string>
+    <string name="noti_readed">Leído</string>
+    <string name="noti_toread">Por leer</string>
+    <string name="notification_title">Asunto</string>
+    <string name="notification_date">Fecha</string>
 
 
 </resources>

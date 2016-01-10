@@ -1,7 +1,5 @@
 package com.walladog.walladog.models;
 
-
-
 import java.util.Date;
 
 public class Race {
@@ -11,7 +9,9 @@ public class Race {
     private Date creationDate;
     private Date modificationDate;
 
+    public Race(){
 
+    }
 
     public Race(String name) {
         this.name = name;
@@ -39,11 +39,6 @@ public class Race {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "{id = "+id+", name = "+name+"}";
     }
 
     public Date getCreationDate() {
