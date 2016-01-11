@@ -3,6 +3,7 @@ package com.walladog.walladog.controllers.activities;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.animation.Animation;
@@ -18,7 +19,10 @@ import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.Race;
 import com.walladog.walladog.models.ServiceGenerator;
 import com.walladog.walladog.models.WDServices;
+import com.walladog.walladog.models.apiservices.AccessToken;
+import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 import com.walladog.walladog.models.apiservices.WDCategoryService;
+import com.walladog.walladog.models.apiservices.WDOAuth;
 import com.walladog.walladog.models.apiservices.WDProductsService;
 import com.walladog.walladog.models.apiservices.WDRacesService;
 import com.walladog.walladog.models.apiservices.WDServicesService;
@@ -28,7 +32,14 @@ import com.walladog.walladog.models.responses.RacesResponse;
 import com.walladog.walladog.models.responses.ServicesResponse;
 import com.walladog.walladog.utils.DBAsyncTasks;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 
 import retrofit.Callback;
@@ -54,6 +65,15 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT >= 10) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
@@ -66,6 +86,16 @@ public class SplashActivity extends AppCompatActivity {
         appTitle.setTypeface(face);
         appLoading.setTextSize(15);
         appLoading.setTypeface(face);
+
+
+
+
+
+        try {
+            OAuth2Login();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         StartAnimations();
 
@@ -145,7 +175,7 @@ public class SplashActivity extends AppCompatActivity {
                     public void onResponse(Response<RacesResponse> response, Retrofit retrofit) {
                         List<Race> mRacesList = response.body().getData();
                         appLoading.setText("Cargando razas");
-                        DBAsyncTasks<Race> task = new DBAsyncTasks<Race>(DBAsyncTasks.TASK_SAVE_LIST,new Race(), getApplicationContext(), mRacesList, new DBAsyncTasks.OnItemsSavedToDBListener() {
+                        DBAsyncTasks<Race> task = new DBAsyncTasks<Race>(DBAsyncTasks.TASK_SAVE_LIST, new Race(), getApplicationContext(), mRacesList, new DBAsyncTasks.OnItemsSavedToDBListener() {
                             @Override
                             public void onItemsSaved(Boolean saved) {
                                 requestsFinished++;
@@ -167,7 +197,7 @@ public class SplashActivity extends AppCompatActivity {
                     public void onResponse(Response<CategoryResponse> response, Retrofit retrofit) {
                         List<Category> mCategoryList = response.body().getData();
                         appLoading.setText("Cargando Categorias");
-                        DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(DBAsyncTasks.TASK_SAVE_LIST,new Category(), getApplicationContext(), mCategoryList, new DBAsyncTasks.OnItemsSavedToDBListener() {
+                        DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(DBAsyncTasks.TASK_SAVE_LIST, new Category(), getApplicationContext(), mCategoryList, new DBAsyncTasks.OnItemsSavedToDBListener() {
                             @Override
                             public void onItemsSaved(Boolean saved) {
                                 requestsFinished++;
@@ -183,11 +213,31 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
+        //ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret).getAccessToken(AccessToken.grantType, AccessToken.cusername, AccessToken.cpassword, AccessToken.clientID, AccessToken.clientSecret)
+        ServiceGenerator.createService(WDOAuth.class).getAccessToken(AccessToken.grantType, AccessToken.cusername, AccessToken.cpassword, AccessToken.clientID, AccessToken.clientSecret)
+                .enqueue(new Callback<AccessToken>() {
+                    @Override
+                    public void onResponse(Response<AccessToken> response, Retrofit retrofit) {
+                        if (response != null) {
+                            String aToken = response.body().getAccessToken();
+                            Log.v(TAG, "Pillamos el token::");
+                        } else {
+                            Log.v(TAG, "Response is null");
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Log.v(TAG, "Failed request on " + AccessToken.class.getName());
+                    }
+                });
+
 
     }
 
     private void LaunchApp(){
-        Log.v(TAG,"Lanzado "+String.valueOf(requestsFinished));
+        Log.v(TAG, "Lanzado " + String.valueOf(requestsFinished));
         if(mProductList!=null && mWDServices!=null && requestsFinished==4){
             Intent i = new Intent(this, MainActivity.class);
             i.putExtra(MainActivity.EXTRA_WDSERVICES, (Serializable) mWDServices);
@@ -199,4 +249,53 @@ public class SplashActivity extends AppCompatActivity {
             Log.v(TAG,"Error , some process working, app not launched...");
         }
     }
+
+    private void OAuth2Login() throws IOException {
+
+        final String USERNAME = "admin";
+        final String PASSWORD = "Keepcoding123";
+        final String CLIENT_ID = "uEAoxVEYOVmpg4Z8IAyCCEItlXO8Cf4G7RSu647d";
+        final String CLIENT_SECRET = "Zc0JGu5pVUt7zNxrhQaCvit6ydr4WxMVI4nXluF9GBWgJV0rbUcR5y2uBZl3TgmLYryashJREp9AiIkbfRUVv5Cdd3n6ZX4Va3fI2cmvMwcgWRFYnrp7K8ZtwkopXrhV";
+        final String URL_API = "http://api.walladog.com/o/token/";
+
+        String data = URLEncoder.encode("grant_type", "UTF-8") + "=" + URLEncoder.encode( "password", "UTF-8" );
+
+        data += "&" + URLEncoder.encode( "username", "UTF-8" ) + "=" + URLEncoder.encode( USERNAME, "UTF-8" );
+
+        data += "&" + URLEncoder.encode( "password", "UTF-8" ) + "=" + URLEncoder.encode( PASSWORD, "UTF-8" );
+
+        data += "&" + URLEncoder.encode( "client_id", "UTF-8" ) + "=" + URLEncoder.encode( CLIENT_ID, "UTF-8" );
+
+        data += "&" + URLEncoder.encode( "client_secret", "UTF-8" ) + "=" + URLEncoder.encode( CLIENT_SECRET, "UTF-8" );
+
+        URL server = new URL( URL_API );
+        HttpURLConnection connection = ( HttpURLConnection ) server.openConnection();
+        connection.setDoOutput( true );
+        OutputStreamWriter osw = new OutputStreamWriter( connection.getOutputStream() );
+        osw.write( data );
+        osw.flush();
+
+        int responseCode = connection.getResponseCode();
+
+        if(responseCode==200)
+        {
+
+            BufferedReader reader = new BufferedReader( new InputStreamReader( connection.getInputStream() ) );
+            StringBuffer response = new StringBuffer();
+            String line = "";
+            while( ( line = reader.readLine() ) != null )
+            {
+                response.append( line );
+            }
+            Log.v( "Login", response.toString() );
+        }
+        else
+        {
+            Log.v( "CatalogClient", "Response code:" + responseCode );
+        }
+    }
+
+
+
+
 }
