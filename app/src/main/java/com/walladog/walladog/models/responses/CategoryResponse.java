@@ -6,7 +6,7 @@ import com.walladog.walladog.models.Race;
 import java.util.List;
 
 
-public class CategoryResponse extends BaseResponse {
+public class CategoryResponse extends BaseResponseWD {
 
     List<Category> data;
     private int totalCount;

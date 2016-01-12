@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.walladog.walladog.R;
+import com.walladog.walladog.WalladogApp;
 import com.walladog.walladog.models.Category;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.Race;
@@ -32,14 +33,8 @@ import com.walladog.walladog.models.responses.RacesResponse;
 import com.walladog.walladog.models.responses.ServicesResponse;
 import com.walladog.walladog.utils.DBAsyncTasks;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import retrofit.Callback;
@@ -88,15 +83,6 @@ public class SplashActivity extends AppCompatActivity {
         appLoading.setTypeface(face);
 
 
-
-
-
-        try {
-            OAuth2Login();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         StartAnimations();
 
     }
@@ -113,7 +99,12 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                getInitRestData();
+                try {
+                    getOAuthToken();
+                    //getInitRestData();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -132,10 +123,44 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-    private void getInitRestData(){
+    private void getOAuthToken() throws UnsupportedEncodingException {
+        ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret).getAccessToken(AccessToken.grantType, AccessToken.cusername, AccessToken.cpassword)
+                .enqueue(new Callback<AccessToken>() {
+                    @Override
+                    public void onResponse(Response<AccessToken> response, Retrofit retrofit) {
+                        if (response != null) {
+                            String aToken = response.body().getAccessToken();
+                            Log.v(TAG, "Pillamos el token::" + aToken);
+                            getSharedPreferences(WalladogApp.class.getSimpleName(),MODE_PRIVATE)
+                                    .edit()
+                                    .putString(AccessToken.OAUTH2_TOKEN,aToken)
+                                    .commit();
+                            try {
+                                getInitRestData();
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                getInitRestData();
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.v(TAG, "Response is null");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Log.v(TAG, "Failed request on " + AccessToken.class.getName());
+                    }
+                });
+    }
+
+    private void getInitRestData() throws UnsupportedEncodingException {
         appLoading.setText("Loading services...");
 
-        ServiceGenerator
+        /*ServiceGeneratorOAuth
                 .createService(WDServicesService.class).getMultiTask()
                 .enqueue(new Callback<ServicesResponse>() {
                     @Override
@@ -152,7 +177,7 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
-        ServiceGenerator.createService(WDProductsService.class).getMultiTask()
+        ServiceGeneratorOAuth.createService(WDProductsService.class).getMultiTask()
                 .enqueue(new Callback<ProductsResponse>() {
 
                     @Override
@@ -169,7 +194,7 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
-        ServiceGenerator.createService(WDRacesService.class).getMultiTask()
+        ServiceGeneratorOAuth.createService(WDRacesService.class).getMultiTask()
                 .enqueue(new Callback<RacesResponse>() {
                     @Override
                     public void onResponse(Response<RacesResponse> response, Retrofit retrofit) {
@@ -190,49 +215,31 @@ public class SplashActivity extends AppCompatActivity {
                         Log.v(TAG, "Failed request on " + WDRacesService.class.getName());
                     }
                 });
-
-        ServiceGenerator.createService(WDCategoryService.class).getMultiTask()
+*/
+        ServiceGeneratorOAuth.createService(WDCategoryService.class).getMultiTask()
                 .enqueue(new Callback<CategoryResponse>() {
                     @Override
                     public void onResponse(Response<CategoryResponse> response, Retrofit retrofit) {
-                        List<Category> mCategoryList = response.body().getData();
                         appLoading.setText("Cargando Categorias");
-                        DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(DBAsyncTasks.TASK_SAVE_LIST, new Category(), getApplicationContext(), mCategoryList, new DBAsyncTasks.OnItemsSavedToDBListener() {
+                        List<Category> mCategoryList = response.body().getData();
+                        /*DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(DBAsyncTasks.TASK_SAVE_LIST, new Category(), getApplicationContext(), mCategoryList, new DBAsyncTasks.OnItemsSavedToDBListener() {
                             @Override
                             public void onItemsSaved(Boolean saved) {
                                 requestsFinished++;
                                 LaunchApp();
                             }
                         });
-                        task.execute();
+                        task.execute();*/
+                        requestsFinished++;
+                        LaunchApp();
                     }
 
                     @Override
                     public void onFailure(Throwable t) {
                         Log.v(TAG, "Failed request on " + WDCategoryService.class.getName());
+                        Log.v(TAG,t.getMessage());
                     }
                 });
-
-        //ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret).getAccessToken(AccessToken.grantType, AccessToken.cusername, AccessToken.cpassword, AccessToken.clientID, AccessToken.clientSecret)
-        ServiceGenerator.createService(WDOAuth.class).getAccessToken(AccessToken.grantType, AccessToken.cusername, AccessToken.cpassword, AccessToken.clientID, AccessToken.clientSecret)
-                .enqueue(new Callback<AccessToken>() {
-                    @Override
-                    public void onResponse(Response<AccessToken> response, Retrofit retrofit) {
-                        if (response != null) {
-                            String aToken = response.body().getAccessToken();
-                            Log.v(TAG, "Pillamos el token::");
-                        } else {
-                            Log.v(TAG, "Response is null");
-                        }
-
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        Log.v(TAG, "Failed request on " + AccessToken.class.getName());
-                    }
-                });
-
 
     }
 
@@ -250,50 +257,7 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    private void OAuth2Login() throws IOException {
 
-        final String USERNAME = "admin";
-        final String PASSWORD = "Keepcoding123";
-        final String CLIENT_ID = "uEAoxVEYOVmpg4Z8IAyCCEItlXO8Cf4G7RSu647d";
-        final String CLIENT_SECRET = "Zc0JGu5pVUt7zNxrhQaCvit6ydr4WxMVI4nXluF9GBWgJV0rbUcR5y2uBZl3TgmLYryashJREp9AiIkbfRUVv5Cdd3n6ZX4Va3fI2cmvMwcgWRFYnrp7K8ZtwkopXrhV";
-        final String URL_API = "http://api.walladog.com/o/token/";
-
-        String data = URLEncoder.encode("grant_type", "UTF-8") + "=" + URLEncoder.encode( "password", "UTF-8" );
-
-        data += "&" + URLEncoder.encode( "username", "UTF-8" ) + "=" + URLEncoder.encode( USERNAME, "UTF-8" );
-
-        data += "&" + URLEncoder.encode( "password", "UTF-8" ) + "=" + URLEncoder.encode( PASSWORD, "UTF-8" );
-
-        data += "&" + URLEncoder.encode( "client_id", "UTF-8" ) + "=" + URLEncoder.encode( CLIENT_ID, "UTF-8" );
-
-        data += "&" + URLEncoder.encode( "client_secret", "UTF-8" ) + "=" + URLEncoder.encode( CLIENT_SECRET, "UTF-8" );
-
-        URL server = new URL( URL_API );
-        HttpURLConnection connection = ( HttpURLConnection ) server.openConnection();
-        connection.setDoOutput( true );
-        OutputStreamWriter osw = new OutputStreamWriter( connection.getOutputStream() );
-        osw.write( data );
-        osw.flush();
-
-        int responseCode = connection.getResponseCode();
-
-        if(responseCode==200)
-        {
-
-            BufferedReader reader = new BufferedReader( new InputStreamReader( connection.getInputStream() ) );
-            StringBuffer response = new StringBuffer();
-            String line = "";
-            while( ( line = reader.readLine() ) != null )
-            {
-                response.append( line );
-            }
-            Log.v( "Login", response.toString() );
-        }
-        else
-        {
-            Log.v( "CatalogClient", "Response code:" + responseCode );
-        }
-    }
 
 
 

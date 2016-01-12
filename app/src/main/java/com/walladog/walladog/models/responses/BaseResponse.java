@@ -26,4 +26,6 @@ public class BaseResponse {
     public void setErrorCodes(ArrayList<ErrorCode> errorCodes) {
         this.errorCodes = errorCodes;
     }
+
+
 }

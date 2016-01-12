@@ -13,6 +13,7 @@ public class AccessToken {
     public static final String redirectUri = "";
     public static final String cusername = "admin";
     public static final String cpassword = "Keepcoding123";
+    public static final String OAUTH2_TOKEN = "OAuth2Token";
 
 
     private String access_token;
