@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -15,7 +16,10 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.LocationServices;
+import com.walladog.walladog.utils.Constants;
+import com.walladog.walladog.utils.WDUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -65,6 +69,8 @@ public class WalladogApp extends Application implements GoogleApiClient.OnConnec
                 mGoogleApiClient.connect();
             }
         }
+
+        createDirs();
 
     }
 
@@ -148,13 +154,43 @@ public class WalladogApp extends Application implements GoogleApiClient.OnConnec
     }
 
     private void saveLatLongCoords(String latitude,String longitude){
-        Log.v(TAG,"Curdate: "+String.valueOf(Calendar.getInstance().getTimeInMillis() / 1000));
+        //Log.v(TAG,"Curdate: "+String.valueOf(Calendar.getInstance().getTimeInMillis() / 1000));
         getSharedPreferences(WalladogApp.class.getSimpleName(), Context.MODE_PRIVATE)
                 .edit()
                 .putString("WDLat", latitude)
                 .putString("WDLong",longitude)
                 .putString("WDLatLongUpdate",String.valueOf(Calendar.getInstance().getTimeInMillis()/1000))
                 .commit();
+    }
+
+    private void createDirs(){
+        if(WDUtils.isExternalStorageAviable() && WDUtils.isExternalStorageWritable()){
+            File file = new File(Environment.getExternalStorageDirectory(), Constants.APP_EXTDATA_DIR);
+            if(!file.exists()){
+                if(!file.mkdirs()){
+                    Log.e(TAG,"Error al crear directorio APP en external storage");
+                }
+            }
+
+            file = new File(Environment.getExternalStorageDirectory(), Constants.APP_IMAGES);
+            if(!file.exists()){
+                if(!file.mkdirs()){
+                    Log.e(TAG,"Error al crear directorio IMAGES en external storage");
+                }
+            }
+
+            file = new File(Environment.getExternalStorageDirectory(), Constants.APP_IMAGES_REDUCED);
+            if(!file.exists()){
+                if(!file.mkdirs()){
+                    Log.e(TAG,"Error al crear directorio IMAGES REDUCED en external storage");
+                }else{
+                    Log.v(TAG,"Directorio creado con éxito");
+                }
+            }
+
+            file=null;
+
+        }
     }
 
     @Override

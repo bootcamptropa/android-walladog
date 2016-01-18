@@ -3,6 +3,7 @@ package com.walladog.walladog.controllers.activities;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -31,7 +32,9 @@ import com.walladog.walladog.models.responses.CategoryResponse;
 import com.walladog.walladog.models.responses.ProductsResponse;
 import com.walladog.walladog.models.responses.RacesResponse;
 import com.walladog.walladog.models.responses.ServicesResponse;
+import com.walladog.walladog.utils.Constants;
 import com.walladog.walladog.utils.DBAsyncTasks;
+import com.walladog.walladog.utils.WDUtils;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -82,7 +85,6 @@ public class SplashActivity extends AppCompatActivity {
         appLoading.setTextSize(15);
         appLoading.setTypeface(face);
 
-
         StartAnimations();
 
     }
@@ -100,8 +102,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 try {
-                    getOAuthToken();
-                    //getInitRestData();
+                    getOAuthTokenAndStartApp();
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -123,50 +124,57 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-    private void getOAuthToken() throws UnsupportedEncodingException {
-        ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret).getAccessToken(AccessToken.grantType, AccessToken.cusername, AccessToken.cpassword)
-                .enqueue(new Callback<AccessToken>() {
-                    @Override
-                    public void onResponse(Response<AccessToken> response, Retrofit retrofit) {
-                        if (response != null) {
-                            String aToken = response.body().getAccessToken();
-                            Log.v(TAG, "Pillamos el token::" + aToken);
-                            getSharedPreferences(WalladogApp.class.getSimpleName(),MODE_PRIVATE)
-                                    .edit()
-                                    .putString(AccessToken.OAUTH2_TOKEN,aToken)
-                                    .commit();
-                            try {
-                                getInitRestData();
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                getInitRestData();
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            Log.v(TAG, "Response is null");
-                        }
-                    }
+    private void getOAuthTokenAndStartApp() throws UnsupportedEncodingException {
+        String savedToken = getSharedPreferences(WalladogApp.class.getSimpleName(),MODE_PRIVATE)
+                .getString(AccessToken.OAUTH2_TOKEN,null);
 
-                    @Override
-                    public void onFailure(Throwable t) {
-                        Log.v(TAG, "Failed request on " + AccessToken.class.getName());
-                    }
-                });
+        if(savedToken==null) {
+            ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret).getAccessToken(AccessToken.grantType, AccessToken.cusername, AccessToken.cpassword)
+                    .enqueue(new Callback<AccessToken>() {
+                        @Override
+                        public void onResponse(Response<AccessToken> response, Retrofit retrofit) {
+                            if (response != null) {
+                                String aToken = response.body().getAccessToken();
+                                Log.v(TAG, "Obtenemos Token y lo salvamos::" + aToken);
+                                getSharedPreferences(WalladogApp.class.getSimpleName(), MODE_PRIVATE)
+                                        .edit()
+                                        .putString(AccessToken.OAUTH2_TOKEN, aToken)
+                                        .commit();
+                                try {
+                                    getInitRestData();
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Log.v(TAG, "Response is null");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                            Log.v(TAG, "Failed request on " + AccessToken.class.getName());
+                        }
+                    });
+        }else{
+            try {
+                getInitRestData();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void getInitRestData() throws UnsupportedEncodingException {
         appLoading.setText("Loading services...");
 
-        /*ServiceGeneratorOAuth
+        ServiceGenerator
                 .createService(WDServicesService.class).getMultiTask()
                 .enqueue(new Callback<ServicesResponse>() {
                     @Override
                     public void onResponse(Response<ServicesResponse> response, Retrofit retrofit) {
                         mWDServices = response.body().getData();
                         appLoading.setText("Servicios cargados");
+                        Log.v(TAG, "Servicios cargados");
                         requestsFinished++;
                         LaunchApp();
                     }
@@ -177,13 +185,14 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
-        ServiceGeneratorOAuth.createService(WDProductsService.class).getMultiTask()
+        ServiceGenerator.createService(WDProductsService.class).getMultiTask()
                 .enqueue(new Callback<ProductsResponse>() {
 
                     @Override
                     public void onResponse(Response<ProductsResponse> response, Retrofit retrofit) {
                         mProductList = response.body().getData();
                         appLoading.setText("Perros cargados");
+                        Log.v(TAG, "Productos cargados");
                         requestsFinished++;
                         LaunchApp();
                     }
@@ -194,7 +203,7 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
-        ServiceGeneratorOAuth.createService(WDRacesService.class).getMultiTask()
+        ServiceGenerator.createService(WDRacesService.class).getMultiTask()
                 .enqueue(new Callback<RacesResponse>() {
                     @Override
                     public void onResponse(Response<RacesResponse> response, Retrofit retrofit) {
@@ -203,6 +212,7 @@ public class SplashActivity extends AppCompatActivity {
                         DBAsyncTasks<Race> task = new DBAsyncTasks<Race>(DBAsyncTasks.TASK_SAVE_LIST, new Race(), getApplicationContext(), mRacesList, new DBAsyncTasks.OnItemsSavedToDBListener() {
                             @Override
                             public void onItemsSaved(Boolean saved) {
+                                Log.v(TAG,"Razas salvadas");
                                 requestsFinished++;
                                 LaunchApp();
                             }
@@ -215,31 +225,30 @@ public class SplashActivity extends AppCompatActivity {
                         Log.v(TAG, "Failed request on " + WDRacesService.class.getName());
                     }
                 });
-*/
+
         ServiceGeneratorOAuth.createService(WDCategoryService.class).getMultiTask()
-                .enqueue(new Callback<CategoryResponse>() {
+                .enqueue(new Callback<List<Category>>() {
                     @Override
-                    public void onResponse(Response<CategoryResponse> response, Retrofit retrofit) {
-                        appLoading.setText("Cargando Categorias");
-                        List<Category> mCategoryList = response.body().getData();
-                        /*DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(DBAsyncTasks.TASK_SAVE_LIST, new Category(), getApplicationContext(), mCategoryList, new DBAsyncTasks.OnItemsSavedToDBListener() {
+                    public void onResponse(Response<List<Category>> response, Retrofit retrofit) {
+                        List<Category> mCategoryList =response.body();
+                        appLoading.setText("Categorias recuperadas");
+                        DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(DBAsyncTasks.TASK_SAVE_LIST, new Category(), getApplicationContext(), mCategoryList, new DBAsyncTasks.OnItemsSavedToDBListener() {
                             @Override
                             public void onItemsSaved(Boolean saved) {
+                                Log.v(TAG,"Categorias salvadas");
                                 requestsFinished++;
                                 LaunchApp();
                             }
                         });
-                        task.execute();*/
-                        requestsFinished++;
-                        LaunchApp();
+                        task.execute();
                     }
 
                     @Override
                     public void onFailure(Throwable t) {
-                        Log.v(TAG, "Failed request on " + WDCategoryService.class.getName());
-                        Log.v(TAG,t.getMessage());
+
                     }
                 });
+
 
     }
 
@@ -256,10 +265,5 @@ public class SplashActivity extends AppCompatActivity {
             Log.v(TAG,"Error , some process working, app not launched...");
         }
     }
-
-
-
-
-
 
 }

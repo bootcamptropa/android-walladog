@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 import com.walladog.walladog.WalladogApp;
 import com.walladog.walladog.models.Detail;
 
@@ -49,8 +50,17 @@ public class ServiceGeneratorOAuth {
 
     public static <S> S createService(Class<S> serviceClass, final AccessToken token,String clientId,String clientSecret) throws UnsupportedEncodingException {
 
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+
+        httpClient.interceptors().clear();
+
+        //Log interceptor
+        //httpClient.interceptors().add(logging);
+
+
         if (token != null) {
-            httpClient.interceptors().clear();
             httpClient.interceptors().add(new Interceptor() {
                 @Override
                 public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
@@ -71,7 +81,6 @@ public class ServiceGeneratorOAuth {
                 String credentials = clientId + ":" + clientSecret;
                 final String basic = "Basic " + getBase64String(credentials);
 
-                httpClient.interceptors().clear();
                 httpClient.interceptors().add(new Interceptor() {
                     @Override
                     public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
@@ -93,13 +102,11 @@ public class ServiceGeneratorOAuth {
 
                 Log.v(TAG, "Token Actual:" + actualToken);
 
-                httpClient.interceptors().clear();
                 httpClient.interceptors().add(new Interceptor() {
                     @Override
                     public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
                         Request original = chain.request();
                         Request.Builder requestBuilder = original.newBuilder()
-                                .header("Accept", "text/html")
                                 .header("Authorization", "Bearer "+actualToken)
                                 .method(original.method(), original.body());
 

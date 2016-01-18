@@ -2,6 +2,7 @@ package com.walladog.walladog.utils;
 
 import android.app.Activity;
 import android.graphics.Typeface;
+import android.os.Environment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -81,6 +82,34 @@ public class WDUtils {
         {
             Log.v( "CatalogClient", "Response code:" + responseCode );
         }
+    }
+
+    public static boolean isExternalStorageAviable(){
+        boolean mExternalStorageAvailable;
+        String state = Environment.getExternalStorageState();
+
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            mExternalStorageAvailable = true;
+        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            mExternalStorageAvailable = true;
+        } else {
+            mExternalStorageAvailable = false;
+        }
+        return mExternalStorageAvailable;
+    }
+
+    public static boolean isExternalStorageWritable(){
+        boolean mExternalStorageWriteable = false;
+        String state = Environment.getExternalStorageState();
+
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            mExternalStorageWriteable = true;
+        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            mExternalStorageWriteable = false;
+        } else {
+            mExternalStorageWriteable = false;
+        }
+        return mExternalStorageWriteable;
     }
 
 }
