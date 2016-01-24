@@ -1,6 +1,8 @@
 package com.walladog.walladog.controllers.fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.walladog.walladog.R;
+import com.walladog.walladog.models.apiservices.AccessToken;
+import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

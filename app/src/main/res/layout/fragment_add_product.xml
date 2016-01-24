@@ -84,34 +84,48 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:orientation="horizontal"
+                android:background="@drawable/background_item_notification"
                 android:padding="10dp" >
 
                 <ImageView
                     android:id="@+id/product_image1"
+                    android:padding="2dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:src="@drawable/ic_menu_camera" />
                 <ImageView
                     android:id="@+id/product_image2"
+                    android:padding="2dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:src="@drawable/ic_menu_camera" />
                 <ImageView
                     android:id="@+id/product_image3"
+                    android:padding="2dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:src="@drawable/ic_menu_camera" />
                 <ImageView
                     android:id="@+id/product_image4"
+                    android:padding="2dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:src="@drawable/ic_menu_camera" />
                 <ImageView
                     android:id="@+id/product_image5"
+                    android:padding="2dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:src="@drawable/ic_menu_camera" />
 
             </LinearLayout>

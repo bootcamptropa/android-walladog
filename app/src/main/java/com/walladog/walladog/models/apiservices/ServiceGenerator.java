@@ -16,6 +16,7 @@ import retrofit.Retrofit;
 public class ServiceGenerator {
 
     public static final String API_BASE_URL = "http://api.develjitsu.com";
+    //public static final String API_BASE_URL = "http://api.walladog.com";
 
     public static Gson gson = new GsonBuilder()
             .registerTypeAdapter(Detail.class, new GenericDeserializer<>(Detail.class))

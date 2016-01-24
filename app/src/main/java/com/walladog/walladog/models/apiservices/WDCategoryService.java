@@ -3,9 +3,12 @@ package com.walladog.walladog.models.apiservices;
 import com.walladog.walladog.models.Category;
 import com.walladog.walladog.models.responses.CategoryResponse;
 
+import java.util.List;
+
 import retrofit.Call;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.PUT;
@@ -18,10 +21,10 @@ import retrofit.http.Path;
 
 public interface WDCategoryService {
 
-    String apiEndpoint = "/category";
+    String apiEndpoint = "/api/1.0/categories";
 
     @GET(apiEndpoint)
-    Call<CategoryResponse> getMultiTask();
+    Call<List<Category>> getMultiTask();
 
     @GET(apiEndpoint+"/{id}")
     Call<Category> getOneTask();
