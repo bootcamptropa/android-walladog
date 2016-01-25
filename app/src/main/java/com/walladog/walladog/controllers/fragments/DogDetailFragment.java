@@ -133,7 +133,7 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
 
     private void syncViewAndModel(){
         txtDogName.setText(mProduct.getName());
-        String isSterile = mProduct.getSterile()?"Yes":"No";
+        String isSterile = mProduct.isSterile()?"Yes":"No";
         txtDogSterile.setText(isSterile);
         txtDogLocation.setText("Barcelona");
         txtDogRace.setText(mProduct.getGender());

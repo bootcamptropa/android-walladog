@@ -21,6 +21,7 @@ import com.walladog.walladog.controllers.fragments.SigninFragment;
 import com.walladog.walladog.controllers.fragments.UserProfileFragment;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.WDServices;
+import com.walladog.walladog.models.responses.ProductResponse;
 
 import java.io.Serializable;
 import java.util.List;
@@ -36,7 +37,7 @@ public class MainActivity extends DrawerBaseActivity
     public static final String EXTRA_WDPRODUCTS = "EXTRA_WDPRODUCTS";
 
     private static List<WDServices> mServices = null;
-    private static List<Product> mProducts = null;
+    private static ProductResponse mProducts = null;
 
     private GoogleApiClient mGoogleApiClient = null;
 
@@ -45,7 +46,7 @@ public class MainActivity extends DrawerBaseActivity
         super.onCreate(savedInstanceState);
 
         mServices = (List<WDServices>) getIntent().getSerializableExtra(this.EXTRA_WDSERVICES);
-        mProducts = (List<Product>) getIntent().getSerializableExtra(this.EXTRA_WDPRODUCTS);
+        mProducts = (ProductResponse) getIntent().getSerializableExtra(this.EXTRA_WDPRODUCTS);
 
         Fragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
@@ -164,7 +165,7 @@ public class MainActivity extends DrawerBaseActivity
     @Override
     public void onListItemSelected(int position) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.drawer_layout_main_activity_frame, DogDetailFragment.newInstance(mProducts.get(position)),DogDetailFragment.class.getName())
+                .replace(R.id.drawer_layout_main_activity_frame, DogDetailFragment.newInstance(mProducts.getResults().get(position)),DogDetailFragment.class.getName())
                 .addToBackStack(DogDetailFragment.class.getName())
                 .commit();
         Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();

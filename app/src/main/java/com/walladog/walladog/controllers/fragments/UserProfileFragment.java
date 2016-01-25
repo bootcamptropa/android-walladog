@@ -12,6 +12,7 @@ import android.widget.Button;
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.ProfilePagerAdapter;
 import com.walladog.walladog.models.Product;
+import com.walladog.walladog.models.responses.ProductResponse;
 
 import java.io.Serializable;
 import java.util.List;
@@ -33,6 +34,15 @@ public class UserProfileFragment extends Fragment implements ViewPager.OnPageCha
     }
 
     public static UserProfileFragment newInstance(List<Product> productlist, String param2) {
+        UserProfileFragment fragment = new UserProfileFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_SELLINGPRODUCTS, (Serializable) productlist);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static UserProfileFragment newInstance(ProductResponse productlist, String param2) {
         UserProfileFragment fragment = new UserProfileFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_SELLINGPRODUCTS, (Serializable) productlist);

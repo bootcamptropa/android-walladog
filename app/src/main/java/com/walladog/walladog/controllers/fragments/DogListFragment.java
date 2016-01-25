@@ -16,12 +16,13 @@ import com.rockerhieu.rvadapter.endless.EndlessRecyclerViewAdapter;
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.DogListAdapter;
 import com.walladog.walladog.models.Product;
-import com.walladog.walladog.models.ServiceGenerator;
-import com.walladog.walladog.models.apiservices.WDProductsService;
-import com.walladog.walladog.models.responses.ProductsResponse;
+import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
+import com.walladog.walladog.models.apiservices.WDProductService;
+import com.walladog.walladog.models.responses.ProductResponse;
 import com.walladog.walladog.utils.SpacesItemDecoration;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import retrofit.Callback;
@@ -40,6 +41,7 @@ public class DogListFragment extends Fragment
     private FloatingActionButton mFab = null;
 
     private List<Product> mProducts =null;
+    private ProductResponse mProductResponse =null;
 
     private OnListItemSelectedListener mListItemListener;
     private DogListAdapter mAdapter = null;
@@ -49,6 +51,9 @@ public class DogListFragment extends Fragment
     private boolean loading = true;
     int grid_column_count = 2;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private int mOffset = 0;
+    private int mLimit = 10;
+    private Boolean mIsLastPage = false;
     StaggeredGridLayoutManager mLayoutManager;
 
     public DogListFragment() {
@@ -63,11 +68,20 @@ public class DogListFragment extends Fragment
         return fragment;
     }
 
+    public static DogListFragment newInstance(ProductResponse products) {
+        DogListFragment fragment = new DogListFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_WDPRODUCTS, (Serializable) products);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mProducts = (List<Product>) getArguments().getSerializable(ARG_WDPRODUCTS);
+            //mProducts = (List<Product>) getArguments().getSerializable(ARG_WDPRODUCTS);
+            mProductResponse = (ProductResponse) getArguments().getSerializable(ARG_WDPRODUCTS);
         }
 
     }
@@ -83,6 +97,10 @@ public class DogListFragment extends Fragment
         mSearchView.setOnQueryTextListener(this);
         mSearchView.setQueryHint("Que buscas?");
 
+        if(mProductResponse.getNext()!=null){
+            this.mOffset=this.mOffset+this.mLimit;
+        }
+
         mSearchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +110,8 @@ public class DogListFragment extends Fragment
 
         mRecyclerView = (RecyclerView) root.findViewById(R.id.masonry_grid);
 
-        mAdapter = new DogListAdapter(getActivity().getApplicationContext(),this,mProducts);
+        //mAdapter = new DogListAdapter(getActivity().getApplicationContext(),this,mProducts);
+        mAdapter = new DogListAdapter(getActivity().getApplicationContext(),this,mProductResponse.getResults());
         endlessRecyclerViewAdapter = new EndlessRecyclerViewAdapter(getContext(),mAdapter,this); //Adapter endless
 
         mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
@@ -144,20 +163,55 @@ public class DogListFragment extends Fragment
 
     @Override
     public void onLoadMoreRequested() {
+        if(mIsLastPage==false){
+            try {
+                ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(mOffset,mLimit)
+                        .enqueue(new Callback<ProductResponse>() {
+                            @Override
+                            public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
+                                if(response.body().getNext()==null){
+                                    mIsLastPage=true;
+                                }
+                                mAdapter.appendItems(response.body().getResults());
+                                endlessRecyclerViewAdapter.onDataReady(true);
+                                mOffset=mOffset+mLimit;
+                            }
 
-        ServiceGenerator.createService(WDProductsService.class).getMultiTask().enqueue(new Callback<ProductsResponse>() {
-            @Override
-            public void onResponse(Response<ProductsResponse> response, Retrofit retrofit) {
-                mAdapter.appendItems(response.body().getData());
-                endlessRecyclerViewAdapter.onDataReady(true);
+                            @Override
+                            public void onFailure(Throwable t) {
+                                Log.v(TAG,"Fallo en la conexion a la api");
+                                endlessRecyclerViewAdapter.onDataReady(false);
+                            }
+                        });
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
+        }else{
+            mOffset=0;
+            mIsLastPage=true;
+            try {
+                ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(mOffset,mLimit)
+                        .enqueue(new Callback<ProductResponse>() {
+                            @Override
+                            public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
+                                if(response.body().getNext()==null){
+                                    mIsLastPage=true;
+                                }
+                                mAdapter.appendItems(response.body().getResults());
+                                endlessRecyclerViewAdapter.onDataReady(true);
+                                mOffset=mOffset+mLimit;
+                            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                Log.v(TAG,"Fallo en la conexion a la api");
-                endlessRecyclerViewAdapter.onDataReady(false);
+                            @Override
+                            public void onFailure(Throwable t) {
+                                Log.v(TAG,"Fallo en la conexion a la api");
+                                endlessRecyclerViewAdapter.onDataReady(false);
+                            }
+                        });
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
-        });
+        }
 
     }
 

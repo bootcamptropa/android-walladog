@@ -25,10 +25,12 @@ import com.walladog.walladog.models.apiservices.AccessToken;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 import com.walladog.walladog.models.apiservices.WDCategoryService;
 import com.walladog.walladog.models.apiservices.WDOAuth;
+import com.walladog.walladog.models.apiservices.WDProductService;
 import com.walladog.walladog.models.apiservices.WDProductsService;
 import com.walladog.walladog.models.apiservices.WDRacesService;
 import com.walladog.walladog.models.apiservices.WDServicesService;
 import com.walladog.walladog.models.responses.CategoryResponse;
+import com.walladog.walladog.models.responses.ProductResponse;
 import com.walladog.walladog.models.responses.ProductsResponse;
 import com.walladog.walladog.models.responses.RacesResponse;
 import com.walladog.walladog.models.responses.ServicesResponse;
@@ -58,7 +60,7 @@ public class SplashActivity extends AppCompatActivity {
     private int requestsFinished=0;
 
     private List<WDServices> mWDServices = null;
-    private List<Product> mProductList = null;
+    private ProductResponse mProductList = null;
 
 
     @Override
@@ -185,7 +187,7 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
-        ServiceGenerator.createService(WDProductsService.class).getMultiTask()
+        /*ServiceGenerator.createService(WDProductsService.class).getMultiTask()
                 .enqueue(new Callback<ProductsResponse>() {
 
                     @Override
@@ -201,7 +203,7 @@ public class SplashActivity extends AppCompatActivity {
                     public void onFailure(Throwable t) {
                         Log.v(TAG, "Failed request on " + WDProductsService.class.getName());
                     }
-                });
+                });*/
 
         ServiceGenerator.createService(WDRacesService.class).getMultiTask()
                 .enqueue(new Callback<RacesResponse>() {
@@ -212,7 +214,7 @@ public class SplashActivity extends AppCompatActivity {
                         DBAsyncTasks<Race> task = new DBAsyncTasks<Race>(DBAsyncTasks.TASK_SAVE_LIST, new Race(), getApplicationContext(), mRacesList, new DBAsyncTasks.OnItemsSavedToDBListener() {
                             @Override
                             public void onItemsSaved(Boolean saved) {
-                                Log.v(TAG,"Razas salvadas");
+                                Log.v(TAG, "Razas salvadas");
                                 requestsFinished++;
                                 LaunchApp();
                             }
@@ -226,16 +228,32 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
+        ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(0,10)
+                .enqueue(new Callback<ProductResponse>() {
+                    @Override
+                    public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
+                        mProductList = response.body();
+                        //Log.v(TAG,"Response contains "+String.valueOf(r.getCount()));
+                        requestsFinished++;
+                        LaunchApp();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+
+                    }
+                });
+
         ServiceGeneratorOAuth.createService(WDCategoryService.class).getMultiTask()
                 .enqueue(new Callback<List<Category>>() {
                     @Override
                     public void onResponse(Response<List<Category>> response, Retrofit retrofit) {
-                        List<Category> mCategoryList =response.body();
+                        List<Category> mCategoryList = response.body();
                         appLoading.setText("Categorias recuperadas");
                         DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(DBAsyncTasks.TASK_SAVE_LIST, new Category(), getApplicationContext(), mCategoryList, new DBAsyncTasks.OnItemsSavedToDBListener() {
                             @Override
                             public void onItemsSaved(Boolean saved) {
-                                Log.v(TAG,"Categorias salvadas");
+                                Log.v(TAG, "Categorias salvadas");
                                 requestsFinished++;
                                 LaunchApp();
                             }
@@ -262,7 +280,7 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(i);
 
         }else{
-            Log.v(TAG,"Error , some process working, app not launched...");
+            Log.v(TAG,"Waiting for launch to end process...");
         }
     }
 

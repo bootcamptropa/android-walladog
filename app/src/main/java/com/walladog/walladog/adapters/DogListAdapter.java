@@ -31,6 +31,10 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
 
     private Context context;
 
+    public List<Product> getProductList() {
+        return productList;
+    }
+
     List<Product> productList = null;
 
 
@@ -71,13 +75,14 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
         String url = "http://loremflickr.com/300/"+String.valueOf(height)+"/dog";
 
         Picasso.with(context)
-                .load(url)
-                .placeholder(R.drawable.progress_animation)
+                //.load(productList.get(position).getImages().get(0).getPhoto_thumbnail_url())
+                .load(R.drawable.walladogsmall)
+                .placeholder(R.drawable.walladogsmall)
                 .transform(transformation)
                 .into(holder.imageView);
 
         holder.dogName.setText(productList.get(position).getName());
-        holder.dogLocation.setText("Barcelona");
+        holder.dogLocation.setText(productList.get(position).getRace());
         holder.dogRace.setText(productList.get(position).getGender());
     }
 
@@ -108,8 +113,10 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
 
     //For pagination:
     public void appendItems(List<Product> products) {
-        int count = getItemCount();
-        productList.addAll(products);
-        notifyItemRangeInserted(count, products.size());
+        if(products!=null){
+            int count = getItemCount();
+            productList.addAll(products);
+            notifyItemRangeInserted(count, products.size());
+        }
     }
 }

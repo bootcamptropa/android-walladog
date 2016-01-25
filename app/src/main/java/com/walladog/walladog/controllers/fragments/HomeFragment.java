@@ -12,6 +12,7 @@ import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.ServicesPagerAdapter;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.WDServices;
+import com.walladog.walladog.models.responses.ProductResponse;
 
 import java.io.Serializable;
 import java.util.List;
@@ -32,6 +33,15 @@ public class HomeFragment extends Fragment {
     private ViewPager pager = null;
 
     public static HomeFragment newInstance(List<WDServices> services, List<Product> products) {
+        HomeFragment fragment = new HomeFragment();
+        Bundle arguments = new Bundle();
+        arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) services);
+        arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
+        fragment.setArguments(arguments);
+        return fragment;
+    }
+
+    public static HomeFragment newInstance(List<WDServices> services, ProductResponse products) {
         HomeFragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
         arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) services);
