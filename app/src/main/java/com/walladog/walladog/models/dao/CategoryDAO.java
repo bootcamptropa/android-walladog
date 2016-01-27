@@ -128,9 +128,7 @@ public class CategoryDAO implements DAOPersistable<Category> {
     public Cursor queryCursor() {
         //Select de toda la vida
         DatabaseHelper db = DatabaseHelper.getInstance(context.get());
-
         Cursor c = db.getReadableDatabase().query(TABLE_CATEGORIES, allColumns, null, null, null, null, null);
-
         return c;
     }
 

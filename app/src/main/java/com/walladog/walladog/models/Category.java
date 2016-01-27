@@ -1,8 +1,9 @@
 package com.walladog.walladog.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Category {
+public class Category implements Serializable {
 
     private double id;
     private String name;

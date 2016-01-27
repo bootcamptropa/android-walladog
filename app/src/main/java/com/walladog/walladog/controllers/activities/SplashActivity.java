@@ -36,6 +36,7 @@ import com.walladog.walladog.models.responses.RacesResponse;
 import com.walladog.walladog.models.responses.ServicesResponse;
 import com.walladog.walladog.utils.Constants;
 import com.walladog.walladog.utils.DBAsyncTasks;
+import com.walladog.walladog.utils.DBAsyncTasksGet;
 import com.walladog.walladog.utils.WDUtils;
 
 import java.io.Serializable;
@@ -61,6 +62,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private List<WDServices> mWDServices = null;
     private ProductResponse mProductList = null;
+    private List<Category> mListaCategorias = null;
 
 
     @Override
@@ -187,24 +189,6 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
-        /*ServiceGenerator.createService(WDProductsService.class).getMultiTask()
-                .enqueue(new Callback<ProductsResponse>() {
-
-                    @Override
-                    public void onResponse(Response<ProductsResponse> response, Retrofit retrofit) {
-                        mProductList = response.body().getData();
-                        appLoading.setText("Perros cargados");
-                        Log.v(TAG, "Productos cargados");
-                        requestsFinished++;
-                        LaunchApp();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        Log.v(TAG, "Failed request on " + WDProductsService.class.getName());
-                    }
-                });*/
-
         ServiceGenerator.createService(WDRacesService.class).getMultiTask()
                 .enqueue(new Callback<RacesResponse>() {
                     @Override
@@ -228,7 +212,7 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
-        ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(0,10)
+        ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(0, 10)
                 .enqueue(new Callback<ProductResponse>() {
                     @Override
                     public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
@@ -248,7 +232,7 @@ public class SplashActivity extends AppCompatActivity {
                 .enqueue(new Callback<List<Category>>() {
                     @Override
                     public void onResponse(Response<List<Category>> response, Retrofit retrofit) {
-                        List<Category> mCategoryList = response.body();
+                        final List<Category> mCategoryList = response.body();
                         appLoading.setText("Categorias recuperadas");
                         DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(DBAsyncTasks.TASK_SAVE_LIST, new Category(), getApplicationContext(), mCategoryList, new DBAsyncTasks.OnItemsSavedToDBListener() {
                             @Override
@@ -256,6 +240,19 @@ public class SplashActivity extends AppCompatActivity {
                                 Log.v(TAG, "Categorias salvadas");
                                 requestsFinished++;
                                 LaunchApp();
+                                DBAsyncTasksGet<Category> task2 = new DBAsyncTasksGet<Category>(DBAsyncTasksGet.TASK_GET_LIST,
+                                        new Category(), getApplicationContext(),
+                                        new DBAsyncTasksGet.OnItemsRecoveredFromDBListener<Category>() {
+                                            @Override
+                                            public void onItemsRecovered(List<Category> items) {
+                                                Log.v(TAG, "Recovered item!!!");
+                                                Log.v(TAG, items.get(0).getName());
+                                                mListaCategorias = items;
+                                                requestsFinished++;
+                                                LaunchApp();
+                                            }
+                                        });
+                                task2.execute();
                             }
                         });
                         task.execute();
@@ -266,16 +263,15 @@ public class SplashActivity extends AppCompatActivity {
 
                     }
                 });
-
-
     }
 
     private void LaunchApp(){
         Log.v(TAG, "Lanzado " + String.valueOf(requestsFinished));
-        if(mProductList!=null && mWDServices!=null && requestsFinished==4){
+        if(mProductList!=null && mWDServices!=null && requestsFinished==5){
             Intent i = new Intent(this, MainActivity.class);
             i.putExtra(MainActivity.EXTRA_WDSERVICES, (Serializable) mWDServices);
             i.putExtra(MainActivity.EXTRA_WDPRODUCTS, (Serializable) mProductList);
+            i.putExtra(MainActivity.EXTRA_CATEGORIAS, (Serializable) mListaCategorias);
             Log.v(TAG,"Launching APP all tasks successfull resolved");
             startActivity(i);
 

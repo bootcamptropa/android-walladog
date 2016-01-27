@@ -17,14 +17,23 @@ import com.walladog.walladog.controllers.fragments.HomeFragment;
 import com.walladog.walladog.controllers.fragments.LoginFragment;
 import com.walladog.walladog.controllers.fragments.MapsLocator;
 import com.walladog.walladog.controllers.fragments.NotificationsFragment;
+import com.walladog.walladog.controllers.fragments.ServiceFragment;
 import com.walladog.walladog.controllers.fragments.SigninFragment;
 import com.walladog.walladog.controllers.fragments.UserProfileFragment;
+import com.walladog.walladog.models.Category;
 import com.walladog.walladog.models.Product;
+import com.walladog.walladog.models.WDNotification;
 import com.walladog.walladog.models.WDServices;
+import com.walladog.walladog.models.dao.NotificationDAO;
 import com.walladog.walladog.models.responses.ProductResponse;
+import com.walladog.walladog.utils.NotificationDataEvent;
+import com.walladog.walladog.utils.WDEventNotification;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
+
+import de.greenrobot.event.EventBus;
 
 public class MainActivity extends DrawerBaseActivity
         implements LoginFragment.OnLoginClickListener,
@@ -35,9 +44,11 @@ public class MainActivity extends DrawerBaseActivity
 
     public static final String EXTRA_WDSERVICES = "EXTRA_WDSERVICES";
     public static final String EXTRA_WDPRODUCTS = "EXTRA_WDPRODUCTS";
+    public static final String EXTRA_CATEGORIAS = "EXTRA_CATEGORIAS";
 
-    private static List<WDServices> mServices = null;
-    private static ProductResponse mProducts = null;
+    private List<WDServices> mServices = null;
+    private ProductResponse mProducts = null;
+    private List<Category> mCategoryList = null;
 
     private GoogleApiClient mGoogleApiClient = null;
 
@@ -45,12 +56,14 @@ public class MainActivity extends DrawerBaseActivity
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mServices = (List<WDServices>) getIntent().getSerializableExtra(this.EXTRA_WDSERVICES);
-        mProducts = (ProductResponse) getIntent().getSerializableExtra(this.EXTRA_WDPRODUCTS);
+        mServices = (List<WDServices>) getIntent().getSerializableExtra(EXTRA_WDSERVICES);
+        mProducts = (ProductResponse) getIntent().getSerializableExtra(EXTRA_WDPRODUCTS);
+        mCategoryList = (List<Category>) getIntent().getSerializableExtra(EXTRA_CATEGORIAS);
 
         Fragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
         arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) mServices);
+        arguments.putSerializable(HomeFragment.ARG_CATEGORIAS, (Serializable) mCategoryList);
         fragment.setArguments(arguments);
 
         if (savedInstanceState == null) {
@@ -170,4 +183,26 @@ public class MainActivity extends DrawerBaseActivity
                 .commit();
         Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    // This method will be called when a NotificationDataEvent is posted
+    public void onEvent(WDEventNotification dataItem){
+        Log.v(TAG, "Recived event to update Notifications");
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts),DogListFragment.class.getName())
+                .addToBackStack(DogListFragment.class.getName())
+                .commit();
+    }
+
 }

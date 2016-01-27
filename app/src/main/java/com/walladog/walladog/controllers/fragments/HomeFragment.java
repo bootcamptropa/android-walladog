@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.ServicesPagerAdapter;
+import com.walladog.walladog.models.Category;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.WDServices;
 import com.walladog.walladog.models.responses.ProductResponse;
@@ -27,16 +28,18 @@ public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getName();
 
     public static final String ARG_WDSERVICES = "ARG_WDSERVICES";
+    public static final String ARG_CATEGORIAS = "ARG_CATEGORIAS";
     public static final String ARG_WDPRODUCTS = "ARG_WDPRODUCTS";
 
     private List<WDServices> services = null;
     private ViewPager pager = null;
 
-    public static HomeFragment newInstance(List<WDServices> services, List<Product> products) {
+    public static HomeFragment newInstance(List<WDServices> services, List<Product> products,List<Category> categorias) {
         HomeFragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
         arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) services);
         arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
+        arguments.putSerializable(HomeFragment.ARG_CATEGORIAS, (Serializable) categorias);
         fragment.setArguments(arguments);
         return fragment;
     }
@@ -66,7 +69,9 @@ public class HomeFragment extends Fragment {
 
         if (getArguments() != null) {
             List<WDServices> services = (List<WDServices>) getArguments().getSerializable(this.ARG_WDSERVICES);
-            pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), services));
+            List<Category> categorias = (List<Category>) getArguments().getSerializable(ARG_CATEGORIAS);
+            //pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), services));
+            pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), categorias));
         }
 
         return root;

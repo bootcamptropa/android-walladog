@@ -35,12 +35,23 @@ public class DogListFragment extends Fragment
     private static final String TAG = DogListFragment.class.getName();
 
     private static final String ARG_WDPRODUCTS = "ARG_WDPRODUCTS";
+    private static final String ARG_RACE = "ARG_RACE";
+    private static final String ARG_CATEGORY = "ARG_CATEGORY";
+    private static final String ARG_LATITUDE = "ARG_LATITUDES";
+    private static final String ARG_LONGITUDE = "ARG_LONGITUDE";
+    private static final String ARG_DISTANCE = "ARG_DISTANCE";
 
     RecyclerView mRecyclerView;
     private SearchView mSearchView = null;
     private FloatingActionButton mFab = null;
 
     private List<Product> mProducts =null;
+    private int mDistance;
+    private int mCategory;
+    private int mRace;
+    private double mLatitude;
+    private double mLogitude;
+
     private ProductResponse mProductResponse =null;
 
     private OnListItemSelectedListener mListItemListener;
@@ -69,6 +80,22 @@ public class DogListFragment extends Fragment
     }
 
     public static DogListFragment newInstance(ProductResponse products) {
+        DogListFragment fragment = new DogListFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_WDPRODUCTS, (Serializable) products);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static DogListFragment newInstance(ProductResponse products,int category,int race) {
+        DogListFragment fragment = new DogListFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_WDPRODUCTS, (Serializable) products);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static DogListFragment newInstance(ProductResponse products,int category,int race, double latitude,double logitude,int distance) {
         DogListFragment fragment = new DogListFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_WDPRODUCTS, (Serializable) products);
