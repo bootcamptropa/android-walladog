@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.walladog.walladog.models.Category;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.WDServices;
 import com.walladog.walladog.models.responses.ProductResponse;
+import com.walladog.walladog.utils.DBAsyncTasksGet;
 
 import java.io.Serializable;
 import java.util.List;
@@ -37,7 +39,17 @@ public class HomeFragment extends Fragment {
     public static HomeFragment newInstance(List<WDServices> services, List<Product> products,List<Category> categorias) {
         HomeFragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
-        arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) services);
+        //arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) services);
+        arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
+        arguments.putSerializable(HomeFragment.ARG_CATEGORIAS, (Serializable) categorias);
+        fragment.setArguments(arguments);
+        return fragment;
+    }
+
+    public static HomeFragment newInstance(List<Product> products,List<Category> categorias) {
+        HomeFragment fragment = new HomeFragment();
+        Bundle arguments = new Bundle();
+        //arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) services);
         arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
         arguments.putSerializable(HomeFragment.ARG_CATEGORIAS, (Serializable) categorias);
         fragment.setArguments(arguments);
@@ -71,7 +83,21 @@ public class HomeFragment extends Fragment {
             List<WDServices> services = (List<WDServices>) getArguments().getSerializable(this.ARG_WDSERVICES);
             List<Category> categorias = (List<Category>) getArguments().getSerializable(ARG_CATEGORIAS);
             //pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), services));
-            pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), categorias));
+            if(categorias==null){
+                DBAsyncTasksGet<Category> task2 = new DBAsyncTasksGet<Category>(DBAsyncTasksGet.TASK_GET_LIST,
+                        new Category(), getContext(),
+                        new DBAsyncTasksGet.OnItemsRecoveredFromDBListener<Category>() {
+                            @Override
+                            public void onItemsRecovered(List<Category> items) {
+                                Log.v(TAG, "Recovered item!!!");
+                                pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), items));
+                            }
+                        });
+                task2.execute();
+            }else{
+                pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), categorias));
+            }
+
         }
 
         return root;

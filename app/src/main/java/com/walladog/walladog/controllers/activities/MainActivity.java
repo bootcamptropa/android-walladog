@@ -2,14 +2,21 @@ package com.walladog.walladog.controllers.activities;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.squareup.picasso.Picasso;
 import com.walladog.walladog.R;
+import com.walladog.walladog.WalladogApp;
 import com.walladog.walladog.controllers.fragments.AddProductFragment;
 import com.walladog.walladog.controllers.fragments.DogDetailFragment;
 import com.walladog.walladog.controllers.fragments.DogListFragment;
@@ -17,23 +24,26 @@ import com.walladog.walladog.controllers.fragments.HomeFragment;
 import com.walladog.walladog.controllers.fragments.LoginFragment;
 import com.walladog.walladog.controllers.fragments.MapsLocator;
 import com.walladog.walladog.controllers.fragments.NotificationsFragment;
-import com.walladog.walladog.controllers.fragments.ServiceFragment;
 import com.walladog.walladog.controllers.fragments.SigninFragment;
 import com.walladog.walladog.controllers.fragments.UserProfileFragment;
 import com.walladog.walladog.models.Category;
-import com.walladog.walladog.models.Product;
-import com.walladog.walladog.models.WDNotification;
+import com.walladog.walladog.models.UserData;
 import com.walladog.walladog.models.WDServices;
-import com.walladog.walladog.models.dao.NotificationDAO;
+import com.walladog.walladog.models.apiservices.AccessToken;
+import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
+import com.walladog.walladog.models.apiservices.WDOAuth;
+import com.walladog.walladog.models.apiservices.WDUserDataService;
 import com.walladog.walladog.models.responses.ProductResponse;
-import com.walladog.walladog.utils.NotificationDataEvent;
 import com.walladog.walladog.utils.WDEventNotification;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Objects;
 
 import de.greenrobot.event.EventBus;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class MainActivity extends DrawerBaseActivity
         implements LoginFragment.OnLoginClickListener,
@@ -46,6 +56,7 @@ public class MainActivity extends DrawerBaseActivity
     public static final String EXTRA_WDPRODUCTS = "EXTRA_WDPRODUCTS";
     public static final String EXTRA_CATEGORIAS = "EXTRA_CATEGORIAS";
 
+    private FrameLayout mFLayout=null;
     private List<WDServices> mServices = null;
     private ProductResponse mProducts = null;
     private List<Category> mCategoryList = null;
@@ -59,6 +70,10 @@ public class MainActivity extends DrawerBaseActivity
         mServices = (List<WDServices>) getIntent().getSerializableExtra(EXTRA_WDSERVICES);
         mProducts = (ProductResponse) getIntent().getSerializableExtra(EXTRA_WDPRODUCTS);
         mCategoryList = (List<Category>) getIntent().getSerializableExtra(EXTRA_CATEGORIAS);
+
+
+        //Layout
+        mFLayout = (FrameLayout) findViewById(R.id.drawer_layout_main_activity_frame);
 
         Fragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
@@ -133,6 +148,10 @@ public class MainActivity extends DrawerBaseActivity
                         .commit();
                 Toast.makeText(getApplicationContext(), "Go to Signin", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.nav_logout:
+
+                Toast.makeText(getApplicationContext(), "Go to Signin", Toast.LENGTH_SHORT).show();
+                break;
             default:
                 Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
         }
@@ -166,8 +185,62 @@ public class MainActivity extends DrawerBaseActivity
 
 
     @Override
-    public void onLoginSubmit(String username, String password, View currentView) {
-        Log.v(TAG, "Click listener");
+    public void onLoginSubmit(String username, String password, View currentView) throws UnsupportedEncodingException {
+        ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret)
+                .getAccessToken(AccessToken.grantType, username, password)
+                .enqueue(new Callback<AccessToken>() {
+                    @Override
+                    public void onResponse(Response<AccessToken> response, Retrofit retrofit) {
+                        if (response != null && response.code()==200) {
+                            String aToken = response.body().getAccessToken();
+
+                            Log.v(TAG, "Obtenemos Token y lo salvamos::" + aToken);
+                            getSharedPreferences(WalladogApp.class.getSimpleName(), MODE_PRIVATE)
+                                    .edit()
+                                    .putString(AccessToken.OAUTH2_TOKEN, aToken)
+                                    .commit();
+                            Snackbar snackbar = Snackbar
+                                    .make(mFLayout, "Login Success", Snackbar.LENGTH_LONG);
+
+                            try {
+                                ServiceGeneratorOAuth.createService(WDUserDataService.class).getUserData().enqueue(new Callback<UserData>() {
+                                    @Override
+                                    public void onResponse(Response<UserData> response, Retrofit retrofit) {
+                                        if(response!=null & response.code()==200){
+                                            UserData ud = response.body();
+                                            getSharedPreferences(WalladogApp.class.getSimpleName(), MODE_PRIVATE)
+                                                    .edit()
+                                                    .putString(AccessToken.UDATA_USERNAME, ud.getUsername())
+                                                    .putString(AccessToken.UDATA_AVATAR, ud.getAvatar_thumbnail_url())
+                                                    .commit();
+
+                                            setMenuForLogged(ud);
+                                        }
+
+                                    }
+                                    @Override
+                                    public void onFailure(Throwable t) {
+                                        Log.v(TAG,"API request failed on Logins request");
+                                        setMenuForNotLogged();
+                                    }
+                                });
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        } else {
+                            Snackbar.make(mFLayout, "Error al autenticar", Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Log.v(TAG, "Failed request on " + AccessToken.class.getName());
+                        Snackbar.make(mFLayout, "Error al autenticar", Snackbar.LENGTH_LONG).show();
+
+                    }
+                });
     }
 
     @Override
@@ -204,5 +277,40 @@ public class MainActivity extends DrawerBaseActivity
                 .addToBackStack(DogListFragment.class.getName())
                 .commit();
     }
+
+    private void setMenuForLogged(UserData ud){
+        View headerView = navigationView.getHeaderView(0);
+        TextView username = (TextView) headerView.findViewById(R.id.txtUsername);
+        TextView description = (TextView) headerView.findViewById(R.id.txtUsernameDesc);
+        ImageView avatar = (ImageView) headerView.findViewById(R.id.avatarImage);
+        username.setText(ud.getFirst_name()+','+ud.getLast_name());
+        description.setText("Conectado");
+        Picasso.with(getApplicationContext())
+                //.load(ud.getAvatar_thumbnail_url())
+                .load("https://lh3.googleusercontent.com/CyrAYZKXSU4MfjB1tk94gK_daNfahS7pGHEuDBXMoL6S9MdBKDFuiL_jWXZ0IBtwrg=w300")
+                .into(avatar);
+
+        Menu drwMenu = navigationView.getMenu().getItem(6).getSubMenu();
+        drwMenu.getItem(0).setVisible(false);
+        drwMenu.getItem(1).setVisible(false);
+    }
+
+    private void setMenuForNotLogged(){
+        View headerView = navigationView.getHeaderView(0);
+        TextView username = (TextView) headerView.findViewById(R.id.txtUsername);
+        TextView description = (TextView) headerView.findViewById(R.id.txtUsernameDesc);
+        ImageView avatar = (ImageView) headerView.findViewById(R.id.avatarImage);
+        username.setText("Usuario anónimo");
+        description.setText("No conectado");
+        Picasso.with(getApplicationContext())
+                .load(R.drawable.walladogsmall)
+                .into(avatar);
+
+        Menu drwMenu = navigationView.getMenu().getItem(6).getSubMenu();
+        drwMenu.getItem(2).setVisible(false);
+        drwMenu.getItem(3).setVisible(false);
+    }
+
+
 
 }

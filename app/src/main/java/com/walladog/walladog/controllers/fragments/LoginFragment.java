@@ -17,6 +17,8 @@ import com.walladog.walladog.R;
 import com.walladog.walladog.models.apiservices.AccessToken;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 
+import java.io.UnsupportedEncodingException;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -61,9 +63,12 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mOnLoginClickListener != null) {
-                    mOnLoginClickListener.onLoginSubmit(userEmail.getText().toString(), userPassword.getText().toString(),root);
+                    try {
+                        mOnLoginClickListener.onLoginSubmit(userEmail.getText().toString(), userPassword.getText().toString(),root);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                 }
-                Log.v("RAMON", "click");
             }
         });
 
@@ -71,7 +76,7 @@ public class LoginFragment extends Fragment {
     }
 
     public interface OnLoginClickListener {
-        void onLoginSubmit(String username, String password,View currentView);
+        void onLoginSubmit(String username, String password,View currentView) throws UnsupportedEncodingException;
     }
 
     @Override

@@ -14,6 +14,8 @@ public class AccessToken {
     public static final String cusername = "admin";
     public static final String cpassword = "Keepcoding123";
     public static final String OAUTH2_TOKEN = "OAuth2Token";
+    public static final String UDATA_USERNAME = "username";
+    public static final String UDATA_AVATAR = "username_avatar";
 
 
     private String access_token;

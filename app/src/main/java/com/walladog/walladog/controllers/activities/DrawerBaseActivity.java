@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.walladog.walladog.R;
 import com.walladog.walladog.utils.WDUtils;
@@ -24,12 +26,18 @@ public abstract class DrawerBaseActivity extends AppCompatActivity {
   @Bind(R.id.drawer)
   DrawerLayout drawerLayout;
 
+
+
+  public TextView mDrawerUsername;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.drawer_layout);
 
     ButterKnife.bind(this);
+
+
 
     // Initializing Toolbar and setting it as the actionbar
     setSupportActionBar(toolbar);
@@ -52,6 +60,10 @@ public abstract class DrawerBaseActivity extends AppCompatActivity {
         return true;
       }
     });
+
+
+
+
 
     ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open_drawer_accesibility_string, R.string.drawer_close_drawer_accesibility_string){
       @Override

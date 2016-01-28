@@ -57,7 +57,7 @@ public class ServiceGeneratorOAuth {
         httpClient.interceptors().clear();
 
         //Log interceptor
-        //httpClient.interceptors().add(logging);
+        httpClient.interceptors().add(logging);
 
 
         if (token != null) {
