@@ -1,6 +1,7 @@
 package com.walladog.walladog.controllers.fragments;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 
 import com.rockerhieu.rvadapter.endless.EndlessRecyclerViewAdapter;
 import com.walladog.walladog.R;
@@ -19,6 +22,8 @@ import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 import com.walladog.walladog.models.apiservices.WDProductService;
 import com.walladog.walladog.models.responses.ProductResponse;
+import com.walladog.walladog.utils.CustomSearchDialog;
+import com.walladog.walladog.utils.SearchObject;
 import com.walladog.walladog.utils.SpacesItemDecoration;
 
 import java.io.Serializable;
@@ -31,7 +36,8 @@ import retrofit.Retrofit;
 
 public class DogListFragment extends Fragment
         implements SearchView.OnQueryTextListener,
-        DogListAdapter.OnPhotoClickListener, EndlessRecyclerViewAdapter.RequestToLoadMoreListener{
+        DogListAdapter.OnPhotoClickListener, EndlessRecyclerViewAdapter.RequestToLoadMoreListener {
+
     private static final String TAG = DogListFragment.class.getName();
 
     private static final String ARG_WDPRODUCTS = "ARG_WDPRODUCTS";
@@ -66,6 +72,9 @@ public class DogListFragment extends Fragment
     private int mLimit = 10;
     private Boolean mIsLastPage = false;
     StaggeredGridLayoutManager mLayoutManager;
+
+    //Dialog search
+    CustomSearchDialog mCsd = null;
 
     public DogListFragment() {
 
@@ -120,20 +129,46 @@ public class DogListFragment extends Fragment
 
         mFab = (FloatingActionButton) root.findViewById(R.id.fab);
 
-        mSearchView = (SearchView) root.findViewById(R.id.search_txt);
-        mSearchView.setOnQueryTextListener(this);
-        mSearchView.setQueryHint("Que buscas?");
+        Button btn = (Button) root.findViewById(R.id.doglist_search);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCsd = new CustomSearchDialog(getActivity(), new CustomSearchDialog.SearchDialogListener() {
+                    @Override
+                    public void OnDialogData(SearchObject so) {
+                        Log.v(TAG,"Search Object");
+                        Log.v(TAG, String.valueOf(so.getRace()));
+                        Log.v(TAG, String.valueOf(so.getDistance()));
+                        Log.v(TAG, String.valueOf(so.getCategory()));
+                    }
+
+                    @Override
+                    public void OnDialogCanceled() {
+
+                    }
+
+                });
+                mCsd.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                mCsd.show();
+            }
+        });
+
+
+        //mSearchView = (SearchView) root.findViewById(R.id.search_txt);
+        //mSearchView.setOnQueryTextListener(this);
+        //mSearchView.setQueryHint("Que buscas?");
 
         if(mProductResponse.getNext()!=null){
             this.mOffset=this.mOffset+this.mLimit;
         }
 
-        mSearchView.setOnClickListener(new View.OnClickListener() {
+        /*mSearchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSearchView.setIconified(false);
             }
-        });
+        });*/
 
         mRecyclerView = (RecyclerView) root.findViewById(R.id.masonry_grid);
 
@@ -240,6 +275,11 @@ public class DogListFragment extends Fragment
             }
         }
 
+    }
+
+    //New search
+    public interface OnNewSearchListener {
+        void onNewSearchRecived(SearchObject so);
     }
 
     public interface OnListItemSelectedListener {

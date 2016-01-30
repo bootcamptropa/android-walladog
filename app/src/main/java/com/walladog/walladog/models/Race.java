@@ -5,6 +5,7 @@ import java.util.Date;
 public class Race {
 
     private double id;
+    private double id_race;
     private String name;
     private Date creationDate;
     private Date modificationDate;
@@ -16,6 +17,11 @@ public class Race {
     public Race(String name) {
         this.name = name;
         this.creationDate = new Date();
+    }
+
+    public Race(double id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public Race(double id, String name, Date creationDate, Date modificationDate) {
@@ -55,5 +61,13 @@ public class Race {
 
     public void setModificationDate(Date modificationDate) {
         this.modificationDate = modificationDate;
+    }
+
+    public double getId_race() {
+        return id_race;
+    }
+
+    public void setId_race(double id_race) {
+        this.id_race = id_race;
     }
 }

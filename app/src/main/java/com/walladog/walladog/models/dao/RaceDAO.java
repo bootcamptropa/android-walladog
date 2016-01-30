@@ -22,6 +22,7 @@ public class RaceDAO implements DAOPersistable<Race> {
 
     public static final String[] allColumns = {
             KEY_RACES_ID,
+            KEY_RACES_IDRACE,
             KEY_RACES_NAME,
             KEY_RACES_CREATION_DATE,
             KEY_RACES_MODIFICATION_DATE
@@ -40,6 +41,10 @@ public class RaceDAO implements DAOPersistable<Race> {
             Log.v(TAG, "Race is null");
             return 0;
         }
+        //Saving raceId in diferent field
+        race.setId_race(race.getId());
+        //Log.v(TAG,"Insertando "+race.getName()+" id: "+String.valueOf(race.getId())+" idcat: "+String.valueOf(race.getId_race()));
+
         // insert
         DatabaseHelper dbHelper = DatabaseHelper.getInstance(context.get());
         SQLiteDatabase db = dbHelper.getDB();
@@ -110,6 +115,7 @@ public class RaceDAO implements DAOPersistable<Race> {
 
         Race n = new Race(c.getString(c.getColumnIndex(KEY_RACES_NAME)));
         n.setId(c.getInt(c.getColumnIndex(KEY_RACES_ID)));
+        n.setId_race(c.getInt(c.getColumnIndex(KEY_RACES_IDRACE)));
 
         Long creationDate = c.getLong(c.getColumnIndex(KEY_RACES_CREATION_DATE));
         Long modificationDate = c.getLong(c.getColumnIndex(KEY_RACES_MODIFICATION_DATE));
@@ -125,9 +131,7 @@ public class RaceDAO implements DAOPersistable<Race> {
     public Cursor queryCursor() {
         //Select de toda la vida
         DatabaseHelper db = DatabaseHelper.getInstance(context.get());
-
         Cursor c = db.getReadableDatabase().query(TABLE_RACES, allColumns, null, null, null, null, null);
-
         return c;
     }
 
@@ -154,6 +158,7 @@ public class RaceDAO implements DAOPersistable<Race> {
         ContentValues content = new ContentValues();
         content.put(KEY_RACES_NAME, race.getName());
         //content.put(KEY_RACES_ID, notebook.getId());
+        content.put(KEY_RACES_IDRACE, race.getId_race());
         content.put(KEY_RACES_CREATION_DATE, DatabaseHelper.convertDateToLong(race.getCreationDate()));
         content.put(KEY_RACES_MODIFICATION_DATE, DatabaseHelper.convertDateToLong(race.getModificationDate()));
 

@@ -70,6 +70,9 @@
     <string name="noti_toread">Por leer</string>
     <string name="notification_title">Asunto</string>
     <string name="notification_date">Fecha</string>
+    <string name="item_category">Categoría</string>
+    <string name="item_nocategory">Desconocida</string>
+    <string name="doglist_filtersearch">Filtrar tu búsqueda   </string>
 
 
 </resources>

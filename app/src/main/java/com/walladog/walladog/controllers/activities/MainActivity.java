@@ -34,6 +34,7 @@ import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 import com.walladog.walladog.models.apiservices.WDOAuth;
 import com.walladog.walladog.models.apiservices.WDUserDataService;
 import com.walladog.walladog.models.responses.ProductResponse;
+import com.walladog.walladog.utils.SearchObject;
 import com.walladog.walladog.utils.WDEventNotification;
 
 import java.io.Serializable;
@@ -48,7 +49,8 @@ import retrofit.Retrofit;
 public class MainActivity extends DrawerBaseActivity
         implements LoginFragment.OnLoginClickListener,
         SigninFragment.OnSigninClickListener,
-        DogListFragment.OnListItemSelectedListener {
+        DogListFragment.OnListItemSelectedListener,
+        DogListFragment.OnNewSearchListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -186,6 +188,8 @@ public class MainActivity extends DrawerBaseActivity
 
     @Override
     public void onLoginSubmit(String username, String password, View currentView) throws UnsupportedEncodingException {
+        // Check if no view has focus:
+
         ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret)
                 .getAccessToken(AccessToken.grantType, username, password)
                 .enqueue(new Callback<AccessToken>() {
@@ -215,6 +219,10 @@ public class MainActivity extends DrawerBaseActivity
                                                     .commit();
 
                                             setMenuForLogged(ud);
+                                            final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+                                            if (fm.getBackStackEntryCount() > 0) {
+                                                fm.popBackStack();
+                                            }
                                         }
 
                                     }
@@ -254,23 +262,23 @@ public class MainActivity extends DrawerBaseActivity
                 .replace(R.id.drawer_layout_main_activity_frame, DogDetailFragment.newInstance(mProducts.getResults().get(position)),DogDetailFragment.class.getName())
                 .addToBackStack(DogDetailFragment.class.getName())
                 .commit();
-        Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+            EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+            EventBus.getDefault().unregister(this);
     }
 
     // This method will be called when a NotificationDataEvent is posted
-    public void onEvent(WDEventNotification dataItem){
+    public void onEvent(WDEventNotification dataItem) {
         Log.v(TAG, "Recived event to update Notifications");
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts),DogListFragment.class.getName())
@@ -312,5 +320,8 @@ public class MainActivity extends DrawerBaseActivity
     }
 
 
+    @Override
+    public void onNewSearchRecived(SearchObject so) {
 
+    }
 }

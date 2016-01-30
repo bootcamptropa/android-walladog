@@ -19,7 +19,24 @@
         android:orientation="horizontal"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.SearchView
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:id="@+id/doglist_search"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:paddingRight="3dp"
+                android:background="@drawable/background_service1"
+                android:drawableRight="@drawable/ic_menu_searchwhite2"
+                android:gravity="right|center_vertical"
+                android:textColor="@color/wd_white"
+                android:text="@string/doglist_filtersearch"
+                />
+
+
+<!--        <android.support.v7.widget.SearchView
             android:layout_width="0dp"
             android:id="@+id/search_txt"
             android:layout_weight="8"
@@ -31,17 +48,17 @@
             android:layout_marginTop="8dp"
             android:layout_marginRight="4dp"
             android:src="@drawable/ic_menu_filter"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"/>-->
 
     </LinearLayout>
 
     <!-- empty line -->
-    <View
+    <!--<View
         android:layout_width="match_parent"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@android:color/darker_gray"/>-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/masonry_grid"

@@ -3,9 +3,12 @@ package com.walladog.walladog.utils;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.walladog.walladog.models.Category;
+import com.walladog.walladog.models.Race;
 import com.walladog.walladog.models.dao.CategoryDAO;
+import com.walladog.walladog.models.dao.RaceDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +54,18 @@ public class DBAsyncTasksGet<T> extends AsyncTask<Object, Object, List<T>> {
                         }else{
                             return null;
                         }
+                    }
+                }
+                if(mItemType instanceof Race) {
+                    RaceDAO objDAO = new RaceDAO(context);
+                    mItemsList = new ArrayList<T>();
+                    Cursor c = objDAO.queryCursor();
+                    if(c.moveToFirst()){
+                        do{
+                            mItemsList.add((T) objDAO.raceFromCursor(c));
+                        }while (c.moveToNext());
+                    }else{
+                        return null;
                     }
                 }
                 break;

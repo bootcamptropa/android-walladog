@@ -3,7 +3,6 @@ package com.walladog.walladog.controllers.activities;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 import com.walladog.walladog.R;
 import com.walladog.walladog.WalladogApp;
 import com.walladog.walladog.models.Category;
-import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.Race;
 import com.walladog.walladog.models.ServiceGenerator;
 import com.walladog.walladog.models.WDServices;
@@ -26,18 +24,12 @@ import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 import com.walladog.walladog.models.apiservices.WDCategoryService;
 import com.walladog.walladog.models.apiservices.WDOAuth;
 import com.walladog.walladog.models.apiservices.WDProductService;
-import com.walladog.walladog.models.apiservices.WDProductsService;
-import com.walladog.walladog.models.apiservices.WDRacesService;
+import com.walladog.walladog.models.apiservices.WDRaceService;
 import com.walladog.walladog.models.apiservices.WDServicesService;
-import com.walladog.walladog.models.responses.CategoryResponse;
 import com.walladog.walladog.models.responses.ProductResponse;
-import com.walladog.walladog.models.responses.ProductsResponse;
-import com.walladog.walladog.models.responses.RacesResponse;
 import com.walladog.walladog.models.responses.ServicesResponse;
-import com.walladog.walladog.utils.Constants;
 import com.walladog.walladog.utils.DBAsyncTasks;
 import com.walladog.walladog.utils.DBAsyncTasksGet;
-import com.walladog.walladog.utils.WDUtils;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -63,6 +55,7 @@ public class SplashActivity extends AppCompatActivity {
     private List<WDServices> mWDServices = null;
     private ProductResponse mProductList = null;
     private List<Category> mListaCategorias = null;
+    private List<Race> mRaceList = null;
 
 
     @Override
@@ -128,9 +121,15 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * @throws UnsupportedEncodingException
+     * Identification with token , refresh token o go to Login
+     *
+     */
     private void getOAuthTokenAndStartApp() throws UnsupportedEncodingException {
         String savedToken = getSharedPreferences(WalladogApp.class.getSimpleName(),MODE_PRIVATE)
-                .getString(AccessToken.OAUTH2_TOKEN,null);
+                .getString(AccessToken.OAUTH2_TOKEN, null);
 
         if(savedToken==null) {
             ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret).getAccessToken(AccessToken.grantType, AccessToken.cusername, AccessToken.cpassword)
@@ -168,6 +167,13 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     *
+     * @throws UnsupportedEncodingException
+     * Get initial data from all services and save to DB
+     *
+     */
     private void getInitRestData() throws UnsupportedEncodingException {
         appLoading.setText("Loading services...");
 
@@ -189,29 +195,6 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
-        ServiceGenerator.createService(WDRacesService.class).getMultiTask()
-                .enqueue(new Callback<RacesResponse>() {
-                    @Override
-                    public void onResponse(Response<RacesResponse> response, Retrofit retrofit) {
-                        List<Race> mRacesList = response.body().getData();
-                        appLoading.setText("Cargando razas");
-                        DBAsyncTasks<Race> task = new DBAsyncTasks<Race>(DBAsyncTasks.TASK_SAVE_LIST, new Race(), getApplicationContext(), mRacesList, new DBAsyncTasks.OnItemsSavedToDBListener() {
-                            @Override
-                            public void onItemsSaved(Boolean saved) {
-                                Log.v(TAG, "Razas salvadas");
-                                requestsFinished++;
-                                LaunchApp();
-                            }
-                        });
-                        task.execute();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        Log.v(TAG, "Failed request on " + WDRacesService.class.getName());
-                    }
-                });
-
         ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(0, 10)
                 .enqueue(new Callback<ProductResponse>() {
                     @Override
@@ -225,6 +208,29 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Throwable t) {
 
+                    }
+                });
+
+        ServiceGeneratorOAuth.createService(WDRaceService.class).getRaces()
+                .enqueue(new Callback<List<Race>>() {
+                    @Override
+                    public void onResponse(Response<List<Race>> response, Retrofit retrofit) {
+                        mRaceList = response.body();
+                        Log.v(TAG, mRaceList.get(0).getName());
+                        appLoading.setText("Salvando razas");
+                        DBAsyncTasks<Race> task = new DBAsyncTasks<Race>(DBAsyncTasks.TASK_SAVE_LIST, new Race(), getApplicationContext(), mRaceList, new DBAsyncTasks.OnItemsSavedToDBListener() {
+                            @Override
+                            public void onItemsSaved(Boolean saved) {
+                                requestsFinished++;
+                                LaunchApp();
+                            }
+                        });
+                        task.execute();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Log.v(TAG,"Error retriving races");
                     }
                 });
 
@@ -245,8 +251,6 @@ public class SplashActivity extends AppCompatActivity {
                                         new DBAsyncTasksGet.OnItemsRecoveredFromDBListener<Category>() {
                                             @Override
                                             public void onItemsRecovered(List<Category> items) {
-                                                Log.v(TAG, "Recovered item!!!");
-                                                Log.v(TAG, items.get(0).getName());
                                                 mListaCategorias = items;
                                                 requestsFinished++;
                                                 LaunchApp();

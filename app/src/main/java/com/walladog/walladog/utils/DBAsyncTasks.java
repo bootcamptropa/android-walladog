@@ -61,6 +61,8 @@ public class DBAsyncTasks<T> extends AsyncTask<Object, Object, Void> {
                     Log.v(TAG, "Insertando Race");
                     RaceDAO objDAO = new RaceDAO(context);
                     for (T item : itemList) {
+                        Race myItem = (Race) item;
+                        Log.v(TAG,"Saving item "+ myItem.getName());
                         objDAO.insert((Race) item);
                     }
                 } else if (type instanceof Category) {

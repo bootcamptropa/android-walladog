@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.walladog.walladog.R;
 import com.walladog.walladog.models.Product;
+import com.walladog.walladog.utils.SearchObject;
 
 import java.util.List;
 import java.util.Random;
@@ -46,7 +47,7 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
 
     @Override
     public MasonryView onCreateViewHolder(ViewGroup parent, int viewType) {
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item, parent, false);
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item_dog, parent, false);
         return new MasonryView(layoutView);
     }
 
@@ -76,7 +77,8 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
 
         Picasso.with(context)
                 //.load(productList.get(position).getImages().get(0).getPhoto_thumbnail_url())
-                .load(R.drawable.walladogsmall)
+                //.load(R.drawable.walladogsmall)
+                .load(url)
                 .placeholder(R.drawable.walladogsmall)
                 .transform(transformation)
                 .into(holder.imageView);
@@ -109,7 +111,6 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
     public interface OnPhotoClickListener {
         void onPhotoClick(int position);
     }
-
 
     //For pagination:
     public void appendItems(List<Product> products) {

@@ -16,6 +16,7 @@ import java.lang.ref.WeakReference;
 
 import static com.walladog.walladog.models.db.DBConstants.KEY_CATEGORIES_CREATION_DATE;
 import static com.walladog.walladog.models.db.DBConstants.KEY_CATEGORIES_ID;
+import static com.walladog.walladog.models.db.DBConstants.KEY_CATEGORIES_IDCATEGORY;
 import static com.walladog.walladog.models.db.DBConstants.KEY_CATEGORIES_MODIFICATION_DATE;
 import static com.walladog.walladog.models.db.DBConstants.KEY_CATEGORIES_NAME;
 import static com.walladog.walladog.models.db.DBConstants.TABLE_CATEGORIES;
@@ -45,6 +46,8 @@ public class CategoryDAO implements DAOPersistable<Category> {
             return 0;
         }
         // insert
+        category.setId_category(category.getId());
+
         DatabaseHelper dbHelper = DatabaseHelper.getInstance(context.get());
         SQLiteDatabase db = dbHelper.getDB();
 
@@ -155,6 +158,7 @@ public class CategoryDAO implements DAOPersistable<Category> {
         ContentValues content = new ContentValues();
         content.put(KEY_CATEGORIES_NAME, category.getName());
         //content.put(KEY_CATEGORIES_ID, notebook.getId());
+        content.put(KEY_CATEGORIES_IDCATEGORY, category.getId_category());
         content.put(KEY_CATEGORIES_CREATION_DATE, DatabaseHelper.convertDateToLong(category.getCreationDate()));
         content.put(KEY_CATEGORIES_MODIFICATION_DATE, DatabaseHelper.convertDateToLong(category.getModificationDate()));
 
