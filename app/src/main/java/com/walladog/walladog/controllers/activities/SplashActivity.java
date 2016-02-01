@@ -271,6 +271,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void LaunchApp(){
         Log.v(TAG, "Lanzado " + String.valueOf(requestsFinished));
+        //TODO valor correcto 5
         if(mProductList!=null && mWDServices!=null && requestsFinished==5){
             Intent i = new Intent(this, MainActivity.class);
             i.putExtra(MainActivity.EXTRA_WDSERVICES, (Serializable) mWDServices);

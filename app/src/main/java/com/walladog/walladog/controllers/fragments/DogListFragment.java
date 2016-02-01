@@ -12,11 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 
 import com.rockerhieu.rvadapter.endless.EndlessRecyclerViewAdapter;
 import com.walladog.walladog.R;
+import com.walladog.walladog.WalladogApp;
 import com.walladog.walladog.adapters.DogListAdapter;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
@@ -137,12 +137,12 @@ public class DogListFragment extends Fragment
                 mCsd = new CustomSearchDialog(getActivity(), new CustomSearchDialog.SearchDialogListener() {
                     @Override
                     public void OnDialogData(SearchObject so) {
-                        Log.v(TAG,"Search Object");
-                        Log.v(TAG, String.valueOf(so.getRace()));
-                        Log.v(TAG, String.valueOf(so.getDistance()));
-                        Log.v(TAG, String.valueOf(so.getCategory()));
+                        try {
+                            reloadGridFromSearch(so);
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
                     }
-
                     @Override
                     public void OnDialogCanceled() {
 
@@ -154,21 +154,9 @@ public class DogListFragment extends Fragment
             }
         });
 
-
-        //mSearchView = (SearchView) root.findViewById(R.id.search_txt);
-        //mSearchView.setOnQueryTextListener(this);
-        //mSearchView.setQueryHint("Que buscas?");
-
         if(mProductResponse.getNext()!=null){
             this.mOffset=this.mOffset+this.mLimit;
         }
-
-        /*mSearchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSearchView.setIconified(false);
-            }
-        });*/
 
         mRecyclerView = (RecyclerView) root.findViewById(R.id.masonry_grid);
 
@@ -227,7 +215,7 @@ public class DogListFragment extends Fragment
     public void onLoadMoreRequested() {
         if(mIsLastPage==false){
             try {
-                ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(mOffset,mLimit)
+                ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(mOffset, mLimit)
                         .enqueue(new Callback<ProductResponse>() {
                             @Override
                             public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
@@ -277,9 +265,36 @@ public class DogListFragment extends Fragment
 
     }
 
-    //New search
-    public interface OnNewSearchListener {
-        void onNewSearchRecived(SearchObject so);
+    private void reloadGridFromSearch(SearchObject so) throws UnsupportedEncodingException {
+
+        String lat,lon,dist,race,category = null;
+
+        final DogListFragment _this = this;
+
+        ServiceGeneratorOAuth.createService(WDProductService.class).getSearchProductsPaginated("0","10",so.getLatitude(),so.getLongitude(),so.getRace(),so.getCategory(),null)
+                .enqueue(new Callback<ProductResponse>() {
+                    @Override
+                    public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
+                        Log.v(TAG, String.valueOf(response.body().getResults().size()));
+                        //mAdapter = new DogListAdapter(getActivity().getApplicationContext(), this, mProductResponse.getResults());
+                        mProductResponse = response.body();
+
+                        //mAdapter = new DogListAdapter(getActivity().getApplicationContext(),this,mProducts);
+                        mAdapter = new DogListAdapter(WalladogApp.context,_this,mProductResponse.getResults());
+                        endlessRecyclerViewAdapter = new EndlessRecyclerViewAdapter(WalladogApp.context,mAdapter,_this); //Adapter endless
+
+                        mRecyclerView.setAdapter(endlessRecyclerViewAdapter);
+
+                        mAdapter.notifyDataSetChanged();
+                        endlessRecyclerViewAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+
+                    }
+                });
+
     }
 
     public interface OnListItemSelectedListener {

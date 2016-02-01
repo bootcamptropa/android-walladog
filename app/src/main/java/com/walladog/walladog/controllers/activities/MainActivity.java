@@ -49,8 +49,7 @@ import retrofit.Retrofit;
 public class MainActivity extends DrawerBaseActivity
         implements LoginFragment.OnLoginClickListener,
         SigninFragment.OnSigninClickListener,
-        DogListFragment.OnListItemSelectedListener,
-        DogListFragment.OnNewSearchListener {
+        DogListFragment.OnListItemSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -317,11 +316,5 @@ public class MainActivity extends DrawerBaseActivity
         Menu drwMenu = navigationView.getMenu().getItem(6).getSubMenu();
         drwMenu.getItem(2).setVisible(false);
         drwMenu.getItem(3).setVisible(false);
-    }
-
-
-    @Override
-    public void onNewSearchRecived(SearchObject so) {
-
     }
 }

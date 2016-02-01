@@ -1,51 +1,37 @@
 package com.walladog.walladog.utils;
 
+import android.content.Context;
+
+import com.walladog.walladog.WalladogApp;
+
 /**
  * Created by hadock on 30/01/16.
  *
  */
 public class SearchObject {
 
-    private double mLatitude;
-    private double mLongitude;
-    private String mSearchString;
-    private int mDistance;
-    private int mCategory;
-    private int mRace;
+    private String mLatitude = null;
+    private String mLongitude = null;
+    private String mSearchString = null;
+    private String mDistance = null;
+    private String mCategory = null;
+    private String mRace = null;
 
-    public SearchObject() {
-    }
 
-    public SearchObject(double latitude, double longitude, String searchString, int distance, int category, int race) {
-        mLatitude = latitude;
-        mLongitude = longitude;
-        mSearchString = searchString;
-        mDistance = distance;
-        mCategory = category;
-        mRace = race;
-    }
 
-    public SearchObject(double latitude, double longitude, int race, int category, int distance) {
-        mLatitude = latitude;
-        mLongitude = longitude;
-        mRace = race;
-        mCategory = category;
-        mDistance = distance;
-    }
-
-    public double getLatitude() {
+    public String getLatitude() {
         return mLatitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(String latitude) {
         mLatitude = latitude;
     }
 
-    public double getLongitude() {
+    public String getLongitude() {
         return mLongitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(String longitude) {
         mLongitude = longitude;
     }
 
@@ -57,27 +43,39 @@ public class SearchObject {
         mSearchString = searchString;
     }
 
-    public int getDistance() {
+    public String getDistance() {
         return mDistance;
     }
 
-    public void setDistance(int distance) {
+    public void setDistance(String distance) {
         mDistance = distance;
     }
 
-    public int getCategory() {
+    public String getCategory() {
         return mCategory;
     }
 
-    public void setCategory(int category) {
+    public void setCategory(String category) {
         mCategory = category;
     }
 
-    public int getRace() {
+    public String getRace() {
         return mRace;
     }
 
-    public void setRace(int race) {
+    public void setRace(String race) {
         mRace = race;
     }
+
+    public SearchObject() {
+
+        mLatitude = String.valueOf(WalladogApp.context
+                .getSharedPreferences(WalladogApp.class.getSimpleName(), Context.MODE_PRIVATE)
+                .getString("WDLat",null));
+        mLongitude = String.valueOf(WalladogApp.context
+                .getSharedPreferences(WalladogApp.class.getSimpleName(), Context.MODE_PRIVATE)
+                .getString("WDLong",null));
+    }
+
+
 }

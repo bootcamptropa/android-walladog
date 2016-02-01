@@ -31,6 +31,17 @@ public interface WDProductService {
     @GET(apiEndpoint)
     Call<ProductResponse> getProductsPaginated(@Query("offset") int offset,@Query("limit") int limit);
 
+    @GET(apiEndpoint)
+    Call<ProductResponse> getSearchProductsPaginated(
+            @Query("offset") String offset,
+            @Query("limit") String limit,
+            @Query("lat") String lat,
+            @Query("lon") String lon,
+            @Query("race") String race,
+            @Query("category") String category,
+            @Query("distance") String distance
+    );
+
     @GET(apiEndpoint+"/{id}/")
     Call<Product> getOneTask();
 

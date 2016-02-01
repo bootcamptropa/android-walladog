@@ -3,6 +3,7 @@ package com.walladog.walladog.utils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -28,7 +29,7 @@ public class CustomSearchDialog extends Dialog implements android.view.View.OnCl
     public Activity c;
     public Dialog d;
     public Spinner mSpinRazas,mSpinDistancia,mSpinCategoria;
-    public Button yes, no;
+    public Button yes, no, mBtnClear;
 
     SearchObject mSo = new SearchObject();
 
@@ -54,17 +55,19 @@ public class CustomSearchDialog extends Dialog implements android.view.View.OnCl
         mSpinRazas = (Spinner) findViewById(R.id.spin_razas);
         mSpinDistancia = (Spinner) findViewById(R.id.spin_distancia);
         mSpinCategoria = (Spinner) findViewById(R.id.spin_categorias);
+        mBtnClear = (Button) findViewById(R.id.btn_clear_filters);
 
         yes = (Button) findViewById(R.id.btn_yes);
         no = (Button) findViewById(R.id.btn_no);
         yes.setOnClickListener(this);
         no.setOnClickListener(this);
+        mBtnClear.setOnClickListener(this);
 
         mSpinRazas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Race searchRace = (Race) parent.getItemAtPosition(position);
-                mSo.setRace((int) searchRace.getId_race());
+                mSo.setRace(String.valueOf((int)searchRace.getId_race()));
             }
 
             @Override
@@ -77,7 +80,7 @@ public class CustomSearchDialog extends Dialog implements android.view.View.OnCl
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 DistanceItem di = (DistanceItem) parent.getItemAtPosition(position);
-                mSo.setDistance(di.getDistance());
+                mSo.setDistance(String.valueOf(di.getDistance()));
             }
 
             @Override
@@ -89,8 +92,7 @@ public class CustomSearchDialog extends Dialog implements android.view.View.OnCl
         mSpinCategoria.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //TODO seguimos aqui
-                mSo.setCategory((int)((Category) parent.getItemAtPosition(position)).getId_category());
+                mSo.setCategory(String.valueOf((int) ((Category) parent.getItemAtPosition(position)).getId_category()));
             }
 
             @Override
@@ -115,6 +117,9 @@ public class CustomSearchDialog extends Dialog implements android.view.View.OnCl
                 mListener.OnDialogCanceled();
                 dismiss();
                 break;
+            case R.id.btn_clear_filters:
+                mListener.OnDialogData(new SearchObject());
+                dismiss();
             default:
                 break;
         }
@@ -144,6 +149,9 @@ public class CustomSearchDialog extends Dialog implements android.view.View.OnCl
                 new DBAsyncTasksGet.OnItemsRecoveredFromDBListener<Category>() {
                     @Override
                     public void onItemsRecovered(List<Category> items) {
+                        for(int i=0;i<items.size();i++){
+                            Log.v(TAG, "Reading " + String.valueOf(items.get(i).getName() + "-" + items.get(i).getId_category()));
+                        }
                         mAdapterCategorias = new BasicsSpinArrayAdapter(c,android.R.layout.simple_spinner_dropdown_item,items);
                         mSpinCategoria.setAdapter(mAdapterCategorias);
                     }

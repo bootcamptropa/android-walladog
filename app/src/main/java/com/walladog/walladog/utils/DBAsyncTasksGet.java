@@ -43,20 +43,17 @@ public class DBAsyncTasksGet<T> extends AsyncTask<Object, Object, List<T>> {
         switch (mTaskType) {
             case TASK_GET_LIST:
                 if (mItemType instanceof Category) {
-                    if (mItemType instanceof Category) {
-                        CategoryDAO objDAO = new CategoryDAO(context);
-                        mItemsList = new ArrayList<T>();
-                        Cursor c = objDAO.queryCursor();
-                        if(c.moveToFirst()){
-                            do{
-                                mItemsList.add((T) objDAO.categoryFromCursor(c));
-                            }while (c.moveToNext());
-                        }else{
-                            return null;
-                        }
+                    CategoryDAO objDAO = new CategoryDAO(context);
+                    mItemsList = new ArrayList<T>();
+                    Cursor c = objDAO.queryCursor();
+                    if(c.moveToFirst()){
+                        do{
+                            mItemsList.add((T) objDAO.categoryFromCursor(c));
+                        }while (c.moveToNext());
+                    }else{
+                        return null;
                     }
-                }
-                if(mItemType instanceof Race) {
+                }else if(mItemType instanceof Race) {
                     RaceDAO objDAO = new RaceDAO(context);
                     mItemsList = new ArrayList<T>();
                     Cursor c = objDAO.queryCursor();
