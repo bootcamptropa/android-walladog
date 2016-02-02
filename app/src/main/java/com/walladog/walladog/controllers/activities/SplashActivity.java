@@ -177,30 +177,11 @@ public class SplashActivity extends AppCompatActivity {
     private void getInitRestData() throws UnsupportedEncodingException {
         appLoading.setText("Loading services...");
 
-        ServiceGenerator
-                .createService(WDServicesService.class).getMultiTask()
-                .enqueue(new Callback<ServicesResponse>() {
-                    @Override
-                    public void onResponse(Response<ServicesResponse> response, Retrofit retrofit) {
-                        mWDServices = response.body().getData();
-                        appLoading.setText("Servicios cargados");
-                        Log.v(TAG, "Servicios cargados");
-                        requestsFinished++;
-                        LaunchApp();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        Log.v(TAG, "Failed request on " + WDServicesService.class.getName());
-                    }
-                });
-
         ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(0, 10)
                 .enqueue(new Callback<ProductResponse>() {
                     @Override
                     public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
                         mProductList = response.body();
-                        //Log.v(TAG,"Response contains "+String.valueOf(r.getCount()));
                         requestsFinished++;
                         LaunchApp();
                     }
@@ -272,9 +253,8 @@ public class SplashActivity extends AppCompatActivity {
     private void LaunchApp(){
         Log.v(TAG, "Lanzado " + String.valueOf(requestsFinished));
         //TODO valor correcto 5
-        if(mProductList!=null && mWDServices!=null && requestsFinished==5){
+        if(mProductList!=null && requestsFinished==4){
             Intent i = new Intent(this, MainActivity.class);
-            i.putExtra(MainActivity.EXTRA_WDSERVICES, (Serializable) mWDServices);
             i.putExtra(MainActivity.EXTRA_WDPRODUCTS, (Serializable) mProductList);
             i.putExtra(MainActivity.EXTRA_CATEGORIAS, (Serializable) mListaCategorias);
             Log.v(TAG,"Launching APP all tasks successfull resolved");

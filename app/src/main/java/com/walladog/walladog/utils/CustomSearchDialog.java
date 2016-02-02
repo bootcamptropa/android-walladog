@@ -67,7 +67,9 @@ public class CustomSearchDialog extends Dialog implements android.view.View.OnCl
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Race searchRace = (Race) parent.getItemAtPosition(position);
-                mSo.setRace(String.valueOf((int)searchRace.getId_race()));
+                if(searchRace.getId()!=-1){
+                    mSo.setRace(String.valueOf((int)searchRace.getId_race()));
+                }
             }
 
             @Override
@@ -138,6 +140,9 @@ public class CustomSearchDialog extends Dialog implements android.view.View.OnCl
                 new DBAsyncTasksGet.OnItemsRecoveredFromDBListener<Race>() {
                     @Override
                     public void onItemsRecovered(List<Race> items) {
+                        Race todasRazas = new Race("Todas las razas");
+                        todasRazas.setId(-1);
+                        items.add(0,todasRazas);
                         mAdapterRazas = new BasicsSpinArrayAdapter(c,android.R.layout.simple_spinner_dropdown_item,items);
                         mSpinRazas.setAdapter(mAdapterRazas);
                     }

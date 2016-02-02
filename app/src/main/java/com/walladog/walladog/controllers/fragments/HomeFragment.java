@@ -29,37 +29,24 @@ public class HomeFragment extends Fragment {
 
     private static final String TAG = HomeFragment.class.getName();
 
-    public static final String ARG_WDSERVICES = "ARG_WDSERVICES";
     public static final String ARG_CATEGORIAS = "ARG_CATEGORIAS";
     public static final String ARG_WDPRODUCTS = "ARG_WDPRODUCTS";
 
     private List<WDServices> services = null;
     private ViewPager pager = null;
 
-    public static HomeFragment newInstance(List<WDServices> services, List<Product> products,List<Category> categorias) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle arguments = new Bundle();
-        //arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) services);
-        arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
-        arguments.putSerializable(HomeFragment.ARG_CATEGORIAS, (Serializable) categorias);
-        fragment.setArguments(arguments);
-        return fragment;
-    }
-
     public static HomeFragment newInstance(List<Product> products,List<Category> categorias) {
         HomeFragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
-        //arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) services);
         arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
         arguments.putSerializable(HomeFragment.ARG_CATEGORIAS, (Serializable) categorias);
         fragment.setArguments(arguments);
         return fragment;
     }
 
-    public static HomeFragment newInstance(List<WDServices> services, ProductResponse products) {
+    public static HomeFragment newInstance(ProductResponse products) {
         HomeFragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
-        arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) services);
         arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
         fragment.setArguments(arguments);
         return fragment;
@@ -80,9 +67,7 @@ public class HomeFragment extends Fragment {
         pager = (ViewPager) root.findViewById(R.id.view_pager);
 
         if (getArguments() != null) {
-            List<WDServices> services = (List<WDServices>) getArguments().getSerializable(this.ARG_WDSERVICES);
             List<Category> categorias = (List<Category>) getArguments().getSerializable(ARG_CATEGORIAS);
-            //pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), services));
             if(categorias==null){
                 DBAsyncTasksGet<Category> task2 = new DBAsyncTasksGet<Category>(DBAsyncTasksGet.TASK_GET_LIST,
                         new Category(), getContext(),

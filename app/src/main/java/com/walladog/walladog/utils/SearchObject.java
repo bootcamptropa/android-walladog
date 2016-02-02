@@ -4,11 +4,13 @@ import android.content.Context;
 
 import com.walladog.walladog.WalladogApp;
 
+import java.io.Serializable;
+
 /**
  * Created by hadock on 30/01/16.
  *
  */
-public class SearchObject {
+public class SearchObject implements Serializable{
 
     private String mLatitude = null;
     private String mLongitude = null;
@@ -16,8 +18,15 @@ public class SearchObject {
     private String mDistance = null;
     private String mCategory = null;
     private String mRace = null;
+    private Boolean mAddLatLon = false;
 
+    public Boolean getAddLatLon() {
+        return mAddLatLon;
+    }
 
+    public void setAddLatLon(Boolean addLatLon) {
+        mAddLatLon = addLatLon;
+    }
 
     public String getLatitude() {
         return mLatitude;
@@ -69,6 +78,9 @@ public class SearchObject {
 
     public SearchObject() {
 
+    }
+
+    public SearchObject(Boolean addLatLon){
         mLatitude = String.valueOf(WalladogApp.context
                 .getSharedPreferences(WalladogApp.class.getSimpleName(), Context.MODE_PRIVATE)
                 .getString("WDLat",null));

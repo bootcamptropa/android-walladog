@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rockerhieu.rvadapter.RecyclerViewAdapterWrapper;
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.SellingAdapter;
 import com.walladog.walladog.models.Product;

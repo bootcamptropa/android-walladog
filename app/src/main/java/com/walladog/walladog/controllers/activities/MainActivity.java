@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.squareup.picasso.Picasso;
 import com.walladog.walladog.R;
 import com.walladog.walladog.WalladogApp;
@@ -27,11 +26,12 @@ import com.walladog.walladog.controllers.fragments.NotificationsFragment;
 import com.walladog.walladog.controllers.fragments.SigninFragment;
 import com.walladog.walladog.controllers.fragments.UserProfileFragment;
 import com.walladog.walladog.models.Category;
+import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.UserData;
-import com.walladog.walladog.models.WDServices;
 import com.walladog.walladog.models.apiservices.AccessToken;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 import com.walladog.walladog.models.apiservices.WDOAuth;
+import com.walladog.walladog.models.apiservices.WDProductService;
 import com.walladog.walladog.models.apiservices.WDUserDataService;
 import com.walladog.walladog.models.responses.ProductResponse;
 import com.walladog.walladog.utils.SearchObject;
@@ -39,6 +39,7 @@ import com.walladog.walladog.utils.WDEventNotification;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -53,22 +54,16 @@ public class MainActivity extends DrawerBaseActivity
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    public static final String EXTRA_WDSERVICES = "EXTRA_WDSERVICES";
     public static final String EXTRA_WDPRODUCTS = "EXTRA_WDPRODUCTS";
     public static final String EXTRA_CATEGORIAS = "EXTRA_CATEGORIAS";
 
     private FrameLayout mFLayout=null;
-    private List<WDServices> mServices = null;
     private ProductResponse mProducts = null;
     private List<Category> mCategoryList = null;
-
-    private GoogleApiClient mGoogleApiClient = null;
-
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mServices = (List<WDServices>) getIntent().getSerializableExtra(EXTRA_WDSERVICES);
         mProducts = (ProductResponse) getIntent().getSerializableExtra(EXTRA_WDPRODUCTS);
         mCategoryList = (List<Category>) getIntent().getSerializableExtra(EXTRA_CATEGORIAS);
 
@@ -78,7 +73,6 @@ public class MainActivity extends DrawerBaseActivity
 
         Fragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
-        arguments.putSerializable(HomeFragment.ARG_WDSERVICES, (Serializable) mServices);
         arguments.putSerializable(HomeFragment.ARG_CATEGORIAS, (Serializable) mCategoryList);
         fragment.setArguments(arguments);
 
@@ -95,7 +89,7 @@ public class MainActivity extends DrawerBaseActivity
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, HomeFragment.newInstance(mServices,mProducts),HomeFragment.class.getName())
+                        .replace(R.id.drawer_layout_main_activity_frame, HomeFragment.newInstance(mProducts),HomeFragment.class.getName())
                         .addToBackStack(HomeFragment.class.getName())
                         .commit();
                 Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
@@ -158,10 +152,13 @@ public class MainActivity extends DrawerBaseActivity
         }
     }
 
+
+    /**
+     * Handling backpresset with backstack to exit application
+     */
     @Override
     public void onBackPressed() {
         final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-
         if (fm.getBackStackEntryCount() == 0) {
             new android.app.AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -185,10 +182,17 @@ public class MainActivity extends DrawerBaseActivity
     }
 
 
+    /**
+     *
+     * @param username
+     * @param password
+     * @param currentView
+     * @throws UnsupportedEncodingException
+     *
+     * User Login handler with oauth2 support
+     */
     @Override
     public void onLoginSubmit(String username, String password, View currentView) throws UnsupportedEncodingException {
-        // Check if no view has focus:
-
         ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret)
                 .getAccessToken(AccessToken.grantType, username, password)
                 .enqueue(new Callback<AccessToken>() {
@@ -250,11 +254,16 @@ public class MainActivity extends DrawerBaseActivity
                 });
     }
 
+
     @Override
     public void onSigninSubmit(String username, String password, View currentView) {
 
     }
 
+    /**
+     * @param position
+     * Handler for service/category selection
+     */
     @Override
     public void onListItemSelected(int position) {
         getSupportFragmentManager().beginTransaction()
@@ -264,27 +273,63 @@ public class MainActivity extends DrawerBaseActivity
             Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-            EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-            EventBus.getDefault().unregister(this);
-    }
-
-    // This method will be called when a NotificationDataEvent is posted
+    /**
+     * @param dataItem
+     * Handler for notifications from child fragments or dialogs
+     */
     public void onEvent(WDEventNotification dataItem) {
-        Log.v(TAG, "Recived event to update Notifications");
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts),DogListFragment.class.getName())
-                .addToBackStack(DogListFragment.class.getName())
-                .commit();
+
+        if(dataItem.getNotificationObject() instanceof SearchObject){
+            Log.v(TAG,"Recived Refresh for DogList");
+            SearchObject so = (SearchObject) dataItem.getNotificationObject();
+            try {
+                ServiceGeneratorOAuth.createService(WDProductService.class).getSearchProductsPaginated("0","10",so.getLatitude(),so.getLongitude(),so.getRace(),so.getCategory(),null)
+                        .enqueue(new Callback<ProductResponse>() {
+                            @Override
+                            public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
+                                Log.v(TAG, "Results size: " + String.valueOf(response.body().getResults().size()));
+                                mProducts = response.body();
+                                getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts),DogListFragment.class.getName())
+                                        .addToBackStack(DogListFragment.class.getName())
+                                        .commit();
+                            }
+
+                            @Override
+                            public void onFailure(Throwable t) {
+
+                            }
+                        });
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }else if(dataItem.getNotificationObject() instanceof Category){
+            Log.v(TAG, "Recived event to update Notifications");
+            SearchObject soCat = new SearchObject();
+            soCat.setCategory(String.valueOf(((Category) dataItem.getNotificationObject()).getId_category()));
+
+            List<Product> filteredProducts = new ArrayList<>();
+            for(Product prod : mProducts.getResults()){
+                if(prod.getCategoryid()==1){
+                    filteredProducts.add(prod);
+                }
+            }
+
+            mProducts.setResults(filteredProducts);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts,soCat),DogListFragment.class.getName())
+                    .addToBackStack(DogListFragment.class.getName())
+                    .commit();
+        }
     }
 
+
+    /**
+     *
+     * @param ud
+     * Setup Drawer menu for Logged user
+     */
     private void setMenuForLogged(UserData ud){
         View headerView = navigationView.getHeaderView(0);
         TextView username = (TextView) headerView.findViewById(R.id.txtUsername);
@@ -302,6 +347,9 @@ public class MainActivity extends DrawerBaseActivity
         drwMenu.getItem(1).setVisible(false);
     }
 
+    /**
+     * Setup Drawer menu for not logged
+     */
     private void setMenuForNotLogged(){
         View headerView = navigationView.getHeaderView(0);
         TextView username = (TextView) headerView.findViewById(R.id.txtUsername);
@@ -316,5 +364,21 @@ public class MainActivity extends DrawerBaseActivity
         Menu drwMenu = navigationView.getMenu().getItem(6).getSubMenu();
         drwMenu.getItem(2).setVisible(false);
         drwMenu.getItem(3).setVisible(false);
+    }
+
+
+    /**
+     * Event register and unsubscribe
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }

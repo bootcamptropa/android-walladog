@@ -3,60 +3,50 @@ package com.walladog.walladog.controllers.fragments;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
-import com.rockerhieu.rvadapter.endless.EndlessRecyclerViewAdapter;
 import com.walladog.walladog.R;
-import com.walladog.walladog.WalladogApp;
 import com.walladog.walladog.adapters.DogListAdapter;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 import com.walladog.walladog.models.apiservices.WDProductService;
 import com.walladog.walladog.models.responses.ProductResponse;
 import com.walladog.walladog.utils.CustomSearchDialog;
+import com.walladog.walladog.utils.EndRecycleViewAdapter;
 import com.walladog.walladog.utils.SearchObject;
 import com.walladog.walladog.utils.SpacesItemDecoration;
+import com.walladog.walladog.utils.WDEventNotification;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
 public class DogListFragment extends Fragment
-        implements SearchView.OnQueryTextListener,
-        DogListAdapter.OnPhotoClickListener, EndlessRecyclerViewAdapter.RequestToLoadMoreListener {
+        implements DogListAdapter.OnPhotoClickListener,
+        EndRecycleViewAdapter.ReqToLoadMoreListener {
 
     private static final String TAG = DogListFragment.class.getName();
 
     private static final String ARG_WDPRODUCTS = "ARG_WDPRODUCTS";
-    private static final String ARG_RACE = "ARG_RACE";
-    private static final String ARG_CATEGORY = "ARG_CATEGORY";
-    private static final String ARG_LATITUDE = "ARG_LATITUDES";
-    private static final String ARG_LONGITUDE = "ARG_LONGITUDE";
-    private static final String ARG_DISTANCE = "ARG_DISTANCE";
+    private static final String ARG_SO = "ARG_SO";
 
     RecyclerView mRecyclerView;
-    private SearchView mSearchView = null;
     private FloatingActionButton mFab = null;
-
-    private List<Product> mProducts =null;
-    private int mDistance;
-    private int mCategory;
-    private int mRace;
-    private double mLatitude;
-    private double mLogitude;
 
     private ProductResponse mProductResponse =null;
 
@@ -64,14 +54,17 @@ public class DogListFragment extends Fragment
     private DogListAdapter mAdapter = null;
 
     //Pagination
-    private EndlessRecyclerViewAdapter endlessRecyclerViewAdapter;
+    private EndRecycleViewAdapter endRecyclerViewAdapter;
     private boolean loading = true;
-    int grid_column_count = 2;
-    int pastVisiblesItems, visibleItemCount, totalItemCount;
     private int mOffset = 0;
     private int mLimit = 10;
     private Boolean mIsLastPage = false;
+    private Boolean mIsUniquePage = false;
     StaggeredGridLayoutManager mLayoutManager;
+    LinearLayout mEmptyResults;
+
+    //Search Object
+    SearchObject mSO = null;
 
     //Dialog search
     CustomSearchDialog mCsd = null;
@@ -92,6 +85,15 @@ public class DogListFragment extends Fragment
         DogListFragment fragment = new DogListFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_WDPRODUCTS, (Serializable) products);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static DogListFragment newInstance(ProductResponse products,SearchObject so) {
+        DogListFragment fragment = new DogListFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_WDPRODUCTS, (Serializable) products);
+        args.putSerializable(ARG_SO, (Serializable) so);
         fragment.setArguments(args);
         return fragment;
     }
@@ -118,6 +120,7 @@ public class DogListFragment extends Fragment
         if (getArguments() != null) {
             //mProducts = (List<Product>) getArguments().getSerializable(ARG_WDPRODUCTS);
             mProductResponse = (ProductResponse) getArguments().getSerializable(ARG_WDPRODUCTS);
+            mSO = (SearchObject) getArguments().getSerializable(ARG_SO);
         }
 
     }
@@ -127,10 +130,11 @@ public class DogListFragment extends Fragment
                              Bundle savedInstanceState) {
         View root =  inflater.inflate(R.layout.fragment_dog_list, container, false);
 
+        mEmptyResults = (LinearLayout) root.findViewById(R.id.doglist_noresults);
+        mRecyclerView = (RecyclerView) root.findViewById(R.id.masonry_grid);
+
         mFab = (FloatingActionButton) root.findViewById(R.id.fab);
-
         Button btn = (Button) root.findViewById(R.id.doglist_search);
-
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,18 +162,27 @@ public class DogListFragment extends Fragment
             this.mOffset=this.mOffset+this.mLimit;
         }
 
-        mRecyclerView = (RecyclerView) root.findViewById(R.id.masonry_grid);
+        if(mProductResponse.getNext()==null && mProductResponse.getPrevious()==null){
+            mIsUniquePage=true;
+        }
 
-        //mAdapter = new DogListAdapter(getActivity().getApplicationContext(),this,mProducts);
-        mAdapter = new DogListAdapter(getActivity().getApplicationContext(),this,mProductResponse.getResults());
-        endlessRecyclerViewAdapter = new EndlessRecyclerViewAdapter(getContext(),mAdapter,this); //Adapter endless
+        Log.v(TAG,"Products size: "+String.valueOf(mProductResponse.getResults().size()));
+        if(mProductResponse.getResults().size()>0){
+            mAdapter = new DogListAdapter(getActivity().getApplicationContext(),this,mProductResponse.getResults());
+            endRecyclerViewAdapter = new EndRecycleViewAdapter(getContext(),mAdapter,this); //Adapter endless
 
-        mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+            mLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+            mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mRecyclerView.setAdapter(endlessRecyclerViewAdapter);
-        SpacesItemDecoration decoration = new SpacesItemDecoration(16);
-        mRecyclerView.addItemDecoration(decoration);
+            mRecyclerView.setAdapter(endRecyclerViewAdapter);
+            SpacesItemDecoration decoration = new SpacesItemDecoration(16);
+            mRecyclerView.addItemDecoration(decoration);
+        }else{
+            mEmptyResults.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+        }
+
+
 
         return root;
     }
@@ -191,78 +204,80 @@ public class DogListFragment extends Fragment
         mListItemListener=null;
     }
 
-    //Search listeners
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        Log.v(TAG, "Submited text : " + query);
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        Log.v(TAG, "Query text change: "+newText);
-        return false;
-    }
-
-    //Photo listener
+    /**
+     * Listener for picture clicks
+     * @param position
+     */
     @Override
     public void onPhotoClick(int position) {
         Log.v(TAG,"Photo click listener at : "+String.valueOf(position));
         mListItemListener.onListItemSelected(position);
     }
 
+    /**
+     * LoadMore interface from endlessAdapter
+     */
     @Override
-    public void onLoadMoreRequested() {
-        if(mIsLastPage==false){
-            try {
-                ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(mOffset, mLimit)
-                        .enqueue(new Callback<ProductResponse>() {
-                            @Override
-                            public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
-                                if(response.body().getNext()==null){
-                                    mIsLastPage=true;
+    public void OnNeedMorePages() {
+        if(mIsUniquePage){
+            //TODO resolve this stupid hack
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    endRecyclerViewAdapter.onDataReady(false);
+                }
+            }, 2000);
+        }else {
+            if (mIsLastPage == false) {
+                try {
+                    ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(mOffset, mLimit)
+                            .enqueue(new Callback<ProductResponse>() {
+                                @Override
+                                public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
+                                    if (response.body().getNext() == null) {
+                                        mIsLastPage = true;
+                                    }
+                                    mAdapter.appendItems(response.body().getResults());
+                                    endRecyclerViewAdapter.onDataReady(true);
+                                    mOffset = mOffset + mLimit;
                                 }
-                                mAdapter.appendItems(response.body().getResults());
-                                endlessRecyclerViewAdapter.onDataReady(true);
-                                mOffset=mOffset+mLimit;
-                            }
 
-                            @Override
-                            public void onFailure(Throwable t) {
-                                Log.v(TAG,"Fallo en la conexion a la api");
-                                endlessRecyclerViewAdapter.onDataReady(false);
-                            }
-                        });
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }else{
-            mOffset=0;
-            mIsLastPage=true;
-            try {
-                ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(mOffset,mLimit)
-                        .enqueue(new Callback<ProductResponse>() {
-                            @Override
-                            public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
-                                if(response.body().getNext()==null){
-                                    mIsLastPage=true;
+                                @Override
+                                public void onFailure(Throwable t) {
+                                    Log.v(TAG, "Fallo en la conexion a la api");
+                                    endRecyclerViewAdapter.onDataReady(false);
                                 }
-                                mAdapter.appendItems(response.body().getResults());
-                                endlessRecyclerViewAdapter.onDataReady(true);
-                                mOffset=mOffset+mLimit;
-                            }
+                            });
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                mOffset = 0;
+                mIsLastPage = true;
+                try {
+                    ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(mOffset, mLimit)
+                            .enqueue(new Callback<ProductResponse>() {
+                                @Override
+                                public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
+                                    if (response.body().getNext() == null) {
+                                        mIsLastPage = true;
+                                    }
+                                    mAdapter.appendItems(response.body().getResults());
+                                    endRecyclerViewAdapter.onDataReady(true);
+                                    mOffset = mOffset + mLimit;
+                                }
 
-                            @Override
-                            public void onFailure(Throwable t) {
-                                Log.v(TAG,"Fallo en la conexion a la api");
-                                endlessRecyclerViewAdapter.onDataReady(false);
-                            }
-                        });
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                                @Override
+                                public void onFailure(Throwable t) {
+                                    Log.v(TAG, "Fallo en la conexion a la api");
+                                    endRecyclerViewAdapter.onDataReady(false);
+                                }
+                            });
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
     }
 
     private void reloadGridFromSearch(SearchObject so) throws UnsupportedEncodingException {
@@ -271,31 +286,12 @@ public class DogListFragment extends Fragment
 
         final DogListFragment _this = this;
 
-        ServiceGeneratorOAuth.createService(WDProductService.class).getSearchProductsPaginated("0","10",so.getLatitude(),so.getLongitude(),so.getRace(),so.getCategory(),null)
-                .enqueue(new Callback<ProductResponse>() {
-                    @Override
-                    public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
-                        Log.v(TAG, String.valueOf(response.body().getResults().size()));
-                        //mAdapter = new DogListAdapter(getActivity().getApplicationContext(), this, mProductResponse.getResults());
-                        mProductResponse = response.body();
+        EventBus.getDefault().post(new WDEventNotification<SearchObject>(1, "Perros Seleccionados", so));
 
-                        //mAdapter = new DogListAdapter(getActivity().getApplicationContext(),this,mProducts);
-                        mAdapter = new DogListAdapter(WalladogApp.context,_this,mProductResponse.getResults());
-                        endlessRecyclerViewAdapter = new EndlessRecyclerViewAdapter(WalladogApp.context,mAdapter,_this); //Adapter endless
 
-                        mRecyclerView.setAdapter(endlessRecyclerViewAdapter);
-
-                        mAdapter.notifyDataSetChanged();
-                        endlessRecyclerViewAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-
-                    }
-                });
 
     }
+
 
     public interface OnListItemSelectedListener {
         void onListItemSelected(int position);
