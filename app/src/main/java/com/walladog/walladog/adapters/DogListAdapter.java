@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.walladog.walladog.R;
 import com.walladog.walladog.models.Product;
+import com.walladog.walladog.utils.SearchObject;
 
 import java.util.List;
 import java.util.Random;
@@ -31,6 +32,10 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
 
     private Context context;
 
+    public List<Product> getProductList() {
+        return productList;
+    }
+
     List<Product> productList = null;
 
 
@@ -42,7 +47,7 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
 
     @Override
     public MasonryView onCreateViewHolder(ViewGroup parent, int viewType) {
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item, parent, false);
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item_dog, parent, false);
         return new MasonryView(layoutView);
     }
 
@@ -71,13 +76,15 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
         String url = "http://loremflickr.com/300/"+String.valueOf(height)+"/dog";
 
         Picasso.with(context)
+                //.load(productList.get(position).getImages().get(0).getPhoto_thumbnail_url())
+                //.load(R.drawable.walladogsmall)
                 .load(url)
-                .placeholder(R.drawable.progress_animation)
+                .placeholder(R.drawable.dogplace1)
                 .transform(transformation)
                 .into(holder.imageView);
 
         holder.dogName.setText(productList.get(position).getName());
-        holder.dogLocation.setText("Barcelona");
+        holder.dogLocation.setText(productList.get(position).getRace());
         holder.dogRace.setText(productList.get(position).getGender());
     }
 
@@ -105,11 +112,12 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
         void onPhotoClick(int position);
     }
 
-
     //For pagination:
     public void appendItems(List<Product> products) {
-        int count = getItemCount();
-        productList.addAll(products);
-        notifyItemRangeInserted(count, products.size());
+        if(products!=null){
+            int count = getItemCount();
+            productList.addAll(products);
+            notifyItemRangeInserted(count, products.size());
+        }
     }
 }

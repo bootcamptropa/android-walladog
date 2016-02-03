@@ -16,8 +16,11 @@ import java.lang.ref.WeakReference;
 
 import static com.walladog.walladog.models.db.DBConstants.KEY_CATEGORIES_CREATION_DATE;
 import static com.walladog.walladog.models.db.DBConstants.KEY_CATEGORIES_ID;
+import static com.walladog.walladog.models.db.DBConstants.KEY_CATEGORIES_IDCATEGORY;
 import static com.walladog.walladog.models.db.DBConstants.KEY_CATEGORIES_MODIFICATION_DATE;
 import static com.walladog.walladog.models.db.DBConstants.KEY_CATEGORIES_NAME;
+import static com.walladog.walladog.models.db.DBConstants.KEY_RACES_ID;
+import static com.walladog.walladog.models.db.DBConstants.KEY_RACES_IDRACE;
 import static com.walladog.walladog.models.db.DBConstants.TABLE_CATEGORIES;
 
 public class CategoryDAO implements DAOPersistable<Category> {
@@ -27,6 +30,7 @@ public class CategoryDAO implements DAOPersistable<Category> {
     public static final String[] allColumns = {
             KEY_CATEGORIES_ID,
             KEY_CATEGORIES_NAME,
+            KEY_CATEGORIES_IDCATEGORY,
             KEY_CATEGORIES_CREATION_DATE,
             KEY_CATEGORIES_MODIFICATION_DATE
     };
@@ -45,6 +49,8 @@ public class CategoryDAO implements DAOPersistable<Category> {
             return 0;
         }
         // insert
+        category.setId_category(category.getId());
+
         DatabaseHelper dbHelper = DatabaseHelper.getInstance(context.get());
         SQLiteDatabase db = dbHelper.getDB();
 
@@ -111,16 +117,17 @@ public class CategoryDAO implements DAOPersistable<Category> {
     public static Category  categoryFromCursor(Cursor c) {
         assert c != null;
 
-        Category n = new Category(c.getString(c.getColumnIndex(KEY_CATEGORIES_NAME)));
-        n.setId(c.getInt(c.getColumnIndex(KEY_CATEGORIES_ID)));
+        Category category = new Category(c.getString(c.getColumnIndex(KEY_CATEGORIES_NAME)));
+        category.setId(c.getInt(c.getColumnIndex(KEY_CATEGORIES_ID)));
+        category.setId_category(c.getInt(c.getColumnIndex(KEY_CATEGORIES_IDCATEGORY)));
 
         Long creationDate = c.getLong(c.getColumnIndex(KEY_CATEGORIES_CREATION_DATE));
         Long modificationDate = c.getLong(c.getColumnIndex(KEY_CATEGORIES_MODIFICATION_DATE));
 
-        n.setCreationDate(DatabaseHelper.convertLongToDate(creationDate));
-        n.setModificationDate(DatabaseHelper.convertLongToDate(modificationDate));
+        category.setCreationDate(DatabaseHelper.convertLongToDate(creationDate));
+        category.setModificationDate(DatabaseHelper.convertLongToDate(modificationDate));
 
-        return n;
+        return category;
     }
 
     @Nullable
@@ -128,9 +135,7 @@ public class CategoryDAO implements DAOPersistable<Category> {
     public Cursor queryCursor() {
         //Select de toda la vida
         DatabaseHelper db = DatabaseHelper.getInstance(context.get());
-
         Cursor c = db.getReadableDatabase().query(TABLE_CATEGORIES, allColumns, null, null, null, null, null);
-
         return c;
     }
 
@@ -157,9 +162,9 @@ public class CategoryDAO implements DAOPersistable<Category> {
         ContentValues content = new ContentValues();
         content.put(KEY_CATEGORIES_NAME, category.getName());
         //content.put(KEY_CATEGORIES_ID, notebook.getId());
+        content.put(KEY_CATEGORIES_IDCATEGORY, category.getId_category());
         content.put(KEY_CATEGORIES_CREATION_DATE, DatabaseHelper.convertDateToLong(category.getCreationDate()));
         content.put(KEY_CATEGORIES_MODIFICATION_DATE, DatabaseHelper.convertDateToLong(category.getModificationDate()));
-
         return content;
     }
 }

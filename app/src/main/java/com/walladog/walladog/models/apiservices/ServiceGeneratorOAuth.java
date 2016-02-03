@@ -2,7 +2,6 @@ package com.walladog.walladog.models.apiservices;
 
 import android.content.Context;
 import android.util.Base64;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -41,23 +40,25 @@ public class ServiceGeneratorOAuth {
                     .addConverterFactory(GsonConverterFactory.create(gson));
 
     public static <S> S createService(Class<S> serviceClass) throws UnsupportedEncodingException {
-        return createService(serviceClass, null, null, null);
+        return createService(serviceClass, null, null, null,false);
     }
 
     public static <S> S createService(Class<S> serviceClass,String clientId,String clientSecret) throws UnsupportedEncodingException {
-        return createService(serviceClass, null, clientId, clientSecret);
+        return createService(serviceClass, null, clientId, clientSecret,false);
     }
 
-    public static <S> S createService(Class<S> serviceClass, final AccessToken token,String clientId,String clientSecret) throws UnsupportedEncodingException {
+    public static <S> S createService(Class<S> serviceClass,AccessToken token) throws UnsupportedEncodingException {
+        return createService(serviceClass, token,null,null,false);
+    }
+
+    public static <S> S createService(Class<S> serviceClass, final AccessToken token,String clientId,String clientSecret,Boolean isMultiplart) throws UnsupportedEncodingException {
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-
         httpClient.interceptors().clear();
-
         //Log interceptor
-        //httpClient.interceptors().add(logging);
+        httpClient.interceptors().add(logging);
 
 
         if (token != null) {
@@ -66,7 +67,7 @@ public class ServiceGeneratorOAuth {
                 public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
                     Request original = chain.request();
                     Request.Builder requestBuilder = original.newBuilder()
-                            .header("Accept", "applicaton/json")
+                            .header("Accept", "application/json")
                             .header("Authorization", "Bearer "+token.getAccessToken())
                             .method(original.method(), original.body());
 
@@ -76,7 +77,6 @@ public class ServiceGeneratorOAuth {
             });
 
         }else{
-
             if(clientId!=null && clientSecret!=null) {
                 String credentials = clientId + ":" + clientSecret;
                 final String basic = "Basic " + getBase64String(credentials);
@@ -88,7 +88,7 @@ public class ServiceGeneratorOAuth {
 
                         Request.Builder requestBuilder = original.newBuilder()
                                 .header("Authorization", basic)
-                                .header("Accept", "applicaton/json")
+                                .header("Accept", "application/json")
                                 .method(original.method(), original.body());
 
                         Request request = requestBuilder.build();
@@ -100,7 +100,7 @@ public class ServiceGeneratorOAuth {
                         .getSharedPreferences(WalladogApp.class.getSimpleName(), Context.MODE_PRIVATE)
                         .getString(AccessToken.OAUTH2_TOKEN,"");
 
-                Log.v(TAG, "Token Actual:" + actualToken);
+                //Log.v(TAG, "Token Actual:" + actualToken);
 
                 httpClient.interceptors().add(new Interceptor() {
                     @Override

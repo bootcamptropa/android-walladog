@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 public class State {
 
-    private double id;
+    private int id;
     private String name;
 
 
@@ -13,31 +13,31 @@ public class State {
 
     }
 
+    public State(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public State (JSONObject json) {
 
-        this.id = json.optDouble("id");
+        this.id = json.optInt("id");
         this.name = json.optString("name");
 
     }
 
-    public double getId() {
-        return this.id;
+    public int getId() {
+        return id;
     }
 
-    public void setId(double id) {
+    public void setId(int id) {
         this.id = id;
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "{id = "+id+", name = "+name+"}";
     }
 }

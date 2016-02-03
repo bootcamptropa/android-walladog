@@ -10,12 +10,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.walladog.walladog.R;
 import com.walladog.walladog.models.apiservices.AccessToken;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
+
+import java.io.UnsupportedEncodingException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -61,9 +64,17 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (mOnLoginClickListener != null) {
-                    mOnLoginClickListener.onLoginSubmit(userEmail.getText().toString(), userPassword.getText().toString(),root);
+                    try {
+                        mOnLoginClickListener.onLoginSubmit(userEmail.getText().toString(), userPassword.getText().toString(),root);
+                        View view = getActivity().getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                 }
-                Log.v("RAMON", "click");
             }
         });
 
@@ -71,7 +82,7 @@ public class LoginFragment extends Fragment {
     }
 
     public interface OnLoginClickListener {
-        void onLoginSubmit(String username, String password,View currentView);
+        void onLoginSubmit(String username, String password,View currentView) throws UnsupportedEncodingException;
     }
 
     @Override

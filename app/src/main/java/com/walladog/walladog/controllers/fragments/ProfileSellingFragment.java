@@ -8,34 +8,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rockerhieu.rvadapter.RecyclerViewAdapterWrapper;
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.SellingAdapter;
 import com.walladog.walladog.models.Product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileSellingFragment extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public static final String ARG_PSELLING = "ARG_PSELLING";
 
-    private String mParam1;
-    private String mParam2;
+    private List<Product> mProductsSelling;
 
     private SellingAdapter adapter;
     private RecyclerView recyclerView;
-    private static List<Product> productList;
 
     public ProfileSellingFragment() {
-        // Required empty public constructor
+
     }
 
-    public static ProfileSellingFragment newInstance(String param1, String param2) {
+    public static ProfileSellingFragment newInstance(List<Product> pSelling) {
         ProfileSellingFragment fragment = new ProfileSellingFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(ARG_PSELLING, (Serializable) pSelling);
         fragment.setArguments(args);
         return fragment;
     }
@@ -44,8 +40,7 @@ public class ProfileSellingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mProductsSelling = (List<Product>) getArguments().getSerializable(ARG_PSELLING);
         }
     }
 
@@ -53,8 +48,6 @@ public class ProfileSellingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile_selling, container, false);
-
-
 
         return v;
     }
@@ -68,15 +61,10 @@ public class ProfileSellingFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
-        productList = new ArrayList<Product>();
-        char c = 'A';
-        for (byte i = 0; i < 20; i++) {
-            Product model = new Product();
-            model.setName("Product name"+String.valueOf(c++));
-            model.setGender("Male");
-            productList.add(model);
+        if(mProductsSelling==null){
+            mProductsSelling = new ArrayList<>();
         }
-        adapter = new SellingAdapter(productList,getContext());
+        adapter = new SellingAdapter(mProductsSelling,getContext());
         recyclerView.setAdapter(adapter);
     }
 }

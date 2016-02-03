@@ -3,150 +3,187 @@ package com.walladog.walladog.models;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 public class Product implements Serializable {
 
 
     private double id;
-    //@SerializedName("name")
     private String name;
-    private double raceId;
-    private double sellerId;
+    private String race;
+    private double raceid;
     private String gender;
     private boolean sterile;
     private String description;
-    private String publishDate;
-    private double stateId;
+    private String state;
+    private int stateid;
+    private Boolean active;
+    private String latitude;
+    private String longitude;
     private double price;
-    private double categoryId;
-    private double latitude;
-    private double longitude;
-    private boolean active;
+    private String category;
+    private int categoryid;
 
+    private ProductSeller seller;
+    private List<ProductImage> images;
 
-
-    public Product () {
-
+    public Product() {
     }
 
-    public Product (JSONObject json) {
-
-        this.gender = json.optString("gender");
-        this.stateId = json.optDouble("stateId");
-        this.raceId = json.optDouble("raceId");
-        this.id = json.optDouble("id");
-        this.price = json.optDouble("price");
-        this.sellerId = json.optDouble("sellerId");
-        this.sterile = json.optBoolean("sterile");
-        this.publishDate = json.optString("publish_date");
-        this.categoryId = json.optDouble("categoryId");
-        this.description = json.optString("description");
-        this.name = json.optString("name");
-
-    }
-
-    public String getGender() {
-        return this.gender;
-    }
-
-    public void setGender(String gender) {
+    public Product(double id, String name, String race, double raceid, String gender, boolean sterile, String description, String state, int stateid, Boolean active, String latitude, String longitude, double price, String category, int categoryid, ProductSeller seller, List<ProductImage> images) {
+        this.id = id;
+        this.name = name;
+        this.race = race;
+        this.raceid = raceid;
         this.gender = gender;
+        this.sterile = sterile;
+        this.description = description;
+        this.state = state;
+        this.stateid = stateid;
+        this.active = active;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.price = price;
+        this.category = category;
+        this.categoryid = categoryid;
+        this.seller = seller;
+        this.images = images;
     }
 
-    public double getStateId() {
-        return this.stateId;
+    public ProductSeller getSeller() {
+        return seller;
     }
 
-    public void setStateId(double stateId) {
-        this.stateId = stateId;
+    public void setSeller(ProductSeller seller) {
+        this.seller = seller;
     }
 
-    public double getRaceId() {
-        return this.raceId;
+    public List<ProductImage> getImages() {
+        return images;
     }
 
-    public void setRaceId(double raceId) {
-        this.raceId = raceId;
+    public void setImages(List<ProductImage> images) {
+        this.images = images;
     }
 
     public double getId() {
-        return this.id;
+        return id;
     }
 
     public void setId(double id) {
         this.id = id;
     }
 
-    public double getPrice() {
-        return this.price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public double getSellerId() {
-        return this.sellerId;
-    }
-
-    public void setSellerId(double sellerId) {
-        this.sellerId = sellerId;
-    }
-
-    public boolean getSterile() {
-        return this.sterile;
-    }
-
-    public void setSterile(boolean sterile) {
-        this.sterile = sterile;
-    }
-
-    public String getPublishDate() {
-        return this.publishDate;
-    }
-
-    public void setPublishDate(String publishDate) {
-        this.publishDate = publishDate;
-    }
-
-    public double getCategoryId() {
-        return this.categoryId;
-    }
-
-    public void setCategoryId(double categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public String getRace() {
+        return race;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setRace(String race) {
+        this.race = race;
     }
 
-    public double getLatitude() {
+    public double getRaceid() {
+        return raceid;
+    }
+
+    public void setRaceid(double raceid) {
+        this.raceid = raceid;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public boolean isSterile() {
+        return sterile;
+    }
+
+    public void setSterile(boolean sterile) {
+        this.sterile = sterile;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public int getStateid() {
+        return stateid;
+    }
+
+    public void setStateid(int stateid) {
+        this.stateid = stateid;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public int getCategoryid() {
+        return categoryid;
+    }
+
+    public void setCategoryid(int categoryid) {
+        this.categoryid = categoryid;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(String latitude) {
         this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

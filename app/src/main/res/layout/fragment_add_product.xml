@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
+              android:background="@drawable/wdbackground1"
               android:layout_height="match_parent"
               android:gravity="center_horizontal"
               android:orientation="vertical"
@@ -22,16 +23,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/text_info"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:text="Indica las propiedades de tu Producto:"
                 />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/background_service1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_marginTop="10dp">
 
                 <AutoCompleteTextView
-                    android:id="@+id/product_name"
+                    android:id="@+id/add_product_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Nombre del producto"
@@ -43,11 +50,15 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:background="@drawable/background_service1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_height="wrap_content">
 
 
                 <EditText
-                    android:id="@+id/product_description"
+                    android:id="@+id/add_product_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:lines="3"
@@ -64,10 +75,14 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:background="@drawable/background_service1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/product_price"
+                    android:id="@+id/add_product_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Precio"
@@ -80,6 +95,47 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_category_txt"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:text="Selecciona una categoría:"
+                />
+
+            <Spinner
+                android:id="@+id/spin_add_category"
+                android:background="@drawable/background_service1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:paddingLeft="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_selectrace_txt"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:text="Selecciona una raza:"
+                />
+
+            <Spinner
+                android:id="@+id/spin_add_race"
+                android:background="@drawable/background_service1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:paddingLeft="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -89,7 +145,102 @@
                 android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:background="@drawable/background_item_notification"
+
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/add_sterile_txt"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:text="Esterilizado:"
+                        />
+
+                    <Spinner
+                        android:id="@+id/spin_add_sterile"
+                        android:background="@drawable/background_service1"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginTop="5dp"
+                        android:paddingLeft="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/add_gender_txt"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:text="Género:"
+                        />
+
+                    <Spinner
+                        android:id="@+id/spin_add_gender"
+                        android:background="@drawable/background_service1"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginTop="5dp"
+                        android:paddingLeft="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_state_txt"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:text="Estado:"
+                />
+
+            <Spinner
+                android:id="@+id/spin_add_state"
+                android:background="@drawable/background_service1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:paddingLeft="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:background="@drawable/background_service1"
                 android:padding="10dp" >
 
                 <ImageView
@@ -131,7 +282,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/btn_add_product"
                 android:layout_width="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/btn_corners"
@@ -141,6 +292,7 @@
                 android:padding="5dp"
                 android:textColor="#FFF"
                 android:drawablePadding="15dp"
+                android:layout_marginBottom="20dp"
                 android:text="Alta producto"/>
 
 

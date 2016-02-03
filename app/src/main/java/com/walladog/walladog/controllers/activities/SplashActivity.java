@@ -3,7 +3,6 @@ package com.walladog.walladog.controllers.activities;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,24 +16,23 @@ import android.widget.TextView;
 import com.walladog.walladog.R;
 import com.walladog.walladog.WalladogApp;
 import com.walladog.walladog.models.Category;
-import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.Race;
 import com.walladog.walladog.models.ServiceGenerator;
+import com.walladog.walladog.models.UserData;
 import com.walladog.walladog.models.WDServices;
 import com.walladog.walladog.models.apiservices.AccessToken;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 import com.walladog.walladog.models.apiservices.WDCategoryService;
 import com.walladog.walladog.models.apiservices.WDOAuth;
-import com.walladog.walladog.models.apiservices.WDProductsService;
-import com.walladog.walladog.models.apiservices.WDRacesService;
+import com.walladog.walladog.models.apiservices.WDProductService;
+import com.walladog.walladog.models.apiservices.WDRaceService;
 import com.walladog.walladog.models.apiservices.WDServicesService;
-import com.walladog.walladog.models.responses.CategoryResponse;
-import com.walladog.walladog.models.responses.ProductsResponse;
-import com.walladog.walladog.models.responses.RacesResponse;
+import com.walladog.walladog.models.apiservices.WDUserDataService;
+import com.walladog.walladog.models.responses.ProductResponse;
 import com.walladog.walladog.models.responses.ServicesResponse;
-import com.walladog.walladog.utils.Constants;
 import com.walladog.walladog.utils.DBAsyncTasks;
-import com.walladog.walladog.utils.WDUtils;
+import com.walladog.walladog.utils.DBAsyncTasksGet;
+import com.walladog.walladog.utils.SearchObject;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -58,7 +56,10 @@ public class SplashActivity extends AppCompatActivity {
     private int requestsFinished=0;
 
     private List<WDServices> mWDServices = null;
-    private List<Product> mProductList = null;
+    //private ProductResponse mProductList = null;
+    private List<Category> mListaCategorias = null;
+    private List<Race> mRaceList = null;
+    private UserData mUserData = null;
 
 
     @Override
@@ -124,39 +125,53 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * @throws UnsupportedEncodingException
+     * Identification with token , refresh token o go to Login
+     *
+     */
     private void getOAuthTokenAndStartApp() throws UnsupportedEncodingException {
         String savedToken = getSharedPreferences(WalladogApp.class.getSimpleName(),MODE_PRIVATE)
-                .getString(AccessToken.OAUTH2_TOKEN,null);
+                .getString(AccessToken.OAUTH2_TOKEN, null);
 
         if(savedToken==null) {
-            ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret).getAccessToken(AccessToken.grantType, AccessToken.cusername, AccessToken.cpassword)
-                    .enqueue(new Callback<AccessToken>() {
-                        @Override
-                        public void onResponse(Response<AccessToken> response, Retrofit retrofit) {
-                            if (response != null) {
-                                String aToken = response.body().getAccessToken();
-                                Log.v(TAG, "Obtenemos Token y lo salvamos::" + aToken);
-                                getSharedPreferences(WalladogApp.class.getSimpleName(), MODE_PRIVATE)
-                                        .edit()
-                                        .putString(AccessToken.OAUTH2_TOKEN, aToken)
-                                        .commit();
-                                try {
-                                    getInitRestData();
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                Log.v(TAG, "Response is null");
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Throwable t) {
-                            Log.v(TAG, "Failed request on " + AccessToken.class.getName());
-                        }
-                    });
+            mUserData = new UserData();
+            requestsFinished++;
+            LaunchApp();
+            getInitRestData();
         }else{
+            AccessToken aToken = new AccessToken();
+            aToken.setAccessToken(savedToken);
+
             try {
+                ServiceGeneratorOAuth.createService(WDUserDataService.class,aToken).getUserData().enqueue(new Callback<UserData>() {
+                    @Override
+                    public void onResponse(Response<UserData> response, Retrofit retrofit) {
+                        if (response != null & response.code() == 200) {
+                            Log.v(TAG,"EMAIL::: "+String.valueOf(response.body().getEmail()));
+                            UserData ud = response.body();
+                            mUserData = ud;
+
+                        }else{
+                            Log.v(TAG, "Failed to recover user data");
+                            Log.v(TAG,"Status :: "+String.valueOf(response.code()));
+
+                        }
+                        requestsFinished++;
+                        LaunchApp();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        mUserData = new UserData();
+                        Log.v(TAG, "Failed to recover user data");
+                        requestsFinished++;
+                        LaunchApp();
+                        //Send NOT-logged info to MainActivity
+                    }
+                });
+
                 getInitRestData();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -164,55 +179,27 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     *
+     * @throws UnsupportedEncodingException
+     * Get initial data from all services and save to DB
+     *
+     */
     private void getInitRestData() throws UnsupportedEncodingException {
         appLoading.setText("Loading services...");
 
-        ServiceGenerator
-                .createService(WDServicesService.class).getMultiTask()
-                .enqueue(new Callback<ServicesResponse>() {
+        SearchObject so = new SearchObject();
+        ServiceGeneratorOAuth.createService(WDRaceService.class).getRaces()
+                .enqueue(new Callback<List<Race>>() {
                     @Override
-                    public void onResponse(Response<ServicesResponse> response, Retrofit retrofit) {
-                        mWDServices = response.body().getData();
-                        appLoading.setText("Servicios cargados");
-                        Log.v(TAG, "Servicios cargados");
-                        requestsFinished++;
-                        LaunchApp();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        Log.v(TAG, "Failed request on " + WDServicesService.class.getName());
-                    }
-                });
-
-        ServiceGenerator.createService(WDProductsService.class).getMultiTask()
-                .enqueue(new Callback<ProductsResponse>() {
-
-                    @Override
-                    public void onResponse(Response<ProductsResponse> response, Retrofit retrofit) {
-                        mProductList = response.body().getData();
-                        appLoading.setText("Perros cargados");
-                        Log.v(TAG, "Productos cargados");
-                        requestsFinished++;
-                        LaunchApp();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable t) {
-                        Log.v(TAG, "Failed request on " + WDProductsService.class.getName());
-                    }
-                });
-
-        ServiceGenerator.createService(WDRacesService.class).getMultiTask()
-                .enqueue(new Callback<RacesResponse>() {
-                    @Override
-                    public void onResponse(Response<RacesResponse> response, Retrofit retrofit) {
-                        List<Race> mRacesList = response.body().getData();
-                        appLoading.setText("Cargando razas");
-                        DBAsyncTasks<Race> task = new DBAsyncTasks<Race>(DBAsyncTasks.TASK_SAVE_LIST, new Race(), getApplicationContext(), mRacesList, new DBAsyncTasks.OnItemsSavedToDBListener() {
+                    public void onResponse(Response<List<Race>> response, Retrofit retrofit) {
+                        mRaceList = response.body();
+                        Log.v(TAG, mRaceList.get(0).getName());
+                        appLoading.setText("Salvando razas");
+                        DBAsyncTasks<Race> task = new DBAsyncTasks<Race>(DBAsyncTasks.TASK_SAVE_LIST, new Race(), getApplicationContext(), mRaceList, new DBAsyncTasks.OnItemsSavedToDBListener() {
                             @Override
                             public void onItemsSaved(Boolean saved) {
-                                Log.v(TAG,"Razas salvadas");
                                 requestsFinished++;
                                 LaunchApp();
                             }
@@ -222,7 +209,7 @@ public class SplashActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Throwable t) {
-                        Log.v(TAG, "Failed request on " + WDRacesService.class.getName());
+                        Log.v(TAG,"Error retriving races");
                     }
                 });
 
@@ -230,14 +217,25 @@ public class SplashActivity extends AppCompatActivity {
                 .enqueue(new Callback<List<Category>>() {
                     @Override
                     public void onResponse(Response<List<Category>> response, Retrofit retrofit) {
-                        List<Category> mCategoryList =response.body();
+                        final List<Category> mCategoryList = response.body();
                         appLoading.setText("Categorias recuperadas");
                         DBAsyncTasks<Category> task = new DBAsyncTasks<Category>(DBAsyncTasks.TASK_SAVE_LIST, new Category(), getApplicationContext(), mCategoryList, new DBAsyncTasks.OnItemsSavedToDBListener() {
                             @Override
                             public void onItemsSaved(Boolean saved) {
-                                Log.v(TAG,"Categorias salvadas");
+                                Log.v(TAG, "Categorias salvadas");
                                 requestsFinished++;
                                 LaunchApp();
+                                DBAsyncTasksGet<Category> task2 = new DBAsyncTasksGet<Category>(DBAsyncTasksGet.TASK_GET_LIST,
+                                        new Category(), getApplicationContext(),
+                                        new DBAsyncTasksGet.OnItemsRecoveredFromDBListener<Category>() {
+                                            @Override
+                                            public void onItemsRecovered(List<Category> items) {
+                                                mListaCategorias = items;
+                                                requestsFinished++;
+                                                LaunchApp();
+                                            }
+                                        });
+                                task2.execute();
                             }
                         });
                         task.execute();
@@ -248,21 +246,21 @@ public class SplashActivity extends AppCompatActivity {
 
                     }
                 });
-
-
     }
 
     private void LaunchApp(){
         Log.v(TAG, "Lanzado " + String.valueOf(requestsFinished));
-        if(mProductList!=null && mWDServices!=null && requestsFinished==4){
+        //TODO valor correcto 4
+        if(requestsFinished==4){
             Intent i = new Intent(this, MainActivity.class);
-            i.putExtra(MainActivity.EXTRA_WDSERVICES, (Serializable) mWDServices);
-            i.putExtra(MainActivity.EXTRA_WDPRODUCTS, (Serializable) mProductList);
+            //i.putExtra(MainActivity.EXTRA_WDPRODUCTS, (Serializable) mProductList);
+            i.putExtra(MainActivity.EXTRA_CATEGORIAS, (Serializable) mListaCategorias);
+            i.putExtra(MainActivity.EXTRA_USERDATA, (Serializable) mUserData);
             Log.v(TAG,"Launching APP all tasks successfull resolved");
             startActivity(i);
 
         }else{
-            Log.v(TAG,"Error , some process working, app not launched...");
+            Log.v(TAG,"Waiting for launch to end process...");
         }
     }
 

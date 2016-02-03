@@ -1,6 +1,7 @@
 package com.walladog.walladog.utils;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -11,6 +12,7 @@ import com.walladog.walladog.models.dao.CategoryDAO;
 import com.walladog.walladog.models.dao.NotificationDAO;
 import com.walladog.walladog.models.dao.RaceDAO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,8 +34,6 @@ public class DBAsyncTasks<T> extends AsyncTask<Object, Object, Void> {
 
     public static final String TASK_SAVE_LIST = "task_save_list";
     public static final String TASK_SAVE_ITEM = "task_save_item";
-    public static final String TASK_GET_LIST = "task_get_list";
-    public static final String TASK_GET_ITEM = "task_get_item";
 
 
     public DBAsyncTasks(String taskType, T myType, Context context, List<T> items, OnItemsSavedToDBListener listener) {
@@ -61,6 +61,7 @@ public class DBAsyncTasks<T> extends AsyncTask<Object, Object, Void> {
                     Log.v(TAG, "Insertando Race");
                     RaceDAO objDAO = new RaceDAO(context);
                     for (T item : itemList) {
+                        Race myItem = (Race) item;
                         objDAO.insert((Race) item);
                     }
                 } else if (type instanceof Category) {
@@ -80,13 +81,6 @@ public class DBAsyncTasks<T> extends AsyncTask<Object, Object, Void> {
                 }
                 break;
             case TASK_SAVE_ITEM:
-                break;
-            case TASK_GET_LIST:
-                if (type instanceof WDNotification) {
-
-                }
-                break;
-            case TASK_GET_ITEM:
                 break;
         }
         return null;

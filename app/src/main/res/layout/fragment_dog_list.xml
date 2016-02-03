@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/wdbackground1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -10,7 +11,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="wrap_content"
+              android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical">
 
@@ -19,29 +20,23 @@
         android:orientation="horizontal"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.SearchView
-            android:layout_width="0dp"
-            android:id="@+id/search_txt"
-            android:layout_weight="8"
-            android:layout_height="wrap_content">
-        </android.support.v7.widget.SearchView>
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:background="@color/wd_white"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="4dp"
-            android:src="@drawable/ic_menu_filter"
-            android:layout_height="wrap_content"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/doglist_search"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:paddingRight="3dp"
+                android:background="@drawable/background_service1"
+                android:drawableRight="@drawable/ic_menu_searchwhite2"
+                android:gravity="right|center_vertical"
+                android:textColor="@color/wd_white"
+                android:text="@string/doglist_filtersearch"
+                />
 
     </LinearLayout>
-
-    <!-- empty line -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/masonry_grid"
@@ -49,6 +44,33 @@
         android:layout_height="match_parent"
         android:layout_marginTop="2dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/doglist_noresults"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="50dp"
+            android:src="@drawable/dognotfound"
+            android:layout_gravity="center"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="No se encontraron resultados..."
+            />
+
+    </LinearLayout>
 </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

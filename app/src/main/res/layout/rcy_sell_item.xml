@@ -6,7 +6,7 @@
               android:layout_height="wrap_content"
               android:layout_centerVertical="true"
               android:layout_margin="1dp"
-              android:background="@drawable/background_item_profile"
+              android:background="@drawable/background_service1"
               android:orientation="horizontal">
 
 
@@ -30,6 +30,7 @@
 
         <TextView
             android:layout_width="match_parent"
+            android:textSize="12sp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:text="Nombre"
@@ -37,6 +38,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
             android:textStyle="bold"
             android:layout_marginTop="1dp"
             android:text="Publicado"
@@ -56,6 +58,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="12sp"
             android:id="@+id/txt_name"
             android:text="Nombre Producto"
             />
@@ -63,12 +66,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
+            android:textSize="12sp"
             android:id="@+id/txt_publishdate"
             android:text="Fecha publicación"
             />
 
     </LinearLayout>
 
+
+    <ImageButton
+        android:id="@+id/btn_prod_options"
+        android:layout_width="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_vdots"
+        />
 
 
 </LinearLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+        android:src="@drawable/wdtranssmal2"
+        android:alpha="0.2"
+        android:tileModeX="mirror"
+        android:autoMirrored="@bool/default_title_indicator_selected_bold"
+        android:tileModeY="repeat"
+        android:tileMode="repeat" />

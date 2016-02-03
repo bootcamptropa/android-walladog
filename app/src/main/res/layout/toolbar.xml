@@ -16,6 +16,6 @@
         android:id="@+id/nav_logobutton"
         android:layout_marginRight="5dp"
         android:padding="5dp"
-        android:background="@drawable/walladogsmall"/>
+        android:background="@drawable/wdroundsm"/>
 
 </android.support.v7.widget.Toolbar>

@@ -12,31 +12,32 @@ import android.widget.Button;
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.ProfilePagerAdapter;
 import com.walladog.walladog.models.Product;
+import com.walladog.walladog.models.responses.ProductResponse;
 
 import java.io.Serializable;
 import java.util.List;
 
 
-public class UserProfileFragment extends Fragment implements ViewPager.OnPageChangeListener {
-    private static final String ARG_SELLINGPRODUCTS = "ARG_SELLINGPRODUCTS";
-    private static final String ARG_PARAM2 = "param2";
+public class UserTransactionsFragment extends Fragment implements ViewPager.OnPageChangeListener {
+    public static final String ARG_SELLINGPRODUCTS = "ARG_SELLINGPRODUCTS";
+    public static final String ARG_SOLDPRODUCTS = "ARG_SOLDPRODUCTS";
 
     private List<Product> mProductsSelling;
-    private String mParam2;
+    private List<Product> mProductsSold;
 
     private ViewPager pager = null;
 
     private Button b1,b2,b3;
 
-    public UserProfileFragment() {
+    public UserTransactionsFragment() {
 
     }
 
-    public static UserProfileFragment newInstance(List<Product> productlist, String param2) {
-        UserProfileFragment fragment = new UserProfileFragment();
+    public static UserTransactionsFragment newInstance(List<Product> productsSelling,List<Product> productsSold) {
+        UserTransactionsFragment fragment = new UserTransactionsFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_SELLINGPRODUCTS, (Serializable) productlist);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(ARG_SELLINGPRODUCTS, (Serializable) productsSelling);
+        args.putSerializable(ARG_SOLDPRODUCTS, (Serializable) productsSold);
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,7 +47,7 @@ public class UserProfileFragment extends Fragment implements ViewPager.OnPageCha
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mProductsSelling = (List<Product>) getArguments().getSerializable(ARG_SELLINGPRODUCTS);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mProductsSold = (List<Product>) getArguments().getSerializable(ARG_SOLDPRODUCTS);
         }
     }
 
@@ -90,7 +91,7 @@ public class UserProfileFragment extends Fragment implements ViewPager.OnPageCha
             }
         });
 
-        pager.setAdapter(new ProfilePagerAdapter(getChildFragmentManager()));
+        pager.setAdapter(new ProfilePagerAdapter(getChildFragmentManager(),mProductsSelling,mProductsSold));
         pager.addOnPageChangeListener(this);
 
         return v;
@@ -110,25 +111,5 @@ public class UserProfileFragment extends Fragment implements ViewPager.OnPageCha
     @Override
     public void onPageScrollStateChanged(int state) {
 
-    }
-
-    public void toogleButton(int position){
-        switch (position){
-            case 1:
-                b1.setTextColor(Color.parseColor("#ffffff"));
-                b2.setTextColor(Color.parseColor("#d3d3d3"));
-                b3.setTextColor(Color.parseColor("#d3d3d3"));
-                break;
-            case 2:
-                b1.setTextColor(Color.parseColor("#d3d3d3"));
-                b2.setTextColor(Color.parseColor("#ffffff"));
-                b3.setTextColor(Color.parseColor("#d3d3d3"));
-                break;
-            case 3:
-                b1.setTextColor(Color.parseColor("#d3d3d3"));
-                b2.setTextColor(Color.parseColor("#d3d3d3"));
-                b3.setTextColor(Color.parseColor("#ffffff"));
-                break;
-        }
     }
 }

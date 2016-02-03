@@ -1,10 +1,12 @@
 package com.walladog.walladog.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Category {
+public class Category implements Serializable {
 
     private double id;
+    private double id_category;
     private String name;
     private Date creationDate;
     private Date modificationDate;
@@ -16,6 +18,14 @@ public class Category {
     public Category(String name) {
         this.name = name;
         this.creationDate = new Date();
+    }
+
+    public Category(double id, double id_category, String name, Date creationDate, Date modificationDate) {
+        this.id = id;
+        this.id_category = id_category;
+        this.name = name;
+        this.creationDate = creationDate;
+        this.modificationDate = modificationDate;
     }
 
     public Category(double id, String name, Date creationDate, Date modificationDate) {
@@ -55,5 +65,13 @@ public class Category {
 
     public void setModificationDate(Date modificationDate) {
         this.modificationDate = modificationDate;
+    }
+
+    public double getId_category() {
+        return id_category;
+    }
+
+    public void setId_category(double id_category) {
+        this.id_category = id_category;
     }
 }

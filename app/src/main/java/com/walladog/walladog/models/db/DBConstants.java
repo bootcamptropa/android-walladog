@@ -16,11 +16,13 @@ public class DBConstants {
 
     // Table field constants
     public static final String KEY_RACES_ID = "_id";
+    public static final String KEY_RACES_IDRACE = "id_race";
     public static final String KEY_RACES_NAME = "name";
     public static final String KEY_RACES_CREATION_DATE = "creationDate";
     public static final String KEY_RACES_MODIFICATION_DATE = "modificationDate";
 
     public static final String KEY_CATEGORIES_ID = "_id";
+    public static final String KEY_CATEGORIES_IDCATEGORY = "id_category";
     public static final String KEY_CATEGORIES_NAME = "name";
     public static final String KEY_CATEGORIES_CREATION_DATE = "creationDate";
     public static final String KEY_CATEGORIES_MODIFICATION_DATE = "modificationDate";
@@ -38,6 +40,7 @@ public class DBConstants {
                     + TABLE_RACES + "( " + KEY_RACES_ID
                     + " integer primary key autoincrement, "
                     + KEY_RACES_NAME + " text not null unique,"
+                    + KEY_RACES_IDRACE + " INTEGER not null unique,"
                     + KEY_RACES_CREATION_DATE + " INTEGER, "
                     + KEY_RACES_MODIFICATION_DATE + " INTEGER "
                     + ");";
@@ -47,6 +50,7 @@ public class DBConstants {
                     + TABLE_CATEGORIES + "( " + KEY_CATEGORIES_ID
                     + " integer primary key autoincrement, "
                     + KEY_CATEGORIES_NAME + " text not null unique,"
+                    + KEY_CATEGORIES_IDCATEGORY + " INTEGER not null unique,"
                     + KEY_CATEGORIES_CREATION_DATE + " INTEGER, "
                     + KEY_CATEGORIES_MODIFICATION_DATE + " INTEGER "
                     + ");";
