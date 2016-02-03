@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getName();
 
     public static final String ARG_CATEGORIAS = "ARG_CATEGORIAS";
-    //public static final String ARG_WDPRODUCTS = "ARG_WDPRODUCTS";
 
     private List<WDServices> services = null;
     private ViewPager pager = null;
@@ -38,7 +36,6 @@ public class HomeFragment extends Fragment {
     public static HomeFragment newInstance(List<Product> products,List<Category> categorias) {
         HomeFragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
-        //arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
         arguments.putSerializable(HomeFragment.ARG_CATEGORIAS, (Serializable) categorias);
         fragment.setArguments(arguments);
         return fragment;
@@ -47,7 +44,6 @@ public class HomeFragment extends Fragment {
     public static HomeFragment newInstance(ProductResponse products) {
         HomeFragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
-        //arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
         fragment.setArguments(arguments);
         return fragment;
     }
@@ -69,7 +65,7 @@ public class HomeFragment extends Fragment {
         final View root = inflater.inflate(R.layout.fragment_home,container,false);
         //Pager
         pager = (ViewPager) root.findViewById(R.id.view_pager);
-                DBAsyncTasksGet<Category> task2 = new DBAsyncTasksGet<Category>(DBAsyncTasksGet.TASK_GET_LIST,
+                DBAsyncTasksGet<Category> taskGetCategory = new DBAsyncTasksGet<Category>(DBAsyncTasksGet.TASK_GET_LIST,
                         new Category(), getContext(),
                         new DBAsyncTasksGet.OnItemsRecoveredFromDBListener<Category>() {
                             @Override
@@ -77,7 +73,7 @@ public class HomeFragment extends Fragment {
                                 pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), items));
                             }
                         });
-                task2.execute();
+                taskGetCategory.execute();
         return root;
     }
 

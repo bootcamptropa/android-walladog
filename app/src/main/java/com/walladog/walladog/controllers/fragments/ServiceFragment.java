@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,6 +45,8 @@ public class ServiceFragment extends Fragment {
     private static TextView serviceDescription = null;
     private static ImageView serviceImage = null;
 
+    private FrameLayout mProgress;
+
     public static ServiceFragment newInstance(WDServices service){
         ServiceFragment fragment = new ServiceFragment();
         Bundle args = new Bundle();
@@ -69,7 +72,6 @@ public class ServiceFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        // Inflate the layout for this fragment
         final View root = inflater.inflate(R.layout.fragment_service, container, false);
 
         // Linking with view
@@ -81,9 +83,12 @@ public class ServiceFragment extends Fragment {
         serviceDescription = (TextView) root.findViewById(R.id.txt_service_description);
         serviceImage = (ImageView) root.findViewById(R.id.img_service3);
 
+        mProgress = (FrameLayout) root.findViewById(R.id.progressService);
+
         serviceImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mProgress.setVisibility(View.VISIBLE);
                 EventBus.getDefault()
                         .post(new WDEventNotification<Category>(WDEventNotification.EVENT_FROM_SERVICE, "Servicio", mCategory));
             }

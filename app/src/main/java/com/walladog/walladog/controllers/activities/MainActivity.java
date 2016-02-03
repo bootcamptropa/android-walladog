@@ -24,7 +24,7 @@ import com.walladog.walladog.controllers.fragments.LoginFragment;
 import com.walladog.walladog.controllers.fragments.MapsLocator;
 import com.walladog.walladog.controllers.fragments.NotificationsFragment;
 import com.walladog.walladog.controllers.fragments.SigninFragment;
-import com.walladog.walladog.controllers.fragments.UserProfileFragment;
+import com.walladog.walladog.controllers.fragments.UserTransactionsFragment;
 import com.walladog.walladog.controllers.fragments.UserZoneFragment;
 import com.walladog.walladog.models.Category;
 import com.walladog.walladog.models.UserData;
@@ -109,47 +109,27 @@ public class MainActivity extends DrawerBaseActivity
                         .replace(R.id.drawer_layout_main_activity_frame, MapsLocator.newInstance("1","1"),MapsLocator.class.getName())
                         .addToBackStack(HomeFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Go to Location", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.nav_transactions:
-                //TODO objeto nulo
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, UserProfileFragment.newInstance(mProducts, "1"),UserProfileFragment.class.getName())
-                        .addToBackStack(UserProfileFragment.class.getName())
-                        .commit();
-                Toast.makeText(getApplicationContext(), "Go to Transactions", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.nav_notifications:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, NotificationsFragment.newInstance("1", "1"),NotificationsFragment.class.getName())
-                        .addToBackStack(NotificationsFragment.class.getName())
-                        .commit();
-                Toast.makeText(getApplicationContext(), "Go to Notification", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_picture:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout_main_activity_frame, AddProductFragment.newInstance("1","1"),AddProductFragment.class.getName())
                         .addToBackStack(AddProductFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Go to Picture", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_login:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout_main_activity_frame, LoginFragment.newInstance(),LoginFragment.class.getName())
                         .addToBackStack(LoginFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Go to Login", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_signin:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout_main_activity_frame, SigninFragment.newInstance(),SigninFragment.class.getName())
                         .addToBackStack(SigninFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Go to Signin", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_logout:
                 setMenuForNotLogged();
-                Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_account:
                 getSupportFragmentManager().beginTransaction()
@@ -158,7 +138,7 @@ public class MainActivity extends DrawerBaseActivity
                         .commit();
                 break;
             default:
-                Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Menu Erroneo", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -360,7 +340,7 @@ public class MainActivity extends DrawerBaseActivity
                 .load("https://lh3.googleusercontent.com/CyrAYZKXSU4MfjB1tk94gK_daNfahS7pGHEuDBXMoL6S9MdBKDFuiL_jWXZ0IBtwrg=w300")
                 .into(avatar);
 
-        Menu drwMenu = navigationView.getMenu().getItem(5).getSubMenu();
+        Menu drwMenu = navigationView.getMenu().getItem(3).getSubMenu();
         drwMenu.getItem(0).setVisible(false);
         drwMenu.getItem(1).setVisible(false);
         drwMenu.getItem(2).setVisible(true);
@@ -391,7 +371,7 @@ public class MainActivity extends DrawerBaseActivity
                 .load(R.drawable.walladogsmall)
                 .into(avatar);
 
-        Menu drwMenu = navigationView.getMenu().getItem(5).getSubMenu();
+        Menu drwMenu = navigationView.getMenu().getItem(3).getSubMenu();
         drwMenu.getItem(0).setVisible(true);
         drwMenu.getItem(1).setVisible(true);
         drwMenu.getItem(2).setVisible(false);

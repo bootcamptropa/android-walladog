@@ -10,6 +10,7 @@ import com.walladog.walladog.R;
 import com.walladog.walladog.controllers.fragments.ProfileSSearchFragment;
 import com.walladog.walladog.controllers.fragments.ProfileSellingFragment;
 import com.walladog.walladog.controllers.fragments.ProfileSoldFragment;
+import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.ProfileOption;
 
 import java.util.ArrayList;
@@ -24,6 +25,11 @@ public class ProfilePagerAdapter extends FragmentPagerAdapter implements IconPag
 
 
     private List<ProfileOption> mProfileOptions = null;
+
+    private List<Product> mProductsSelling;
+    private List<Product> mProductsSold;
+
+
 
     private static final String[] CONTENT = new String[] { "Calendar", "Camera", "Alarms", "Location" };
     private static final int[] ICONS = new int[] {
@@ -40,6 +46,17 @@ public class ProfilePagerAdapter extends FragmentPagerAdapter implements IconPag
         mProfileOptions.add(new ProfileOption("Vendidos"));
         mProfileOptions.add(new ProfileOption("Vendiendo"));
         mProfileOptions.add(new ProfileOption("Búsquedas"));
+    }
+
+    public ProfilePagerAdapter(android.support.v4.app.FragmentManager fm,List<Product> pSelling,List<Product> pSold) {
+        super(fm);
+        mProfileOptions = new ArrayList<>();
+        mProfileOptions.add(new ProfileOption("Vendidos"));
+        mProfileOptions.add(new ProfileOption("Vendiendo"));
+        mProfileOptions.add(new ProfileOption("Búsquedas"));
+
+        mProductsSelling=pSelling;
+        mProductsSold=pSold;
     }
 
     @Override
@@ -65,22 +82,24 @@ public class ProfilePagerAdapter extends FragmentPagerAdapter implements IconPag
 
         switch (position){
             case 0:
-                fragment = new ProfileSellingFragment();
-                //arguments.putSerializable(ServiceFragment.ARG_WDSERVICE,mServices.get(position));
-                fragment.setArguments(arguments);
+                fragment = ProfileSellingFragment.newInstance(mProductsSelling);
                 break;
             case 1:
-                fragment = new ProfileSoldFragment();
-                //arguments.putSerializable(ServiceFragment.ARG_WDSERVICE,mServices.get(position));
-                fragment.setArguments(arguments);
+                fragment = ProfileSoldFragment.newInstance(mProductsSold);
                 break;
             case 2:
-                fragment = new ProfileSSearchFragment();
-                //arguments.putSerializable(ServiceFragment.ARG_WDSERVICE,mServices.get(position));
-                fragment.setArguments(arguments);
+                fragment = ProfileSSearchFragment.newInstance("1","1");
                 break;
         }
         return fragment;
 
+    }
+
+    public void setProductsSelling(List<Product> productsSelling) {
+        mProductsSelling = productsSelling;
+    }
+
+    public void setProductsSold(List<Product> productsSold) {
+        mProductsSold = productsSold;
     }
 }

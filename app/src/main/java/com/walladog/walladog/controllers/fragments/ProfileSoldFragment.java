@@ -1,7 +1,5 @@
 package com.walladog.walladog.controllers.fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,30 +12,28 @@ import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.SellingAdapter;
 import com.walladog.walladog.models.Product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class ProfileSoldFragment extends Fragment {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PSOLD = "ARG_PSOLD";
 
-    private String mParam1;
-    private String mParam2;
+    private List<Product> mProductsSold;
+
 
     private SellingAdapter adapter;
     private RecyclerView recyclerView;
-    private static List<Product> productList;
 
     public ProfileSoldFragment() {
-        // Required empty public constructor
+
     }
 
-    public static ProfileSoldFragment newInstance(String param1, String param2) {
+    public static ProfileSoldFragment newInstance(List<Product> products) {
         ProfileSoldFragment fragment = new ProfileSoldFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(ARG_PSOLD, (Serializable) products);
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,8 +42,7 @@ public class ProfileSoldFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mProductsSold = (List<Product>) getArguments().getSerializable(ARG_PSOLD);
         }
     }
 
@@ -70,15 +65,7 @@ public class ProfileSoldFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
-        productList = new ArrayList<Product>();
-        char c = 'A';
-        for (byte i = 0; i < 20; i++) {
-            Product model = new Product();
-            model.setName(String.valueOf(c++));
-            model.setGender("Male");
-            productList.add(model);
-        }
-        adapter = new SellingAdapter(productList,getContext());
+        adapter = new SellingAdapter(mProductsSold,getContext());
         recyclerView.setAdapter(adapter);
     }
 }

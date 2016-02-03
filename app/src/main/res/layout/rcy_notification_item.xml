@@ -6,7 +6,7 @@
               android:layout_height="wrap_content"
               android:layout_centerVertical="true"
               android:layout_margin="1dp"
-              android:background="@drawable/background_item_notification"
+              android:background="@drawable/background_service1"
               android:orientation="horizontal">
 
 
@@ -70,6 +70,14 @@
             />
 
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_prod_options"
+        android:layout_width="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_vdots"
+        />
 
 
 

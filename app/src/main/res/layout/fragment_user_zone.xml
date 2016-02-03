@@ -1,78 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:background="@drawable/wdbackground1"
-              android:layout_height="wrap_content"
-              android:layout_width="match_parent"
-              android:orientation="vertical"
-              >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".MainActivity">
 
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="30dp"
-        app:border_width="1dp"
-        android:src="@drawable/personsample3"
-        android:layout_gravity="center"
-        />
 
-    <TextView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto"
+                  android:background="@drawable/wdbackground1"
+                  android:layout_height="fill_parent"
+                  android:layout_width="match_parent"
+                  android:orientation="vertical"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="10dp"
+                app:border_width="1dp"
+                android:src="@drawable/personsample3"
+                android:layout_gravity="center"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textSize="16sp"
+                android:text="Bienvenido a tu zona de usuario, elige una opción:"
+                />
+
+            <Button
+                android:id="@+id/btn_uz_notifications"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="25dp"
+                android:background="@drawable/btn_corners"
+                android:textSize="14sp"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/cast_ic_notification_on"
+                android:paddingTop="0dp"
+                android:paddingLeft="30dp"
+                android:layout_margin="5dp"
+                android:textColor="@color/wd_white"
+                android:elevation="5dp"
+                android:text="Notificaciones"/>
+
+            <Button
+                android:id="@+id/btn_uz_transactions"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_corners"
+                android:textSize="14sp"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/ic_menu_wpetfeet"
+                android:paddingTop="0dp"
+                android:paddingLeft="30dp"
+                android:layout_margin="5dp"
+                android:textColor="@color/wd_white"
+                android:elevation="5dp"
+                android:text="Tus productos"/>
+
+            <Button
+                android:id="@+id/btn_uz_profile"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/btn_corners"
+                android:textSize="14sp"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/ic_menu_signinwhite"
+                android:paddingTop="0dp"
+                android:paddingLeft="30dp"
+                android:layout_margin="5dp"
+                android:textColor="@color/wd_white"
+                android:elevation="5dp"
+                android:text="Datos de Usuario"/>
+        </LinearLayout>
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="20dp"
+            app:border_width="1dp"
+            android:src="@drawable/homedog"
+            android:layout_gravity="center"
+            />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/frameProgress"
+        android:animateLayoutChanges="true"
+        android:alpha="0.4"
+        android:background="#000000"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:textSize="16sp"
-        android:text="Bienvenido a tu zona de usuario, elige una opción:"
-        />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btn_uz_notifications"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/btn_corners"
-        android:textSize="14sp"
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_weight="1"
-        android:drawableLeft="@drawable/cast_ic_notification_on"
-        android:paddingTop="0dp"
-        android:paddingLeft="30dp"
-        android:layout_margin="5dp"
-        android:textColor="@color/wd_white"
-        android:elevation="5dp"
-        android:text="Notificaciones"/>
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:layout_gravity="center" />
+    </FrameLayout>
 
-    <Button
-        android:id="@+id/btn_uz_transactions"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@drawable/btn_corners"
-        android:textSize="14sp"
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_weight="1"
-        android:drawableLeft="@drawable/ic_menu_cartwhite"
-        android:paddingTop="0dp"
-        android:paddingLeft="30dp"
-        android:layout_margin="5dp"
-        android:textColor="@color/wd_white"
-        android:elevation="5dp"
-        android:text="Transacciones"/>
-
-    <Button
-        android:id="@+id/btn_uz_profile"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@drawable/btn_corners"
-        android:textSize="14sp"
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_weight="1"
-        android:drawableLeft="@drawable/ic_menu_signinwhite"
-        android:paddingTop="0dp"
-        android:paddingLeft="30dp"
-        android:layout_margin="5dp"
-        android:textColor="@color/wd_white"
-        android:elevation="5dp"
-        android:text="Transacciones"/>
-
-
-</LinearLayout>
+</RelativeLayout>
