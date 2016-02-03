@@ -230,12 +230,13 @@ public class DogListFragment extends Fragment
         }else {
             if (mIsLastPage == false) {
                 try {
-                    ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(mOffset, mLimit)
+                    ServiceGeneratorOAuth.createService(WDProductService.class).getSearchProductsPaginated(String.valueOf(mOffset), String.valueOf(mLimit),mSO.getLatitude(), mSO.getLongitude(),mSO.getRace(),mSO.getCategory(),mSO.getDistance())
                             .enqueue(new Callback<ProductResponse>() {
                                 @Override
                                 public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
                                     if (response.body().getNext() == null) {
                                         mIsLastPage = true;
+                                        Log.v(TAG, "Is last page");
                                     }
                                     mAdapter.appendItems(response.body().getResults());
                                     endRecyclerViewAdapter.onDataReady(true);
@@ -252,44 +253,20 @@ public class DogListFragment extends Fragment
                     e.printStackTrace();
                 }
             } else {
-                mOffset = 0;
-                mIsLastPage = true;
-                try {
-                    ServiceGeneratorOAuth.createService(WDProductService.class).getProductsPaginated(mOffset, mLimit)
-                            .enqueue(new Callback<ProductResponse>() {
-                                @Override
-                                public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
-                                    if (response.body().getNext() == null) {
-                                        mIsLastPage = true;
-                                    }
-                                    mAdapter.appendItems(response.body().getResults());
-                                    endRecyclerViewAdapter.onDataReady(true);
-                                    mOffset = mOffset + mLimit;
-                                }
-
-                                @Override
-                                public void onFailure(Throwable t) {
-                                    Log.v(TAG, "Fallo en la conexion a la api");
-                                    endRecyclerViewAdapter.onDataReady(false);
-                                }
-                            });
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                Log.v(TAG,"ELSE :: Is last page");
+                //TODO resolve this stupid hack
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        endRecyclerViewAdapter.onDataReady(false);
+                    }
+                }, 2000);
             }
         }
     }
 
     private void reloadGridFromSearch(SearchObject so) throws UnsupportedEncodingException {
-
-        String lat,lon,dist,race,category = null;
-
-        final DogListFragment _this = this;
-
         EventBus.getDefault().post(new WDEventNotification<SearchObject>(1, "Perros Seleccionados", so));
-
-
-
     }
 
 

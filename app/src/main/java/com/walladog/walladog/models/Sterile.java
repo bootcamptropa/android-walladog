@@ -1,28 +1,18 @@
 package com.walladog.walladog.models;
 
-import org.json.JSONObject;
-
-
-public class State {
-
+/**
+ * Created by hadock on 3/02/16.
+ *
+ */
+public class Sterile {
     private int id;
     private String name;
+    private Boolean value;
 
-
-    public State () {
-
-    }
-
-    public State(int id, String name) {
+    public Sterile(int id, String name, Boolean value) {
         this.id = id;
         this.name = name;
-    }
-
-    public State (JSONObject json) {
-
-        this.id = json.optInt("id");
-        this.name = json.optString("name");
-
+        this.value = value;
     }
 
     public int getId() {
@@ -39,5 +29,13 @@ public class State {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getValue() {
+        return value;
+    }
+
+    public void setValue(Boolean value) {
+        this.value = value;
     }
 }

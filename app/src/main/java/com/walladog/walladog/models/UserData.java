@@ -34,6 +34,10 @@ public class UserData implements Serializable{
         this.products_count = products_count;
     }
 
+    public UserData(){
+
+    }
+
     public int getId() {
         return id;
     }

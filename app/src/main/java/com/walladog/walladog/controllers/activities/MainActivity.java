@@ -25,8 +25,8 @@ import com.walladog.walladog.controllers.fragments.MapsLocator;
 import com.walladog.walladog.controllers.fragments.NotificationsFragment;
 import com.walladog.walladog.controllers.fragments.SigninFragment;
 import com.walladog.walladog.controllers.fragments.UserProfileFragment;
+import com.walladog.walladog.controllers.fragments.UserZoneFragment;
 import com.walladog.walladog.models.Category;
-import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.UserData;
 import com.walladog.walladog.models.apiservices.AccessToken;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
@@ -39,7 +39,6 @@ import com.walladog.walladog.utils.WDEventNotification;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -54,19 +53,30 @@ public class MainActivity extends DrawerBaseActivity
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    public static final String EXTRA_WDPRODUCTS = "EXTRA_WDPRODUCTS";
+    //public static final String EXTRA_WDPRODUCTS = "EXTRA_WDPRODUCTS";
     public static final String EXTRA_CATEGORIAS = "EXTRA_CATEGORIAS";
+    public static final String EXTRA_USERDATA = "EXTRA_USERDATA";
 
     private FrameLayout mFLayout=null;
     private ProductResponse mProducts = null;
     private List<Category> mCategoryList = null;
+    private UserData mUserData = null;
+    private SearchObject mSo = null;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mProducts = (ProductResponse) getIntent().getSerializableExtra(EXTRA_WDPRODUCTS);
-        mCategoryList = (List<Category>) getIntent().getSerializableExtra(EXTRA_CATEGORIAS);
-
+        //mProducts = (ProductResponse) getIntent().getSerializableExtra(EXTRA_WDPRODUCTS);
+        if(getIntent().getExtras()!=null) {
+            mCategoryList = (List<Category>) getIntent().getSerializableExtra(EXTRA_CATEGORIAS);
+            mUserData = (UserData) getIntent()
+                    .getSerializableExtra(EXTRA_USERDATA) != null ? (UserData) getIntent().getSerializableExtra(EXTRA_USERDATA) : new UserData();
+            if(mUserData!=null && mUserData.getEmail()!=null){
+                setMenuForLogged(mUserData);
+            }else{
+                setMenuForNotLogged();
+            }
+        }
 
         //Layout
         mFLayout = (FrameLayout) findViewById(R.id.drawer_layout_main_activity_frame);
@@ -89,17 +99,10 @@ public class MainActivity extends DrawerBaseActivity
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, HomeFragment.newInstance(mProducts),HomeFragment.class.getName())
+                        .replace(R.id.drawer_layout_main_activity_frame, HomeFragment.newInstance(),HomeFragment.class.getName())
                         .addToBackStack(HomeFragment.class.getName())
                         .commit();
                 Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.nav_products:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts),DogListFragment.class.getName())
-                        .addToBackStack(DogListFragment.class.getName())
-                        .commit();
-                Toast.makeText(getApplicationContext(), "Go to Products", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_location:
                 getSupportFragmentManager().beginTransaction()
@@ -109,6 +112,7 @@ public class MainActivity extends DrawerBaseActivity
                 Toast.makeText(getApplicationContext(), "Go to Location", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_transactions:
+                //TODO objeto nulo
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.drawer_layout_main_activity_frame, UserProfileFragment.newInstance(mProducts, "1"),UserProfileFragment.class.getName())
                         .addToBackStack(UserProfileFragment.class.getName())
@@ -144,8 +148,14 @@ public class MainActivity extends DrawerBaseActivity
                 Toast.makeText(getApplicationContext(), "Go to Signin", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_logout:
-
-                Toast.makeText(getApplicationContext(), "Go to Signin", Toast.LENGTH_SHORT).show();
+                setMenuForNotLogged();
+                Toast.makeText(getApplicationContext(), "Logout", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_account:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.drawer_layout_main_activity_frame, UserZoneFragment.newInstance("1","1"),UserZoneFragment.class.getName())
+                        .addToBackStack(SigninFragment.class.getName())
+                        .commit();
                 break;
             default:
                 Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
@@ -193,7 +203,7 @@ public class MainActivity extends DrawerBaseActivity
      */
     @Override
     public void onLoginSubmit(String username, String password, View currentView) throws UnsupportedEncodingException {
-        ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret)
+        ServiceGeneratorOAuth.createService(WDOAuth.class, null, AccessToken.clientID, AccessToken.clientSecret,false)
                 .getAccessToken(AccessToken.grantType, username, password)
                 .enqueue(new Callback<AccessToken>() {
                     @Override
@@ -209,6 +219,7 @@ public class MainActivity extends DrawerBaseActivity
                             Snackbar snackbar = Snackbar
                                     .make(mFLayout, "Login Success", Snackbar.LENGTH_LONG);
 
+                            //Get Login info
                             try {
                                 ServiceGeneratorOAuth.createService(WDUserDataService.class).getUserData().enqueue(new Callback<UserData>() {
                                     @Override
@@ -281,16 +292,16 @@ public class MainActivity extends DrawerBaseActivity
 
         if(dataItem.getNotificationObject() instanceof SearchObject){
             Log.v(TAG,"Recived Refresh for DogList");
-            SearchObject so = (SearchObject) dataItem.getNotificationObject();
+            mSo = (SearchObject) dataItem.getNotificationObject();
             try {
-                ServiceGeneratorOAuth.createService(WDProductService.class).getSearchProductsPaginated("0","10",so.getLatitude(),so.getLongitude(),so.getRace(),so.getCategory(),null)
+                ServiceGeneratorOAuth.createService(WDProductService.class).getSearchProductsPaginated("0","10",mSo.getLatitude(),mSo.getLongitude(),mSo.getRace(),mSo.getCategory(),null)
                         .enqueue(new Callback<ProductResponse>() {
                             @Override
                             public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
                                 Log.v(TAG, "Results size: " + String.valueOf(response.body().getResults().size()));
                                 mProducts = response.body();
                                 getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts),DogListFragment.class.getName())
+                                        .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts,mSo),DogListFragment.class.getName())
                                         .addToBackStack(DogListFragment.class.getName())
                                         .commit();
                             }
@@ -304,23 +315,30 @@ public class MainActivity extends DrawerBaseActivity
                 e.printStackTrace();
             }
         }else if(dataItem.getNotificationObject() instanceof Category){
-            Log.v(TAG, "Recived event to update Notifications");
-            SearchObject soCat = new SearchObject();
-            soCat.setCategory(String.valueOf(((Category) dataItem.getNotificationObject()).getId_category()));
+            Log.v(TAG, "Recived event to update FirsttimeGRID");
+            final SearchObject soCat = new SearchObject();
+            soCat.setCategory(String.valueOf((int)((Category) dataItem.getNotificationObject()).getId_category()));
 
-            List<Product> filteredProducts = new ArrayList<>();
-            for(Product prod : mProducts.getResults()){
-                if(prod.getCategoryid()==1){
-                    filteredProducts.add(prod);
-                }
+            try {
+                ServiceGeneratorOAuth.createService(WDProductService.class).getSearchProductsPaginated("0","1000",null,null,null,String.valueOf((int)((Category) dataItem.getNotificationObject()).getId_category()),null)
+                        .enqueue(new Callback<ProductResponse>() {
+                            @Override
+                            public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
+                                mProducts = response.body();
+                                getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts, soCat), DogListFragment.class.getName())
+                                        .addToBackStack(DogListFragment.class.getName())
+                                        .commit();
+                            }
+
+                            @Override
+                            public void onFailure(Throwable t) {
+
+                            }
+                        });
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             }
-
-            mProducts.setResults(filteredProducts);
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.drawer_layout_main_activity_frame, DogListFragment.newInstance(mProducts,soCat),DogListFragment.class.getName())
-                    .addToBackStack(DogListFragment.class.getName())
-                    .commit();
         }
     }
 
@@ -342,15 +360,27 @@ public class MainActivity extends DrawerBaseActivity
                 .load("https://lh3.googleusercontent.com/CyrAYZKXSU4MfjB1tk94gK_daNfahS7pGHEuDBXMoL6S9MdBKDFuiL_jWXZ0IBtwrg=w300")
                 .into(avatar);
 
-        Menu drwMenu = navigationView.getMenu().getItem(6).getSubMenu();
+        Menu drwMenu = navigationView.getMenu().getItem(5).getSubMenu();
         drwMenu.getItem(0).setVisible(false);
         drwMenu.getItem(1).setVisible(false);
+        drwMenu.getItem(2).setVisible(true);
+        drwMenu.getItem(3).setVisible(true);
     }
 
     /**
      * Setup Drawer menu for not logged
      */
     private void setMenuForNotLogged(){
+
+        //Delete shared preferences and token
+        getSharedPreferences(WalladogApp.class.getSimpleName(), MODE_PRIVATE)
+                .edit()
+                .remove(AccessToken.OAUTH2_TOKEN)
+                .remove(AccessToken.UDATA_USERNAME)
+                .remove(AccessToken.UDATA_AVATAR)
+                .commit();
+        mUserData = null;
+
         View headerView = navigationView.getHeaderView(0);
         TextView username = (TextView) headerView.findViewById(R.id.txtUsername);
         TextView description = (TextView) headerView.findViewById(R.id.txtUsernameDesc);
@@ -361,7 +391,9 @@ public class MainActivity extends DrawerBaseActivity
                 .load(R.drawable.walladogsmall)
                 .into(avatar);
 
-        Menu drwMenu = navigationView.getMenu().getItem(6).getSubMenu();
+        Menu drwMenu = navigationView.getMenu().getItem(5).getSubMenu();
+        drwMenu.getItem(0).setVisible(true);
+        drwMenu.getItem(1).setVisible(true);
         drwMenu.getItem(2).setVisible(false);
         drwMenu.getItem(3).setVisible(false);
     }

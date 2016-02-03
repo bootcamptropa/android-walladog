@@ -79,7 +79,7 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
                 //.load(productList.get(position).getImages().get(0).getPhoto_thumbnail_url())
                 //.load(R.drawable.walladogsmall)
                 .load(url)
-                .placeholder(R.drawable.walladogsmall)
+                .placeholder(R.drawable.dogplace1)
                 .transform(transformation)
                 .into(holder.imageView);
 

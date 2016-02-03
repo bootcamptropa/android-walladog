@@ -11,12 +11,11 @@ public class AccessToken {
     public static final String clientID = "uEAoxVEYOVmpg4Z8IAyCCEItlXO8Cf4G7RSu647d";
     public static final String clientSecret = "Zc0JGu5pVUt7zNxrhQaCvit6ydr4WxMVI4nXluF9GBWgJV0rbUcR5y2uBZl3TgmLYryashJREp9AiIkbfRUVv5Cdd3n6ZX4Va3fI2cmvMwcgWRFYnrp7K8ZtwkopXrhV";
     public static final String redirectUri = "";
-    public static final String cusername = "admin";
-    public static final String cpassword = "Keepcoding123";
+    public static final String cusername = "ramoncin3";
+    public static final String cpassword = "1234";
     public static final String OAUTH2_TOKEN = "OAuth2Token";
     public static final String UDATA_USERNAME = "username";
     public static final String UDATA_AVATAR = "username_avatar";
-
 
     private String access_token;
     private String token_type;
@@ -63,4 +62,10 @@ public class AccessToken {
     public String getAccessToken() {
         return access_token;
     }
+
+    public void setAccessToken(String access_token) {
+        this.access_token = access_token;
+    }
+
+
 }

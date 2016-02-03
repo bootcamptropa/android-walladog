@@ -84,15 +84,8 @@ public class ServiceFragment extends Fragment {
         serviceImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch ((int) mCategory.getId()){
-                    case 1:
-                        EventBus.getDefault().post(new WDEventNotification<Category>(1,"Perros Seleccionados",mCategory));
-                        Log.v(TAG,"Son perros");
-                        break;
-                    case 2:
-                        Log.v(TAG,"Son comida");
-                        break;
-                }
+                EventBus.getDefault()
+                        .post(new WDEventNotification<Category>(WDEventNotification.EVENT_FROM_SERVICE, "Servicio", mCategory));
             }
         });
 
@@ -102,7 +95,7 @@ public class ServiceFragment extends Fragment {
         //serviceTitle.setText(wdservice.getName());
         serviceTitle.setText(mCategory.getName());
         //serviceDescription.setText(wdservice.getDescription());
-        serviceDescription.setText("Descripcion de la categoria/servicio");
+        serviceDescription.setText(getDogCategoryDescription(mCategory.getName()));
 
         Picasso.with(getActivity().getApplicationContext())
                 .load(getDogCategoryPicture(mCategory.getName()))
@@ -127,6 +120,22 @@ public class ServiceFragment extends Fragment {
             pic = "http://static.notinerd.com/wp-content/uploads/2015/07/2305-300x300.jpg";
         }
         return pic;
+    }
+
+    private String getDogCategoryDescription(String category){
+        String description = "";
+        if(category.equals("Perros")){
+            description = "En Walladog queremos ofrecerte la oportunidad de adoptar a un amigo que te necesita, entra y elige a un amigo para toda la vida.";
+        }else if(category.equals("Comida")){
+            description = "Uhm! tu mascota necesita comida, seguro que aqui encuentras justo la que necesita. Y mira que precios!";
+        }else if(category.equals("Ropa")){
+            description = "Dios mio que Frio!, va siendo hora de comprarnos una chaqueta, no te pierdas nuestra seleccion de moda canina, porque Él lo vale!";
+        }else if(category.equals("Accesorios")){
+            description = "Guau! mira que abrebadero, y mira que collar, los super accesorios de Walladog! Me compras uno ?";
+        }else if(category.equals("Otros")){
+            description = "Porque siempre hay otras cosas que no te esperas, aqui las tienes , en la sección Otros!";
+        }
+        return description;
     }
 
 }

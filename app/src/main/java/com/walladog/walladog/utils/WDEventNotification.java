@@ -10,6 +10,8 @@ public class WDEventNotification<T> {
     public final String mMessage;
     public final T mNotificationObject;
 
+    public final static int EVENT_FROM_SERVICE = 1;
+
     public int getNotificationType() {
         return mNotificationType;
     }

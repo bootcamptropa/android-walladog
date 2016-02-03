@@ -30,7 +30,7 @@ public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getName();
 
     public static final String ARG_CATEGORIAS = "ARG_CATEGORIAS";
-    public static final String ARG_WDPRODUCTS = "ARG_WDPRODUCTS";
+    //public static final String ARG_WDPRODUCTS = "ARG_WDPRODUCTS";
 
     private List<WDServices> services = null;
     private ViewPager pager = null;
@@ -38,7 +38,7 @@ public class HomeFragment extends Fragment {
     public static HomeFragment newInstance(List<Product> products,List<Category> categorias) {
         HomeFragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
-        arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
+        //arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
         arguments.putSerializable(HomeFragment.ARG_CATEGORIAS, (Serializable) categorias);
         fragment.setArguments(arguments);
         return fragment;
@@ -47,8 +47,13 @@ public class HomeFragment extends Fragment {
     public static HomeFragment newInstance(ProductResponse products) {
         HomeFragment fragment = new HomeFragment();
         Bundle arguments = new Bundle();
-        arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
+        //arguments.putSerializable(HomeFragment.ARG_WDPRODUCTS, (Serializable) products);
         fragment.setArguments(arguments);
+        return fragment;
+    }
+
+    public static HomeFragment newInstance() {
+        HomeFragment fragment = new HomeFragment();
         return fragment;
     }
 
@@ -62,29 +67,17 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final View root = inflater.inflate(R.layout.fragment_home,container,false);
-
         //Pager
         pager = (ViewPager) root.findViewById(R.id.view_pager);
-
-        if (getArguments() != null) {
-            List<Category> categorias = (List<Category>) getArguments().getSerializable(ARG_CATEGORIAS);
-            if(categorias==null){
                 DBAsyncTasksGet<Category> task2 = new DBAsyncTasksGet<Category>(DBAsyncTasksGet.TASK_GET_LIST,
                         new Category(), getContext(),
                         new DBAsyncTasksGet.OnItemsRecoveredFromDBListener<Category>() {
                             @Override
                             public void onItemsRecovered(List<Category> items) {
-                                Log.v(TAG, "Recovered item!!!");
                                 pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), items));
                             }
                         });
                 task2.execute();
-            }else{
-                pager.setAdapter(new ServicesPagerAdapter(getChildFragmentManager(), categorias));
-            }
-
-        }
-
         return root;
     }
 

@@ -21,7 +21,9 @@ import com.walladog.walladog.utils.WDUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by hadock on 1/01/16.
@@ -41,7 +43,7 @@ public class WalladogApp extends Application implements GoogleApiClient.OnConnec
     private String regid = null;
 
     //Location
-    private GoogleApiClient mGoogleApiClient = null;
+    public static GoogleApiClient mGoogleApiClient = null;
 
     @Override
     public void onCreate() {
@@ -161,6 +163,21 @@ public class WalladogApp extends Application implements GoogleApiClient.OnConnec
                 .putString("WDLong",longitude)
                 .putString("WDLatLongUpdate",String.valueOf(Calendar.getInstance().getTimeInMillis()/1000))
                 .commit();
+    }
+
+    public static List<String> getGeopos(){
+        List<String> geoCoords = new ArrayList<>(2);
+
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            geoCoords.add(0,String.valueOf(mLastLocation.getLatitude()));
+            geoCoords.add(1,String.valueOf(mLastLocation.getLongitude()));
+            Log.v(TAG,"Reading geolocation");
+            return geoCoords;
+        }else{
+            Log.v(TAG,"Lag/Lang is null");
+            return null;
+        }
     }
 
     private void createDirs(){
