@@ -25,7 +25,10 @@ import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.CarouselAdapter;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.ProductImage;
+import com.walladog.walladog.models.Transaction;
+import com.walladog.walladog.models.TransactionResponse;
 import com.walladog.walladog.models.UserData;
+import com.walladog.walladog.models.WDTransaction;
 import com.walladog.walladog.models.apiservices.ServiceGenerator;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 import com.walladog.walladog.models.apiservices.WDTransactionService;
@@ -122,15 +125,17 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
             public void onClick(View v) {
                 //Enviar transacción
                 try {
-                    ServiceGeneratorOAuth.createService(WDTransactionService.class).createTransaction(mProduct).enqueue(new Callback<UserData>() {
+                    ServiceGeneratorOAuth.createService(WDTransactionService.class).createTransaction(new WDTransaction((int)mProduct.getId()))
+                    .enqueue(new Callback<TransactionResponse>() {
                         @Override
-                        public void onResponse(Response<UserData> response, Retrofit retrofit) {
-                            snakeMsg("Transaccion creada con éxito");
+                        public void onResponse(Response<TransactionResponse> response, Retrofit retrofit) {
+                            TransactionResponse r = response.body();
+                            snakeMsg("Transaccion correcta!");
                         }
 
                         @Override
                         public void onFailure(Throwable t) {
-                            snakeMsg("Transaccion creada con éxito");
+                            snakeMsg("Transaccion incorrecta!");
                         }
                     });
                 } catch (UnsupportedEncodingException e) {
