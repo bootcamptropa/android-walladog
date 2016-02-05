@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -311,6 +312,7 @@ public class AddProductFragment extends Fragment {
             String dir = Environment.getExternalStorageDirectory() + File.separator + Constants.APP_IMAGES;
 
             originalImage = dir + "tmpPicture" + String.valueOf(requestCode) + ".jpg";
+
             littleDir = Environment.getExternalStorageDirectory() + File.separator + Constants.APP_IMAGES_REDUCED;
             littleFileName = "tmpReduced" + String.valueOf(requestCode) + ".jpg";
             littleFullRoute = littleDir + littleFileName;
@@ -318,44 +320,71 @@ public class AddProductFragment extends Fragment {
             if (littleFile.exists()) littleFile.delete();
 
             //Save image to External Storage DIR
-            Bitmap bmp = BitmapFactory.decodeFile(originalImage);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 4;
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            options.inDither=false;
+            Bitmap bmp = BitmapFactory.decodeFile(originalImage,options);
 
             FileOutputStream out = new FileOutputStream(littleFile);
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
+
             out.flush();
             out.close();
+            bmp.recycle();
+            System.gc();
+
+
         }else{
             littleDir = Environment.getExternalStorageDirectory() + File.separator + Constants.APP_IMAGES_REDUCED;
             littleFileName = "tmpReduced" + String.valueOf(requestCode) + ".jpg";
             File littleFile = new File(littleDir, littleFileName);
 
+            //TODO rotar imagenes
+            String[] orientationColumn = {MediaStore.Images.Media.ORIENTATION};
+            Cursor cur = getActivity().managedQuery(galleryUri, orientationColumn, null, null, null);
+            int orientation = -1;
+            if (cur != null && cur.moveToFirst()) {
+                orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]));
+            }
+            Matrix matrix = new Matrix();
+            matrix.postRotate(orientation);
+            //TODO: 3/02/16
+
             InputStream imageStream = getActivity().getContentResolver().openInputStream(galleryUri);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 4;
+            options.inDither=false;
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
             Bitmap bmp = BitmapFactory.decodeStream(imageStream);
 
+
             Log.v(TAG,"Rotate::");
-            Log.v(TAG, String.valueOf(getRotation(getContext(), galleryUri)));
+            Log.v(TAG, String.valueOf(orientation));
 
             FileOutputStream out = new FileOutputStream(littleFile);
-            bmp = rotateImageIfRequired(getContext(),bmp,getImageUri(getContext(),bmp));
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            //bmp = rotateImageIfRequired(getContext(),bmp,getImageUri(getContext(),bmp));
 
+
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
             out.close();
+            bmp.recycle();
+            System.gc();
         }
 
-        mTmpRoute = littleDir+littleFileName;
-        Log.v(TAG,"TMP route:: "+mTmpRoute);
 
 
         Picasso.with(getContext()).invalidate(new File(littleDir, littleFileName));
         switch (requestCode) {
             case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE1:
-                mListImages.add(littleDir+littleFileName);
+                mListImages.add(littleDir + littleFileName);
                 Picasso.with(getContext())
                         .load(new File(littleDir, littleFileName))
                         .fit()
                         .centerCrop()
                         .into(im1);
+
                 break;
             case CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE2:
                 mListImages.add(littleDir+littleFileName);
@@ -430,43 +459,6 @@ public class AddProductFragment extends Fragment {
                         .into(im5);
                 break;
         }
-    }
-
-    private static Bitmap rotateImageIfRequired(Context context,Bitmap img, Uri selectedImage) {
-
-        // Detect rotation
-        int rotation=getRotation(context, selectedImage);
-        if(rotation!=0){
-            Matrix matrix = new Matrix();
-            matrix.postRotate(rotation);
-            Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
-            img.recycle();
-            return rotatedImg;
-        }else{
-            return img;
-        }
-    }
-
-    private static int getRotation(Context context,Uri selectedImage) {
-        int rotation =0;
-        ContentResolver content = context.getContentResolver();
-        Cursor mediaCursor = content.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[] { "orientation", "date_added" },null, null,"date_added desc");
-        if (mediaCursor != null && mediaCursor.getCount() !=0 ) {
-            while(mediaCursor.moveToNext()){
-                rotation = mediaCursor.getInt(0);
-                break;
-            }
-        }
-        mediaCursor.close();
-        return rotation;
-    }
-
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
     }
 
     public void LoadSpinners(){
@@ -625,20 +617,6 @@ public class AddProductFragment extends Fragment {
     }
 
     private void sendForm(){
-        /*mAddForm.setName("Prueba ramon2");
-        mAddForm.setDescription("Esto es una prueba desde Android");
-        mAddForm.setPrice("10.50");
-        mAddForm.setCategory("1");
-        mAddForm.setRace("1");
-        mAddForm.setSterile("true");
-        mAddForm.setGender("MAL");
-        mAddForm.setState("1");
-        mAddForm.setLatitutde("41.431141200000006");
-        mAddForm.setLongitude("2.1548569");*/
-
-
-        //Log.v(TAG, "Path::: " + mTmpRoute);
-        //File file = new File(mTmpRoute);
 
         HashMap<String,RequestBody> map = new HashMap<>(2);
         int i = 1;
@@ -648,13 +626,6 @@ public class AddProductFragment extends Fragment {
             map.put("upload_image\"; filename=\"pimage"+String.valueOf(i)+".jpg",upload_file);
         }
 
-        /*RequestBody upload_file1 =RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        map.put("upload_image\"; filename=\"product1.jpg",upload_file1);
-
-        RequestBody upload_file2 =RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        map.put("upload_image\"; filename=\"product2.jpg",upload_file2);
-*/
-        //RequestBody upload_file =RequestBody.create(MediaType.parse("multipart/form-data"), file);
         RequestBody name = RequestBody.create(MediaType.parse("multipart/form-data"),mAddForm.getName());
         RequestBody description = RequestBody.create(MediaType.parse("multipart/form-data"),mAddForm.getDescription());
         RequestBody price = RequestBody.create(MediaType.parse("multipart/form-data"),mAddForm.getPrice());
@@ -672,16 +643,17 @@ public class AddProductFragment extends Fragment {
                     .enqueue(new Callback<String>() {
                         @Override
                         public void onResponse(Response<String> response, Retrofit retrofit) {
-
+                            Log.v(TAG,"Producto creado correctamente");
+                            snakeMsg("Producto creado!");
                         }
 
                         @Override
                         public void onFailure(Throwable t) {
+                            snakeMsg("Error al crear producto!");
                             Log.v(TAG,t.getMessage());
                         }
                     });
         } catch (UnsupportedEncodingException e) {
-            Log.v(TAG,"Eeeeeeeeeeeeeroooooor");
             e.printStackTrace();
         }
 

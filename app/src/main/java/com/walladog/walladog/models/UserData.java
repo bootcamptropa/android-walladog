@@ -14,6 +14,19 @@ public class UserData implements Serializable{
     // "avatar_thumbnail_url":"https://s3.amazonaws.com/walladog/thumbnails/ramoncin3.png",
     // "products_count":11}
 
+
+    /*
+    {
+        "id": 22,
+            "first_name": "Ramon",
+            "last_name": "ALBERTI DANES",
+            "username": "ramoncin3",
+            "email": "krainet@gmail.com",
+            "avatar_url": "https://thecreatorsproject-images.vice.com/content-images/contentimage/no-slug/d4d24f28d34addbcb66fb9e86c8276b2.jpg",
+            "avatar_thumbnail_url": "https://s3.amazonaws.com/walladog/thumbnails/ramoncin3.png",
+            "products_count": 0
+    }
+*/
     private int id;
     private String first_name;
     private String last_name;
@@ -22,6 +35,9 @@ public class UserData implements Serializable{
     private String avatar_url;
     private String avatar_thumbnail_url;
     private String products_count;
+    private String password;
+    private String password2;
+
 
     public UserData(int id, String first_name, String last_name, String username, String email, String avatar_url, String avatar_thumbnail_url, String products_count) {
         this.id = id;
@@ -32,6 +48,12 @@ public class UserData implements Serializable{
         this.avatar_url = avatar_url;
         this.avatar_thumbnail_url = avatar_thumbnail_url;
         this.products_count = products_count;
+    }
+
+    public UserData(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
     }
 
     public UserData(){
@@ -101,4 +123,21 @@ public class UserData implements Serializable{
     public void setProducts_count(String products_count) {
         this.products_count = products_count;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword2() {
+        return password2;
+    }
+
+    public void setPassword2(String password2) {
+        this.password2 = password2;
+    }
+
 }

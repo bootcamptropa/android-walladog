@@ -76,12 +76,25 @@ public class DogListAdapter extends RecyclerView.Adapter<DogListAdapter.MasonryV
         String url = "http://loremflickr.com/300/"+String.valueOf(height)+"/dog";
 
         Picasso.with(context)
-                //.load(productList.get(position).getImages().get(0).getPhoto_thumbnail_url())
+                .load(productList.get(position).getImages().get(0).getPhoto_thumbnail_url())
                 //.load(R.drawable.walladogsmall)
-                .load(url)
-                .placeholder(R.drawable.dogplace1)
+                //.load(url)
+                .placeholder(R.drawable.dogplace3)
                 .transform(transformation)
                 .into(holder.imageView);
+
+        String genero = "";
+        switch (productList.get(position).getGender()){
+            case "MAL":
+                genero = "Macho";
+                break;
+            case "FEM":
+                genero = "Hembra";
+                break;
+            default:
+                genero = "Desconocido";
+                break;
+        }
 
         holder.dogName.setText(productList.get(position).getName());
         holder.dogLocation.setText(productList.get(position).getRace());
