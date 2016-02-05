@@ -21,13 +21,39 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.mikhaellopez.circularimageview.CircularImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                app:border_width="1dp"
-                app:border_color="@android:color/darker_gray"
-                android:src="@drawable/personsample2"
-                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/background_service3"
+                android:orientation="horizontal"
+                >
+
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    app:border_width="1dp"
+                    android:layout_weight="1"
+                    android:id="@+id/useredit_avatar"
+                    app:border_color="@android:color/darker_gray"
+                    android:src="@drawable/dogplace3"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:id="@+id/edit_user_titleusername"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="14sp"
+                    android:textColor="#5d5d5d"
+                    android:layout_weight="2"
+                    />
+
+            </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -35,7 +61,7 @@
                 android:background="@drawable/background_service1"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="5dp">
 
                 <AutoCompleteTextView
                     android:id="@+id/edit_user_username"

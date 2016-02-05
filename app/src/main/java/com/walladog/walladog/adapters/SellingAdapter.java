@@ -1,12 +1,17 @@
 package com.walladog.walladog.adapters;
 
+
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +19,8 @@ import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.walladog.walladog.R;
+import com.walladog.walladog.controllers.fragments.DogDetailFragment;
+import com.walladog.walladog.controllers.fragments.EditProductFragment;
 import com.walladog.walladog.models.Product;
 
 import java.util.List;
@@ -29,6 +36,9 @@ public class SellingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private SparseBooleanArray selectedItems;
 
     private static final int FOOTER_VIEW = 1;
+    private ImageButton mProdOptions;
+    Product model;
+    private FragmentManager mFm;
 
     private Context context;
 
@@ -37,6 +47,16 @@ public class SellingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             throw new IllegalArgumentException("modelData must not be null");
         }
         this.context = context;
+        items = modelData;
+        selectedItems = new SparseBooleanArray();
+    }
+
+    public SellingAdapter(List<Product> modelData,Context context,android.support.v4.app.FragmentManager fm) {
+        if (modelData == null) {
+            throw new IllegalArgumentException("modelData must not be null");
+        }
+        this.context = context;
+        mFm = fm;
         items = modelData;
         selectedItems = new SparseBooleanArray();
     }
@@ -64,27 +84,33 @@ public class SellingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         try {
             if (viewHolder instanceof ListItemViewHolder) {
                 ListItemViewHolder vh = (ListItemViewHolder) viewHolder;
-                Product model = items.get(position);
+                model = items.get(position);
                 vh.name.setText(String.valueOf(model.getName()));
-                vh.publish_date.setText(String.valueOf(model.getGender()));
+                vh.publish_date.setText(String.valueOf(model.getCategory()));
 
                 Transformation transformation = new RoundedTransformationBuilder()
                         .borderColor(Color.parseColor("#5e7974"))
-                        .borderWidthDp(5)
-                        .cornerRadiusDp(10)
+                        .borderWidthDp(1)
+                        .cornerRadiusDp(5)
                         .oval(false)
                         .build();
 
-                Random randomGenerator = new Random();
-                int randomInt = randomGenerator.nextInt(20);
-                int height = 300 + randomInt;
-                String url = "http://loremflickr.com/300/"+String.valueOf(height)+"/dog";
                 Picasso.with(context)
-                        .load(url)
+                        .load(model.getImages().get(0).getPhoto_thumbnail_url())
                         .transform(transformation)
                         .placeholder(R.drawable.progress_animation2)
                         .into(vh.img_product);
                 viewHolder.itemView.setActivated(selectedItems.get(position, false));
+
+
+                mProdOptions.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        optionsDialog(model);
+                    }
+                });
+
+
                 vh.bindView(position);
             } else  {
                 FooterViewHolder vh = (FooterViewHolder) viewHolder;
@@ -119,6 +145,9 @@ public class SellingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             name = (TextView) itemView.findViewById(R.id.txt_name);
             publish_date = (TextView) itemView.findViewById(R.id.txt_publishdate);
             img_product = (ImageView) itemView.findViewById(R.id.img_grid);
+            mProdOptions = (ImageButton) itemView.findViewById(R.id.btn_prod_options);
+
+
         }
     }
 
@@ -152,5 +181,33 @@ public class SellingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void bindView(int position) {
             // bindView() method to implement actions
         }
+    }
+
+    private void optionsDialog(final Product oProduct){
+        final CharSequence[] options = {"Ver","Editar","Eliminar","Cancelar"};
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Que acción quieres realizar");
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (options[which] == "Ver") {
+                    mFm.beginTransaction()
+                            .replace(R.id.drawer_layout_main_activity_frame, DogDetailFragment.newInstance(oProduct),DogDetailFragment.class.getName())
+                            .addToBackStack(DogDetailFragment.class.getName())
+                            .commit();
+                } else if (options[which] == "Editar") {
+                    mFm.beginTransaction()
+                            .replace(R.id.drawer_layout_main_activity_frame, EditProductFragment.newInstance(oProduct),EditProductFragment.class.getName())
+                            .addToBackStack(EditProductFragment.class.getName())
+                            .commit();
+                } else if (options[which] == "Eliminar") {
+                    //Start delete
+                } else {
+                    dialog.dismiss();
+                }
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

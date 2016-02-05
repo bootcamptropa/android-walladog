@@ -41,7 +41,7 @@
             android:textSize="12sp"
             android:textStyle="bold"
             android:layout_marginTop="1dp"
-            android:text="Publicado"
+            android:text="Cat:"
             />
 
     </LinearLayout>
@@ -68,7 +68,7 @@
             android:layout_marginTop="1dp"
             android:textSize="12sp"
             android:id="@+id/txt_publishdate"
-            android:text="Fecha publicación"
+            android:text="Categoria"
             />
 
     </LinearLayout>
@@ -76,9 +76,12 @@
 
     <ImageButton
         android:id="@+id/btn_prod_options"
-        android:layout_width="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_width="25dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="8dp"
+        android:padding="2dp"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:src="@drawable/ic_menu_vdots"
         />
 

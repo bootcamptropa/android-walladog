@@ -1,14 +1,13 @@
 package com.walladog.walladog.adapters;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import com.walladog.walladog.controllers.fragments.PhotoDetailFragment;
-import com.walladog.walladog.controllers.fragments.ServiceFragment;
-import com.walladog.walladog.models.Photo;
+import com.walladog.walladog.models.ProductImage;
 
 import java.util.List;
 
@@ -19,22 +18,20 @@ import java.util.List;
 
 public class CarouselAdapter extends FragmentPagerAdapter implements ViewPager.OnPageChangeListener {
 
+    private final static String TAG = CarouselAdapter.class.getName();
+    private List<ProductImage> mPhotos = null;
 
-    private List<Photo> mPhotos;
-
-    public CarouselAdapter(FragmentManager fm, List photos) {
+    public CarouselAdapter(FragmentManager fm, List<ProductImage> photos) {
         super(fm);
+        Log.v(TAG, "Constructor");
+        Log.v(TAG,"Items en photos: "+String.valueOf(photos.size()));
+        Log.v(TAG,"Primera foto: "+String.valueOf(photos.get(0).getPhoto_url()));
         mPhotos = photos;
     }
 
     @Override
     public Fragment getItem(int position) {
-        Photo oPhoto = mPhotos.get(position);
-        Fragment fragment = new PhotoDetailFragment();
-        Bundle arguments = new Bundle();
-        arguments.putSerializable(PhotoDetailFragment.EXTRA_MESSAGE,oPhoto);
-        fragment.setArguments(arguments);
-        return fragment;
+        return PhotoDetailFragment.newInstance(mPhotos.get(position));
     }
 
     @Override

@@ -20,18 +20,64 @@
             android:orientation="vertical"
             >
 
-            <com.mikhaellopez.circularimageview.CircularImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="10dp"
-                app:border_width="1dp"
-                android:src="@drawable/personsample3"
-                android:layout_gravity="center"
-                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:padding="10dp"
+                android:background="@drawable/background_service3"
+                android:orientation="horizontal"
+                >
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:border_width="1dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/dogplace3"
+                    android:id="@+id/userzone_avatar"
+                    android:layout_gravity="center_vertical"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="#3cb72c"
+                        android:text="Conectado"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/userzone_username"
+                        android:textSize="16sp"
+                        android:textColor="#000"
+                        android:text="Nombre usuario"
+                        />
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:textSize="16sp"
@@ -111,6 +157,7 @@
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
             android:indeterminate="true"
             android:layout_gravity="center" />
     </FrameLayout>

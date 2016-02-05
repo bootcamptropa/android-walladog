@@ -64,7 +64,7 @@ public class ProfileSellingFragment extends Fragment {
         if(mProductsSelling==null){
             mProductsSelling = new ArrayList<>();
         }
-        adapter = new SellingAdapter(mProductsSelling,getContext());
+        adapter = new SellingAdapter(mProductsSelling,getContext(),getActivity().getSupportFragmentManager());
         recyclerView.setAdapter(adapter);
     }
 }

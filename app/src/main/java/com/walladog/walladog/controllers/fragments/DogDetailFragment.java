@@ -1,12 +1,14 @@
 package com.walladog.walladog.controllers.fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -16,16 +18,26 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 import com.viewpagerindicator.LinePageIndicator;
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.CarouselAdapter;
-import com.walladog.walladog.models.Photo;
 import com.walladog.walladog.models.Product;
+import com.walladog.walladog.models.ProductImage;
+import com.walladog.walladog.models.UserData;
+import com.walladog.walladog.models.apiservices.ServiceGenerator;
+import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
+import com.walladog.walladog.models.apiservices.WDTransactionService;
 import com.walladog.walladog.utils.CustomMarker;
 import com.walladog.walladog.utils.WorkaroundMapFragment;
 
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 
 public class DogDetailFragment extends Fragment implements ViewPager.OnPageChangeListener {
@@ -33,16 +45,22 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
     private static final String TAG = DogDetailFragment.class.getName();
     private static final String ARG_PRODUCT = "PRODUCT";
 
-    TextView txtDogName,txtDogRace,txtDogSterile,txtDogLocation = null;
+    TextView txtDogName,txtDogRace,txtDogSterile,txtDogLocation,txtDescription,txtProductOwner,txtProductOwnerLocation = null;
+    CircularImageView avatarOwner;
+    CarouselAdapter adapter = null;
 
     //Array of Products (dogs)
-    private List<Photo> photoList=null;
+    private List<ProductImage> photoList=null;
     private Product mProduct=null;
+    private Button mButtonBuy;
 
     //Map
     private ScrollView mScrollView;
     private GoogleMap mMap=null;
     private CustomMarker customDogMarker=null;
+    private ViewPager pager;
+
+    private LinePageIndicator ti;
 
     public static DogDetailFragment newInstance(Product product) {
         DogDetailFragment fragment = new DogDetailFragment();
@@ -53,10 +71,7 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
     }
 
     public DogDetailFragment() {
-        photoList = new ArrayList<>();
-        for(int i=0; i<5; i++){
-            photoList.add(new Photo("Photo"+String.valueOf(i),"http://loremflickr.com/30"+String.valueOf(i)+"/300/dog"));
-        }
+
     }
 
     @Override
@@ -64,7 +79,7 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mProduct = (Product) getArguments().getSerializable(ARG_PRODUCT);
-            customDogMarker = new CustomMarker(mProduct.getName(), 41.390205, 2.154007);
+            //customDogMarker = new CustomMarker(mProduct.getName(), 41.390205, 2.154007);
         }
     }
 
@@ -77,8 +92,13 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
         txtDogName = (TextView) v.findViewById(R.id.txt_dog_name);
         txtDogRace = (TextView) v.findViewById(R.id.txt_dog_race);
         txtDogSterile = (TextView) v.findViewById(R.id.txt_dog_sterile);
-        //txtDogLocation = (TextView) v.findViewById(R.id.txt_dog_location);
-
+        txtDescription = (TextView) v.findViewById(R.id.description_product);
+        txtProductOwner = (TextView) v.findViewById(R.id.txt_product_owner_name);
+        txtProductOwnerLocation = (TextView) v.findViewById(R.id.txt_product_owner_location);
+        mButtonBuy = (Button) v.findViewById(R.id.btn_comprar);
+        avatarOwner = (CircularImageView) v.findViewById(R.id.product_seller_avatar);
+        pager = (ViewPager) v.findViewById(R.id.viewpager);
+        ti = (LinePageIndicator) v.findViewById(R.id.titles);
 
 
         //Map - intercepting touch events in custom class
@@ -97,20 +117,29 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
 
         }
 
-        if(mProduct!=null){
-            CarouselAdapter adapter = new CarouselAdapter(getActivity().getSupportFragmentManager(),photoList);
-            ViewPager pager = (ViewPager) v.findViewById(R.id.viewpager);
+        mButtonBuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Enviar transacción
+                try {
+                    ServiceGeneratorOAuth.createService(WDTransactionService.class).createTransaction(mProduct).enqueue(new Callback<UserData>() {
+                        @Override
+                        public void onResponse(Response<UserData> response, Retrofit retrofit) {
+                            snakeMsg("Transaccion creada con éxito");
+                        }
 
-            pager.addOnPageChangeListener(this);
+                        @Override
+                        public void onFailure(Throwable t) {
+                            snakeMsg("Transaccion creada con éxito");
+                        }
+                    });
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
-            LinePageIndicator ti = (LinePageIndicator) v.findViewById(R.id.titles);
-            pager.setAdapter(adapter);
-            ti.setViewPager(pager);
-            ti.setOnPageChangeListener(this);
-            syncViewAndModel();
-        }
-
-
+        syncViewAndModel();
 
         return v;
     }
@@ -132,6 +161,18 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
     }
 
     private void syncViewAndModel(){
+
+        photoList = mProduct.getImages();
+        Log.v(TAG, "Lista de imagenes :: " + String.valueOf(photoList.size()));
+        adapter = new CarouselAdapter(getActivity().getSupportFragmentManager(),photoList);
+        pager.setAdapter(adapter);
+        pager.setCurrentItem(0);
+        pager.addOnPageChangeListener(this);
+
+
+        ti.setViewPager(pager);
+        ti.setOnPageChangeListener(this);
+
         String genero = "";
         switch (mProduct.getGender()){
             case "MAL":
@@ -148,30 +189,49 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
         txtDogName.setText(mProduct.getName());
         String isSterile = mProduct.isSterile()?"Si":"No";
         txtDogSterile.setText(isSterile);
+        txtDescription.setText(mProduct.getDescription());
         //txtDogLocation.setText("Barcelona");
+        txtProductOwner.setText(mProduct.getSeller().getFirst_name()+" "+mProduct.getSeller().getLast_name());
+        txtProductOwnerLocation.setText(mProduct.getSeller().getUsername());
         txtDogRace.setText(genero);
+
+        Picasso.with(getContext())
+                .load(mProduct.getSeller().getAvatar_thumbnail_url())
+                .placeholder(R.drawable.personsample3)
+                .into(avatarOwner);
 
         double latitude = Double.parseDouble(mProduct.getLatitude());
         double longitude  = Double.parseDouble(mProduct.getLongitude());
-            //TODO reactivate this for real-devices
-            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
-            MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Walladog");
-            // Set icon
-            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_menu_petfeet));
-            // adding marker
+
+        //TODO reactivate this for real-devices
+        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
+        MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title(mProduct.getName());
+        // Set icon
+        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_menu_petfeet));
+        // adding marker
         try {
             mMap.addMarker(marker);
         }catch (Exception e){
 
         }
 
-            CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
-            mMap.moveCamera(center);
-            mMap.animateCamera(zoom);
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
+        mMap.moveCamera(center);
+        mMap.animateCamera(zoom);
 
-            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
 
+    }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        adapter=null;
+        System.gc();
+    }
+
+    private void snakeMsg(String s){
+        Snackbar.make(getView(), s, Snackbar.LENGTH_LONG).show();
     }
 }

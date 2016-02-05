@@ -1,22 +1,24 @@
 package com.walladog.walladog.controllers.fragments;
 
 
-import android.graphics.Color;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 import com.walladog.walladog.R;
-import com.walladog.walladog.models.Photo;
-import com.walladog.walladog.models.WDServices;
+import com.walladog.walladog.models.ProductImage;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by hadock on 31/12/15.
@@ -24,50 +26,56 @@ import com.walladog.walladog.models.WDServices;
  */
 public class PhotoDetailFragment extends Fragment {
 
-    public static final String EXTRA_MESSAGE = "PICTURE";
-    private Photo mPhoto = null;
+    private final static String TAG = PhotoDetailFragment.class.getName();
 
-    public final PhotoDetailFragment newInstance(Photo photo){
+    public static final String EXTRA_MESSAGE = "PICTURE";
+    private ImageView mImageProduct = null;
+    private ProductImage mPhoto = null;
+
+    public static final PhotoDetailFragment newInstance(ProductImage photo){
         PhotoDetailFragment f = new PhotoDetailFragment();
-        Bundle bdl = new Bundle(1);
-        bdl.putSerializable(EXTRA_MESSAGE, photo);
-        f.setArguments(bdl);
+        Bundle arguments = new Bundle();
+        Log.v(TAG,"Aqui llega foto "+photo.getPhoto_url());
+        arguments.putSerializable(EXTRA_MESSAGE, photo);
+        f.setArguments(arguments);
         return f;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mPhoto = (ProductImage) getArguments().getSerializable(EXTRA_MESSAGE);
+            Log.v(TAG,"Tenemos foto al OnCreate: "+mPhoto.getPhoto_url());
+        }
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        if (getArguments() != null) {
-            mPhoto = (Photo) getArguments().getSerializable(EXTRA_MESSAGE);
-        }else{
-            mPhoto = new Photo("http://loremflickr.com/400/300/dog","Placeholder");
-        }
         View v = inflater.inflate(R.layout.photo_layout, container, false);
-        
-        ImageView imgView = (ImageView)v.findViewById(R.id.imageView);
-        //TextView txtView = (TextView) v.findViewById(R.id.photoTitle);
-        //txtView.setText(mPhoto.getPhotoTitle());
+        mImageProduct = (ImageView)v.findViewById(R.id.productImage);
 
-/*
-        Transformation transformation = new RoundedTransformationBuilder()
-                .borderColor(Color.LTGRAY)
-                .borderWidthDp(0)
-                .cornerRadiusDp(10)
-                .oval(false)
-                .build();
-*/
+        Log.v(TAG, "OnCreateView::: " + mPhoto.getPhoto_url());
 
-        Picasso.with(getActivity()).
-                load(mPhoto.getPhotoUrl())
-                /*.transform(transformation)*/
-                .placeholder(R.drawable.walladogsmall)
-                .into(imgView);
+
+        Picasso.with(getContext()).invalidate(mPhoto.getPhoto_url());
+        Picasso.with(getContext())
+                .load(mPhoto.getPhoto_url())
+                .placeholder(R.drawable.dogplace3)
+                .into(mImageProduct);
+
 
         return v;
     }
 
     public PhotoDetailFragment() {
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 }

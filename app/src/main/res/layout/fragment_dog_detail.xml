@@ -23,9 +23,26 @@
             app:lineWidth="15dp"
             android:layout_width="fill_parent" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_corners"
+            android:paddingLeft="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textStyle="bold"
+            android:textColor="#d3d3d3"
+            android:elevation="2dp"
+            android:text="Me lo quedo!"
+            android:textAlignment="center"
+            android:id="@+id/btn_comprar"
+            android:drawableLeft="@drawable/ic_menu_cartwhite"
+            />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginTop="2dp"
             android:layout_margin="2dp"
             android:background="@color/primary_color"
             android:orientation="horizontal">
@@ -91,6 +108,7 @@
 
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -173,6 +191,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     app:border_width="1dp"
+                    android:id="@+id/product_seller_avatar"
                     android:src="@drawable/personsample3"
                     android:layout_gravity="center"
                     />
@@ -191,7 +210,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/txt_product_owner_name"
                         android:layout_gravity="center_vertical"
-                        android:text="Ramon Alberti Danes"
+                        android:text="Nombre Vendedor"
                         />
                     <TextView
                         android:layout_width="match_parent"

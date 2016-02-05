@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 import com.walladog.walladog.R;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.UserData;
@@ -36,7 +39,9 @@ public class UserZoneFragment extends Fragment implements View.OnClickListener {
     private String mParam2;
 
     private Button btnNotifications,btnProductos,btnUserData;
+    private CircularImageView mAvatar;
     private FrameLayout mFrameProgress;
+    private TextView mUsername;
     private int mTasks;
 
     private UserData mUserData;
@@ -74,6 +79,8 @@ public class UserZoneFragment extends Fragment implements View.OnClickListener {
         btnProductos = (Button) v.findViewById(R.id.btn_uz_transactions);
         btnUserData = (Button) v.findViewById(R.id.btn_uz_profile);
         mFrameProgress = (FrameLayout) v.findViewById(R.id.frameProgress);
+        mAvatar = (CircularImageView) v.findViewById(R.id.userzone_avatar);
+        mUsername = (TextView) v.findViewById(R.id.userzone_username);
 
         //Listeners
         btnNotifications.setOnClickListener(this);
@@ -121,6 +128,8 @@ public class UserZoneFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onResponse(Response<UserData> response, Retrofit retrofit) {
                 mUserData=response.body();
+                Picasso.with(getContext()).load(mUserData.getAvatar_url()).into(mAvatar);
+                mUsername.setText(mUserData.getUsername());
                 mTasks++;
                 removeOverlay();
             }

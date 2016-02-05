@@ -102,7 +102,6 @@ public class MainActivity extends DrawerBaseActivity
                         .replace(R.id.drawer_layout_main_activity_frame, HomeFragment.newInstance(),HomeFragment.class.getName())
                         .addToBackStack(HomeFragment.class.getName())
                         .commit();
-                Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_location:
                 getSupportFragmentManager().beginTransaction()
@@ -261,7 +260,6 @@ public class MainActivity extends DrawerBaseActivity
                 .replace(R.id.drawer_layout_main_activity_frame, DogDetailFragment.newInstance(mProducts.getResults().get(position)),DogDetailFragment.class.getName())
                 .addToBackStack(DogDetailFragment.class.getName())
                 .commit();
-            Toast.makeText(getApplicationContext(), "Go to Home", Toast.LENGTH_SHORT).show();
     }
 
     /**

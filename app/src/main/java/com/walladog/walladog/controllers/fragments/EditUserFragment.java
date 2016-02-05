@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 import com.walladog.walladog.R;
 import com.walladog.walladog.models.UserData;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
@@ -30,7 +33,9 @@ public class EditUserFragment extends Fragment {
     private UserData mUserdata;
 
     AutoCompleteTextView mUsername,mFirstname,mLastname,mPassword,mPassword2,mAvatarUrl;
+    TextView mUsernameTitle;
     Button mBtnSave;
+    CircularImageView mAvatar;
 
     public EditUserFragment() {
 
@@ -64,6 +69,8 @@ public class EditUserFragment extends Fragment {
         mPassword2 = (AutoCompleteTextView) v.findViewById(R.id.edit_user_password2);
         mAvatarUrl = (AutoCompleteTextView) v.findViewById(R.id.edit_user_avatarurl);
         mBtnSave = (Button) v.findViewById(R.id.btn_update_user);
+        mAvatar = (CircularImageView) v.findViewById(R.id.useredit_avatar);
+        mUsernameTitle = (TextView) v.findViewById(R.id.edit_user_titleusername);
 
         mBtnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +96,8 @@ public class EditUserFragment extends Fragment {
             mFirstname.setText(mUserdata.getFirst_name());
             mLastname.setText(mUserdata.getLast_name());
             mAvatarUrl.setText(mUserdata.getAvatar_url());
+            mUsernameTitle.setText(mUserdata.getUsername());
+            Picasso.with(getContext()).load(mUserdata.getAvatar_url()).into(mAvatar);
         }
     }
 
