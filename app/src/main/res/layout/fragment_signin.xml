@@ -11,14 +11,6 @@
               android:paddingTop="@dimen/activity_vertical_margin"
               tools:context="com.walladog.walladog.controllers.activities.MainActivity">
 
-    <!-- Login progress -->
-    <ProgressBar
-        android:id="@+id/login_progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone"/>
 
     <ScrollView
         android:id="@+id/login_form"
@@ -84,14 +76,14 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/firstname"
+                    android:id="@+id/password2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_firstname"
+                    android:hint="@string/prompt_password2"
                     android:imeActionId="@+id/login"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="textAutoComplete"
+                    android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"/>
 
@@ -102,10 +94,10 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/lastname"
+                    android:id="@+id/register_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Indica tus apellidos"
+                    android:hint="@string/prompt_username"
                     android:imeActionId="@+id/login"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
@@ -133,3 +125,5 @@
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
+
+

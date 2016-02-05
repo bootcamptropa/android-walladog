@@ -18,7 +18,7 @@ import retrofit.http.Path;
  *
  */
 
-public interface WDLoginService {
+public interface _WDLoginService {
 
     String apiEndpoint = "/auth";
 

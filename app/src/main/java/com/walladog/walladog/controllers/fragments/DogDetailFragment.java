@@ -77,7 +77,7 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
         txtDogName = (TextView) v.findViewById(R.id.txt_dog_name);
         txtDogRace = (TextView) v.findViewById(R.id.txt_dog_race);
         txtDogSterile = (TextView) v.findViewById(R.id.txt_dog_sterile);
-        txtDogLocation = (TextView) v.findViewById(R.id.txt_dog_location);
+        //txtDogLocation = (TextView) v.findViewById(R.id.txt_dog_location);
 
 
 
@@ -132,25 +132,32 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
     }
 
     private void syncViewAndModel(){
+        String genero = "";
+        switch (mProduct.getGender()){
+            case "MAL":
+                genero = "Macho";
+                break;
+            case "FEM":
+                genero = "Hembra";
+                break;
+            default:
+                genero = "Desconocido";
+                break;
+        }
+
         txtDogName.setText(mProduct.getName());
-        String isSterile = mProduct.isSterile()?"Yes":"No";
+        String isSterile = mProduct.isSterile()?"Si":"No";
         txtDogSterile.setText(isSterile);
-        txtDogLocation.setText("Barcelona");
-        txtDogRace.setText(mProduct.getGender());
+        //txtDogLocation.setText("Barcelona");
+        txtDogRace.setText(genero);
 
-        double latitude = 41.390205;
-        double longitude  = 2.154007;
-
-
+        double latitude = Double.parseDouble(mProduct.getLatitude());
+        double longitude  = Double.parseDouble(mProduct.getLongitude());
             //TODO reactivate this for real-devices
-
             CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
-
             MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude, longitude)).title("Walladog");
-
             // Set icon
             marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_menu_petfeet));
-
             // adding marker
         try {
             mMap.addMarker(marker);

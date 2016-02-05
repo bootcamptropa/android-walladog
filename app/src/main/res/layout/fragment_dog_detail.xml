@@ -66,7 +66,7 @@
                     android:text="Raza:"
                     />
 
-                <TextView
+                <!--<TextView
                     android:layout_width="match_parent"
                     android:background="@color/wd_grey_bg"
                     android:padding="1dp"
@@ -75,7 +75,7 @@
                     android:layout_marginTop="1dp"
                     android:layout_height="wrap_content"
                     android:text="Localidad:"
-                    />
+                    />-->
 
                 <TextView
                     android:layout_width="match_parent"
@@ -116,7 +116,7 @@
                     android:text="@string/txt_dog_norace"
                     />
 
-                <TextView
+                <!--<TextView
                     android:layout_width="match_parent"
                     android:padding="1dp"
                     android:layout_marginLeft="3dp"
@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/txt_dog_location"
                     android:text="@string/txt_unknown"
-                    />
+                    />-->
 
                 <TextView
                     android:layout_width="match_parent"

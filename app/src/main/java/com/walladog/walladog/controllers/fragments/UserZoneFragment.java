@@ -106,7 +106,10 @@ public class UserZoneFragment extends Fragment implements View.OnClickListener {
                         .commit();
                 break;
             case R.id.btn_uz_profile:
-                Log.v(TAG, "Click3");
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.drawer_layout_main_activity_frame, EditUserFragment.newInstance(mUserData),UserTransactionsFragment.class.getName())
+                        .addToBackStack(EditUserFragment.class.getName())
+                        .commit();
                 break;
         }
 
