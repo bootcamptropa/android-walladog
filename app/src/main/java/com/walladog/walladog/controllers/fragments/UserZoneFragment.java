@@ -3,7 +3,6 @@ package com.walladog.walladog.controllers.fragments;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +31,6 @@ public class UserZoneFragment extends Fragment implements View.OnClickListener {
 
     private final static String TAG = UserZoneFragment.class.getName();
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
 
     private Button btnNotifications,btnProductos,btnUserData;
     private CircularImageView mAvatar;
@@ -53,10 +47,6 @@ public class UserZoneFragment extends Fragment implements View.OnClickListener {
 
     public static UserZoneFragment newInstance(String param1, String param2) {
         UserZoneFragment fragment = new UserZoneFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -64,8 +54,6 @@ public class UserZoneFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -106,15 +94,14 @@ public class UserZoneFragment extends Fragment implements View.OnClickListener {
                         .commit();
                 break;
             case R.id.btn_uz_transactions:
-                Log.v(TAG,"Click2");
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, UserTransactionsFragment.newInstance(mSellingProducts, mSoldProducts),UserTransactionsFragment.class.getName())
-                        .addToBackStack(UserTransactionsFragment.class.getName())
+                        .replace(R.id.drawer_layout_main_activity_frame, UserProductsFragment.newInstance(mSellingProducts, mSoldProducts),UserProductsFragment.class.getName())
+                        .addToBackStack(UserProductsFragment.class.getName())
                         .commit();
                 break;
             case R.id.btn_uz_profile:
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_layout_main_activity_frame, EditUserFragment.newInstance(mUserData),UserTransactionsFragment.class.getName())
+                        .replace(R.id.drawer_layout_main_activity_frame, EditUserFragment.newInstance(mUserData),UserProductsFragment.class.getName())
                         .addToBackStack(EditUserFragment.class.getName())
                         .commit();
                 break;

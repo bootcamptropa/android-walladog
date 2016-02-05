@@ -9,24 +9,6 @@ import java.io.Serializable;
 
 public class UserData implements Serializable{
 
-    //{"id":22,"first_name":"Ramon","last_name":"ALBERTI DANES","username":"ramoncin3",
-    // "email":"krainet@gmail.com","avatar_url":"https://thecreatorsproject-images.vice.com/content-images/contentimage/no-slug/d4d24f28d34addbcb66fb9e86c8276b2.jpg",
-    // "avatar_thumbnail_url":"https://s3.amazonaws.com/walladog/thumbnails/ramoncin3.png",
-    // "products_count":11}
-
-
-    /*
-    {
-        "id": 22,
-            "first_name": "Ramon",
-            "last_name": "ALBERTI DANES",
-            "username": "ramoncin3",
-            "email": "krainet@gmail.com",
-            "avatar_url": "https://thecreatorsproject-images.vice.com/content-images/contentimage/no-slug/d4d24f28d34addbcb66fb9e86c8276b2.jpg",
-            "avatar_thumbnail_url": "https://s3.amazonaws.com/walladog/thumbnails/ramoncin3.png",
-            "products_count": 0
-    }
-*/
     private int id;
     private String first_name;
     private String last_name;

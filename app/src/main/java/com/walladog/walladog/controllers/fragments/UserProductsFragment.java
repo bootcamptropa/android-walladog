@@ -12,13 +12,12 @@ import android.widget.Button;
 import com.walladog.walladog.R;
 import com.walladog.walladog.adapters.ProfilePagerAdapter;
 import com.walladog.walladog.models.Product;
-import com.walladog.walladog.models.responses.ProductResponse;
 
 import java.io.Serializable;
 import java.util.List;
 
 
-public class UserTransactionsFragment extends Fragment implements ViewPager.OnPageChangeListener {
+public class UserProductsFragment extends Fragment implements ViewPager.OnPageChangeListener {
     public static final String ARG_SELLINGPRODUCTS = "ARG_SELLINGPRODUCTS";
     public static final String ARG_SOLDPRODUCTS = "ARG_SOLDPRODUCTS";
 
@@ -29,12 +28,12 @@ public class UserTransactionsFragment extends Fragment implements ViewPager.OnPa
 
     private Button b1,b2,b3;
 
-    public UserTransactionsFragment() {
+    public UserProductsFragment() {
 
     }
 
-    public static UserTransactionsFragment newInstance(List<Product> productsSelling,List<Product> productsSold) {
-        UserTransactionsFragment fragment = new UserTransactionsFragment();
+    public static UserProductsFragment newInstance(List<Product> productsSelling,List<Product> productsSold) {
+        UserProductsFragment fragment = new UserProductsFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_SELLINGPRODUCTS, (Serializable) productsSelling);
         args.putSerializable(ARG_SOLDPRODUCTS, (Serializable) productsSold);

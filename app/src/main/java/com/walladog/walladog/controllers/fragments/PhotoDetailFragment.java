@@ -35,7 +35,6 @@ public class PhotoDetailFragment extends Fragment {
     public static final PhotoDetailFragment newInstance(ProductImage photo){
         PhotoDetailFragment f = new PhotoDetailFragment();
         Bundle arguments = new Bundle();
-        Log.v(TAG,"Aqui llega foto "+photo.getPhoto_url());
         arguments.putSerializable(EXTRA_MESSAGE, photo);
         f.setArguments(arguments);
         return f;
@@ -46,7 +45,6 @@ public class PhotoDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mPhoto = (ProductImage) getArguments().getSerializable(EXTRA_MESSAGE);
-            Log.v(TAG,"Tenemos foto al OnCreate: "+mPhoto.getPhoto_url());
         }
 
     }
@@ -57,8 +55,6 @@ public class PhotoDetailFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.photo_layout, container, false);
         mImageProduct = (ImageView)v.findViewById(R.id.productImage);
-
-        Log.v(TAG, "OnCreateView::: " + mPhoto.getPhoto_url());
 
 
         Picasso.with(getContext()).invalidate(mPhoto.getPhoto_url());

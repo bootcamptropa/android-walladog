@@ -163,8 +163,6 @@ public class AddProductFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.v(TAG, "Request code");
-        Log.v(TAG, String.valueOf(requestCode));
 
         if(requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE1 ||
                 requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE2 ||
@@ -265,7 +263,6 @@ public class AddProductFragment extends Fragment {
                     +Constants.APP_IMAGES
                     +"tmpPicture"+String.valueOf(picNumber)+".jpg";
 
-            Log.v(TAG,"Guardando original en : "+path);
 
             File newFile = new File(path);
 
@@ -359,8 +356,6 @@ public class AddProductFragment extends Fragment {
             Bitmap bmp = BitmapFactory.decodeStream(imageStream);
 
 
-            Log.v(TAG,"Rotate::");
-            Log.v(TAG, String.valueOf(orientation));
 
             FileOutputStream out = new FileOutputStream(littleFile);
             //bmp = rotateImageIfRequired(getContext(),bmp,getImageUri(getContext(),bmp));

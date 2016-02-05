@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +25,7 @@ import com.walladog.walladog.adapters.CarouselAdapter;
 import com.walladog.walladog.models.Product;
 import com.walladog.walladog.models.ProductImage;
 import com.walladog.walladog.models.Transaction;
-import com.walladog.walladog.models.TransactionResponse;
-import com.walladog.walladog.models.UserData;
 import com.walladog.walladog.models.WDTransaction;
-import com.walladog.walladog.models.apiservices.ServiceGenerator;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 import com.walladog.walladog.models.apiservices.WDTransactionService;
 import com.walladog.walladog.utils.CustomMarker;
@@ -126,10 +122,10 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
                 //Enviar transacción
                 try {
                     ServiceGeneratorOAuth.createService(WDTransactionService.class).createTransaction(new WDTransaction((int)mProduct.getId()))
-                    .enqueue(new Callback<TransactionResponse>() {
+                    .enqueue(new Callback<Transaction>() {
                         @Override
-                        public void onResponse(Response<TransactionResponse> response, Retrofit retrofit) {
-                            TransactionResponse r = response.body();
+                        public void onResponse(Response<Transaction> response, Retrofit retrofit) {
+                            Transaction r = response.body();
                             snakeMsg("Transaccion correcta!");
                         }
 
@@ -168,7 +164,6 @@ public class DogDetailFragment extends Fragment implements ViewPager.OnPageChang
     private void syncViewAndModel(){
 
         photoList = mProduct.getImages();
-        Log.v(TAG, "Lista de imagenes :: " + String.valueOf(photoList.size()));
         adapter = new CarouselAdapter(getActivity().getSupportFragmentManager(),photoList);
         pager.setAdapter(adapter);
         pager.setCurrentItem(0);

@@ -1,6 +1,7 @@
 package com.walladog.walladog.models.apiservices;
 
 import com.walladog.walladog.models.UserData;
+import com.walladog.walladog.models.UserSignIn;
 
 import retrofit.Call;
 import retrofit.http.Body;
@@ -16,7 +17,7 @@ import retrofit.http.Path;
 
 public interface WDUsersService {
 
-    String apiEndpoint = "/api/1.0/users";
+    String apiEndpoint = "/api/1.0/users/";
 
     @GET(apiEndpoint)
     Call<UserData> getUsers();
@@ -25,7 +26,7 @@ public interface WDUsersService {
     Call<UserData> updateUser(@Path("id") String idcustomer, @Body UserData data);
 
     @POST(apiEndpoint)
-    Call<UserData> createUser(@Body UserData data);
+    Call<UserData> createUser(@Body UserSignIn data);
 
 
 }

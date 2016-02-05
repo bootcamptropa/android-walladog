@@ -166,7 +166,6 @@ public class DogListFragment extends Fragment
             mIsUniquePage=true;
         }
 
-        Log.v(TAG,"Products size: "+String.valueOf(mProductResponse.getResults().size()));
         if(mProductResponse.getResults().size()>0){
             mAdapter = new DogListAdapter(getActivity().getApplicationContext(),this,mProductResponse.getResults());
             endRecyclerViewAdapter = new EndRecycleViewAdapter(getContext(),mAdapter,this); //Adapter endless
@@ -210,7 +209,6 @@ public class DogListFragment extends Fragment
      */
     @Override
     public void onPhotoClick(int position) {
-        Log.v(TAG,"Photo click listener at : "+String.valueOf(position));
         mListItemListener.onListItemSelected(position);
     }
 
@@ -236,7 +234,6 @@ public class DogListFragment extends Fragment
                                 public void onResponse(Response<ProductResponse> response, Retrofit retrofit) {
                                     if (response.body().getNext() == null) {
                                         mIsLastPage = true;
-                                        Log.v(TAG, "Is last page");
                                     }
                                     mAdapter.appendItems(response.body().getResults());
                                     endRecyclerViewAdapter.onDataReady(true);
@@ -245,7 +242,6 @@ public class DogListFragment extends Fragment
 
                                 @Override
                                 public void onFailure(Throwable t) {
-                                    Log.v(TAG, "Fallo en la conexion a la api");
                                     endRecyclerViewAdapter.onDataReady(false);
                                 }
                             });
@@ -253,7 +249,6 @@ public class DogListFragment extends Fragment
                     e.printStackTrace();
                 }
             } else {
-                Log.v(TAG,"ELSE :: Is last page");
                 //TODO resolve this stupid hack
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {

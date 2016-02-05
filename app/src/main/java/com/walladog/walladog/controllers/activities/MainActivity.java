@@ -22,17 +22,17 @@ import com.walladog.walladog.controllers.fragments.DogListFragment;
 import com.walladog.walladog.controllers.fragments.HomeFragment;
 import com.walladog.walladog.controllers.fragments.LoginFragment;
 import com.walladog.walladog.controllers.fragments.MapsLocator;
-import com.walladog.walladog.controllers.fragments.NotificationsFragment;
 import com.walladog.walladog.controllers.fragments.SigninFragment;
-import com.walladog.walladog.controllers.fragments.UserTransactionsFragment;
 import com.walladog.walladog.controllers.fragments.UserZoneFragment;
 import com.walladog.walladog.models.Category;
 import com.walladog.walladog.models.UserData;
+import com.walladog.walladog.models.UserSignIn;
 import com.walladog.walladog.models.apiservices.AccessToken;
 import com.walladog.walladog.models.apiservices.ServiceGeneratorOAuth;
 import com.walladog.walladog.models.apiservices.WDOAuth;
 import com.walladog.walladog.models.apiservices.WDProductService;
 import com.walladog.walladog.models.apiservices.WDUserDataService;
+import com.walladog.walladog.models.apiservices.WDUsersService;
 import com.walladog.walladog.models.responses.ProductResponse;
 import com.walladog.walladog.utils.SearchObject;
 import com.walladog.walladog.utils.WDEventNotification;
@@ -246,8 +246,29 @@ public class MainActivity extends DrawerBaseActivity
 
 
     @Override
-    public void onSigninSubmit(String username, String password, View currentView) {
+    public void onSigninSubmit(String username, String password, View currentView, String useremail) {
+        UserSignIn user = new UserSignIn(username,password,password,useremail);
 
+        try {
+            ServiceGeneratorOAuth.createService(WDUsersService.class).createUser(user).enqueue(new Callback<UserData>() {
+                @Override
+                public void onResponse(Response<UserData> response, Retrofit retrofit) {
+                    snakeMsg("Registrado! identificate!");
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    snakeMsg("Error al registrarse!");
+                }
+            });
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void snakeMsg(String s){
+        Snackbar.make(mFLayout, s, Snackbar.LENGTH_LONG).show();
     }
 
     /**

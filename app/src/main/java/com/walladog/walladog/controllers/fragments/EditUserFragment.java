@@ -117,13 +117,11 @@ public class EditUserFragment extends Fragment {
         ServiceGeneratorOAuth.createService(WDUsersService.class).updateUser(String.valueOf(mUserdata.getId()),data).enqueue(new Callback<UserData>() {
             @Override
             public void onResponse(Response<UserData> response, Retrofit retrofit) {
-                Log.v(TAG, "Usuario actualizado con éxito");
                 snakeMsg("Datos actualizados!");
             }
 
             @Override
             public void onFailure(Throwable t) {
-                Log.v(TAG,"Error al actualizar");
                 snakeMsg("Error al actualizar!");
             }
         });

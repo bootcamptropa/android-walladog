@@ -96,7 +96,6 @@ public class NotificationListFragment extends Fragment {
 
     // This method will be called when a NotificationDataEvent is posted
     public void onEvent(NotificationDataEvent dataItem){
-        Log.v(TAG,"Recived event to update Notifications");
         NotificationDAO ndao = new NotificationDAO(getContext());
         adapter.setItems(ndao.getNotificationsFromType(String.valueOf(mNotificationType)));
         adapter.notifyDataSetChanged();

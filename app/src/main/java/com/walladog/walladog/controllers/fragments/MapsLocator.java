@@ -154,7 +154,6 @@ public class MapsLocator extends Fragment {
                         }
                         setCustomMarkerOnePosition();
                         setCustomMarkerTwoPosition();
-                        Log.v(TAG,"Hola");
                     }
                 });
     }
